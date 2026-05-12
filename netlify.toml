@@ -1,17 +1,37 @@
 [build]
-  publish = "public"
+  publish = "."
 
-  [[headers]]
-    for = "/sw.js"
-      [headers.values]
-          Cache-Control = "no-cache"
+  [[redirects]]
+    from = "/manifest.json"
+      to = "/public/manifest.json"
+        status = 200
 
-          [[headers]]
-            for = "/manifest.json"
-              [headers.values]
-                  Cache-Control = "no-cache"
+        [[redirects]]
+          from = "/sw.js"
+            to = "/public/sw.js"
+              status = 200
 
-                  [[headers]]
-                    for = "/.well-known/assetlinks.json"
-                      [headers.values]
-                          Content-Type = "application/json"
+              [[redirects]]
+                from = "/offline.html"
+                  to = "/public/offline.html"
+                    status = 200
+
+                    [[redirects]]
+                      from = "/icons/*"
+                        to = "/public/icons/:splat"
+                          status = 200
+
+                          [[redirects]]
+                            from = "/.well-known/assetlinks.json"
+                              to = "/public/.well-known/assetlinks.json"
+                                status = 200
+
+                                [[headers]]
+                                  for = "/sw.js"
+                                    [headers.values]
+                                        Cache-Control = "no-cache"
+
+                                        [[headers]]
+                                          for = "/manifest.json"
+                                            [headers.values]
+                                                Cache-Control = "no-cache"
