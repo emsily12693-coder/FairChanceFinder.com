@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FairChance Finder</title>
-  <link rel="manifest" href="/public/manifest.json">
+  <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#1a237e">
   <meta name="description" content="Connecting fair-chance job seekers with employers who believe in second chances.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="FairChance Finder">
-  <link rel="apple-touch-icon" href="/public/icons/16724.jpg">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -76,10 +76,7 @@
     }
     .section { padding: 24px 20px; }
     .section h3 { font-size: 18px; margin-bottom: 16px; color: var(--teal); }
-    .jobs-grid {
-      display: grid;
-      gap: 14px;
-    }
+    .jobs-grid { display: grid; gap: 14px; }
     .job-card {
       background: var(--card);
       border-radius: 12px;
@@ -184,7 +181,7 @@
 </head>
 <body>
   <header>
-    <img src="/public/icons/16724.jpg" alt="FairChance Finder Logo">
+    <img src="/icons/icon-192x192.png" alt="FairChance Finder Logo">
     <h1><span>FairChance</span> <span>Finder</span></h1>
   </header>
 
@@ -203,7 +200,7 @@
       <div class="job-card">
         <div class="fair-badge">⭐ Fair Chance Employer</div>
         <h4>Warehouse Associate</h4>
-        <div class="company">Amazon Fulfillment</div>
+        <div class="company">Amazon Fulfillment — Phoenix, AZ</div>
         <div class="tags">
           <span class="tag">Full-Time</span>
           <span class="tag">$18-22/hr</span>
@@ -214,7 +211,7 @@
       <div class="job-card">
         <div class="fair-badge">⭐ Fair Chance Employer</div>
         <h4>Delivery Driver</h4>
-        <div class="company">FedEx Ground</div>
+        <div class="company">FedEx Ground — Tempe, AZ</div>
         <div class="tags">
           <span class="tag">Full-Time</span>
           <span class="tag">$20-25/hr</span>
@@ -225,7 +222,7 @@
       <div class="job-card">
         <div class="fair-badge">⭐ Fair Chance Employer</div>
         <h4>Restaurant Team Member</h4>
-        <div class="company">Dave's Hot Chicken</div>
+        <div class="company">Dave's Hot Chicken — Chandler, AZ</div>
         <div class="tags">
           <span class="tag">Part-Time</span>
           <span class="tag">$15-17/hr</span>
@@ -236,7 +233,7 @@
       <div class="job-card">
         <div class="fair-badge">⭐ Fair Chance Employer</div>
         <h4>Construction Laborer</h4>
-        <div class="company">Turner Construction</div>
+        <div class="company">Turner Construction — Scottsdale, AZ</div>
         <div class="tags">
           <span class="tag">Full-Time</span>
           <span class="tag">$19-24/hr</span>
@@ -304,14 +301,14 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/public/sw.js')
-          .then(r => console.log('SW registered:', r.scope))
-          .catch(e => console.error('SW error:', e));
+        navigator.serviceWorker.register('/sw.js')
+          .then(r => console.log('FairChanceFinder SW registered:', r.scope))
+          .catch(e => console.error('FairChanceFinder SW error:', e));
       });
     }
     function searchJobs() {
       var q = document.getElementById('searchInput').value;
-      if (q) showToast('Searching for: ' + q);<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FairChance Finder</title><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#1a237e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="FairChance Finder"><link rel="apple-touch-icon" href="/icons/16724.jpg"></head><body style="margin:0;font-family:system-ui;background:#0a0a0a;color:#f9fafb;text-align:center;padding:40px 20px"><img src="/icons/16724.jpg" style="width:80px;border-radius:16px;margin-bottom:20px"><h1 style="color:#4dd0c4">FairChance Finder</h1><p style="color:#9ca3af">Connecting fair-chance job seekers with employers who believe in second chances.</p><script>if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js')</script></body></html>
+      if (q) showToast('Searching for: ' + q);
     }
     function showToast(msg) {
       var t = document.getElementById('toast');
