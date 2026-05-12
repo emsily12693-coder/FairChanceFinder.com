@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resources – FairChance Finder</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1a237e">
+  <meta name="description" content="Free reentry resources, legal aid, housing, and support for fair-chance job seekers.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --teal:#00897b; --purple:#6a1b9a; --dark:#0d0d0d; --card:#1a1a2e; --text:#f0f0f0; --muted:#aaa; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; }
+    header { background: #000; padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--teal); position: sticky; top: 0; z-index: 100; }
+    header img { width: 40px; height: 40px; border-radius: 8px; }
+    header h1 { font-size: 20px; }
+    header h1 span:first-child { color: var(--teal); }
+    header h1 span:last-child { color: var(--purple); }
+    .page-title { padding: 24px 20px 4px; font-size: 22px; font-weight: 700; }
+    .page-subtitle { padding: 0 20px 20px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .filter-row { display: flex; gap: 8px; padding: 0 20px 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .filter-chip { padding: 6px 14px; border-radius: 20px; border: 1px solid #444; background: transparent; color: var(--muted); font-size: 13px; cursor: pointer; white-space: nowrap; transition: all .2s; }
+    .filter-chip.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+    .section { padding: 0 20px 8px; }
+    .section h3 { font-size: 16px; color: var(--teal); margin-bottom: 12px; padding-top: 12px; }
+    .resource-card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--purple); display: flex; gap: 14px; align-items: flex-start; }
+    .resource-card .icon-wrap { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+    .resource-card h4 { font-size: 15px; margin-bottom: 4px; }
+    .resource-card p { color: var(--muted); font-size: 13px; line-height: 1.5; margin-bottom: 10px; }
+    .resource-card .info-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+    .info-chip { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+    .link-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: rgba(106,27,154,0.2); color: #ce93d8; border: 1px solid var(--purple); border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; cursor: pointer; }
+    .link-btn:active { background: rgba(106,27,154,0.4); }
+    .hotline-card { background: linear-gradient(135deg, #1a237e 0%, var(--purple) 100%); border-radius: 12px; padding: 20px; margin-bottom: 12px; text-align: center; }
+    .hotline-card .number { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: 1px; margin: 8px 0; }
+    .hotline-card p { font-size: 13px; color: rgba(255,255,255,0.75); }
+    .tip-card { background: rgba(255,193,7,0.08); border: 1px solid rgba(255,193,7,0.3); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .tip-card h4 { color: #ffc107; font-size: 14px; margin-bottom: 6px; }
+    .tip-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    nav { position: fixed; bottom: 0; left: 0; right: 0; background: #000; display: flex; border-top: 1px solid #333; z-index: 100; }
+    nav a { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0; color: var(--muted); text-decoration: none; font-size: 11px; gap: 3px; }
+    nav a.active { color: var(--teal); }
+    nav a span { font-size: 20px; }
+    .spacer { height: 80px; }
+    #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--teal); color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 14px; display: none; z-index: 200; white-space: nowrap; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="/icons/icon-192x192.png" alt="FairChance Finder Logo">
+  <h1><span>FairChance</span> <span>Finder</span></h1>
+</header>
+
+<div class="page-title">🤝 Resources</div>
+<div class="page-subtitle">Free support for reentry, housing, legal aid, and more — all in Arizona.</div>
+
+<div class="filter-row">
+  <button class="filter-chip active" onclick="filterRes('all', this)">All</button>
+  <button class="filter-chip" onclick="filterRes('reentry', this)">🔓 Reentry</button>
+  <button class="filter-chip" onclick="filterRes('legal', this)">⚖️ Legal Aid</button>
+  <button class="filter-chip" onclick="filterRes('housing', this)">🏠 Housing</button>
+  <button class="filter-chip" onclick="filterRes('jobs', this)">💼 Job Training</button>
+  <button class="filter-chip" onclick="filterRes('mental', this)">💚 Mental Health</button>
+</div>
+
+<div class="section">
+  <!-- REENTRY -->
+  <h3 class="cat-head" data-cat="reentry">🔓 Reentry Support</h3>
+
+  <div class="resource-card" data-cat="reentry">
+    <div class="icon-wrap">🏛️</div>
+    <div>
+      <h4>Arizona Department of Corrections Reentry</h4>
+      <p>State-run reentry services including employment assistance, housing navigation, and benefit enrollment for returning citizens.</p>
+      <div class="info-row">
+        <span class="info-chip">📍 Statewide</span>
+        <span class="info-chip">🆓 Free</span>
+        <span class="info-chip">📞 (602) 542-5497</span>
+      </div>
+      <a class="link-btn" onclick="showToast('Opening ADCRR Reentry...')">🌐 Visit Website</a>
+    </div>
+  </div>
+
+  <div class="resource-card" data-cat="reentry">
+    <div class="icon-wrap">🔑</div>
+    <div>
+      <h4>AZ Reentry Alliance</h4>
+      <p>Connects returning citizens to a network of providers across Arizona for housing, employment, treatment, and mentorship.</p>
+      <div class="info-row">
+        <span class="info-chip">📍 Phoenix, AZ</span>
+        <span class="info-chip">🆓 Free</span>
+      </div>
+      <a class="link-btn" onclick="showToast('Opening AZ Reentry Alliance...')">🌐 Visit Website</a>
+    </div>
+  </div>
+
+  <div class="resource-card" data-cat="reentry">
+    <div class="icon-wrap">✊</div>
+    <div>
+      <h4>Southwest Key Programs</h4>
+      <p>Reentry case management, life skills training, and workforce development for justice-involved youth and adults.</p>
+      <div class="info-row">
+        <span class="info-chip">📍 Phoenix, AZ</span>
+        <span class="info-chip">🆓 Free</span>
+      </div>
+      <a class="link-btn" onclick="showToast('Opening Southwest Key...')">🌐 Visit Website</a>
+    </div>
+  </div>
+
+  <!-- LEGAL -->
+  <h3 class="cat-head" data-cat="legal">⚖️ Legal Aid & Record Clearing</h3>
+
+  <div class="resource-card" data-cat="legal">
+    <div class="icon-wrap">📜</div>
+    <div>
+      <h4>Arizona Justice Project</h4>
+      <p>Free legal help for wrongfully convicted and over-sentenced individuals. Also provides reentry legal support.</p>
+      <div class="info-row">
+        <span class="info-chip">📍 Phoenix, AZ</span>
+        <span class="info-chip">🆓 Free</span>
+        <span class="info-chip">📞 (602) 496-0576</span>
+      </div>
+      <a class="link-btn" onclick="showToast('Opening AZ Justice Project...')">🌐 Visit Website</a>
+    </div>
+  </div>
+
+  <div class="resource-card" data-cat="legal">
+    <div class="icon-wrap">🧹</div>
+    <div>
+      <h4>Record Clearing – AZ Set Aside</h4>
+      <p>Arizona allows "setting aside" certain convictions. This can improve job prospects and housing eligibility. Free legal clinics available.</p>
+      <div class="info-row">
+        <span class="info-chip">📍 Statewide</span>
+        <span class="info-chip">🆓 Free clinics</span>
+      </div>
+      <a class="link-btn" onclick="showToast('Opening Record Clearing info...')">🌐 Learn How</a>
+    </div>
+  </div>
+
+  <div class="resource-card" data-cat="legal">
+    <div class="icon-wrap">🏛️</div>
+    <div>
+      <h4>Community Legal Services</h4>
+      <p>Free civil legal aid including expungement assistance, housing, and employment issues for low-income Arizonans.</p>
+      <div class="info-row">
+        <span class="info-chip">📍 Maricopa County</span>
+        <span class="info-chip">🆓 Free</span>
+        <span class="info-chip">📞 (602) 258-3434</span>
+      </div>
+      <a class="link-btn" onclick="showToast('Opening Community Legal Services...')">🌐 Visit Website</a>
+    </div>
+  </div>
+
+  <!-- HOUSING -->
+  <h3 class="cat-head" data-cat="housing">🏠 Housing</h3>
+
+  <div class="resource-card" data-cat="housing">
+    <div class="icon-wrap">🛖</div>
+    <div>
+      <h4>Arizona Coalition to End Homelessness</h4>
+      <p>Connects returning citizens to transitional and permanent supportive housing across the state.</p>
+      <div class="info-row">
+        <span class="info-chip">📍 Statewide</span>
+        <span class="info-chip">🆓 Free referrals</span>
+      </div>
+      <a class="link-btn" onclick="showToast('Opening AZ Coalition...')">🌐 Visit Website</a>
+    </div>
+  </div>
+
+  <div class="resource-card" data-cat="housing">
+    <div class="icon-wrap">🏡</div>
+    <div>
+      <h4>UMOM New Day Centers</h4>
+      <p>Emergency and transitional housing for individuals and families, including those with criminal records.</p>
+      <div class="info-row">
+        <span class="info-chip">📍 Phoenix, AZ</span>
+        <span class="info-chip">🆓 Free</span>
+        <span class="info-chip">📞 (602) 943-9048</span>
+      </div>
+      <a class="link-btn" onclick="showToast('Opening UMOM...')">🌐 Visit Website</a>
+    </div>
+  </div>
+
+  <!-- JOB TRAINING -->
+  <h3 class="cat-head" data-cat="jobs">💼 Job Training & Workforce</h3>
+
+  <div class="resource-card" data-cat="jobs">
+    <div class="icon-wrap">🎓</div>
+    <div>
+      <h4>AZ@Work – Arizona Job Centers</h4>
+      <p>Free job training, resume help, interview coaching, and connections to employers. Special track for justice-involved job seekers.</p>
+      <div class="info-row">
+        <span class="info-chip">📍 Multiple locations</span>
+        <span class="info-chip">🆓 Free</span>
+        <span class="info-chip">📞 (602) 542-4016</span>
+      </div>
+      <a class="link-btn" onclick="showToast('Opening AZ@Work...')">🌐 Visit Website</a>
+    </div>
+  </div>
+
+  <div class="resource-card" data-cat="jobs">
+    <div class="icon-wrap">🔨</div>
+    <div>
+      <h4>Goodwill of Central & Northern AZ</h4>
+      <p>Free job placement services, skills training, and career coaching. No background check required to receive services.</p>
+      <div class="info-row">
+        <span class="info-chip">📍 Valley-wide</span>
+        <span class="info-chip">🆓 Free</span>
+      </div>
+      <a class="link-btn" onclick="showToast('Opening Goodwill Career Services...')">🌐 Visit Website</a>
+    </div>
+  </div>
+
+  <div class="resource-card" data-cat="jobs">
+    <div class="icon-wrap">🚀</div>
+    <div>
+      <h4>Vet Center Reintegration</h4>
+      <p>For justice-involved veterans: employment services, mental health counseling, and benefits assistance.</p>
+      <div class="info-row">
+        <span class="info-chip">📍 Phoenix, AZ</span>
+        <span class="info-chip">🆓 Free for veterans</span>
+        <span class="info-chip">📞 (602) 640-2981</span>
+      </div>
+      <a class="link-btn" onclick="showToast('Opening Vet Center...')">🌐 Visit Website</a>
+    </div>
+  </div>
+
+  <!-- MENTAL HEALTH -->
+  <h3 class="cat-head" data-cat="mental">💚 Mental Health & Substance Use</h3>
+
+  <div class="resource-card" data-cat="mental">
+    <div class="icon-wrap">💚</div>
+    <div>
+      <h4>Arizona Crisis Line</h4>
+      <p>24/7 free mental health crisis support by phone, text, or chat. Confidential. Available to everyone in Arizona.</p>
+      <div class="hotline-card" style="margin-top:10px; border-radius:8px;">
+        <div style="color:#ffc107; font-weight:700; font-size:13px;">📞 CALL OR TEXT</div>
+        <div class="number">988</div>
+        <p>24/7 — Free — Confidential</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="resource-card" data-cat="mental">
+    <div class="icon-wrap">🌿</div>
+    <div>
+      <h4>Connections Health Solutions</h4>
+      <p>Walk-in behavioral health crisis services with no appointment needed. Accepts all insurance and uninsured individuals.</p>
+      <div class="info-row">
+        <span class="info-chip">📍 Phoenix, Tucson, Mesa</span>
+        <span class="info-chip">🆓 Sliding scale</span>
+        <span class="info-chip">📞 (520) 301-2400</span>
+      </div>
+      <a class="link-btn" onclick="showToast('Opening Connections Health...')">🌐 Visit Website</a>
+    </div>
+  </div>
+
+  <!-- TIPS -->
+  <h3>💡 Know Your Rights</h3>
+  <div class="tip-card">
+    <h4>⭐ Arizona Fair Chance Hiring Law</h4>
+    <p>Arizona HB 2617 limits when employers can ask about your criminal history. Many employers must wait until a conditional job offer before running a background check.</p>
+  </div>
+  <div class="tip-card">
+    <h4>📋 Ban the Box</h4>
+    <p>Arizona state agencies and many cities have removed the criminal history checkbox from initial job applications. You have the right to be evaluated on your qualifications first.</p>
+  </div>
+  <div class="tip-card">
+    <h4>🛡️ What Employers Can & Can't Ask</h4>
+    <p>Employers cannot use an arrest record that didn't result in a conviction to deny you a job in many circumstances. Older offenses may also be limited from consideration.</p>
+  </div>
+</div>
+
+<div class="spacer"></div>
+<div id="toast"></div>
+
+<nav>
+  <a href="/"><span>🔍</span> Search</a>
+  <a href="/my-apps.html"><span>📋</span> My Apps</a>
+  <a href="/resources.html" class="active" aria-current="page"><span>🤝</span> Resources</a>
+  <a href="/profile.html"><span>👤</span> Profile</a>
+</nav>
+
+<script>
+function filterRes(cat, chipEl) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  if (chipEl) chipEl.classList.add('active');
+
+  document.querySelectorAll('.resource-card').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+  });
+  document.querySelectorAll('.cat-head').forEach(h => {
+    h.style.display = (cat === 'all' || h.dataset.cat === cat) ? '' : 'none';
+  });
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 2500);
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
