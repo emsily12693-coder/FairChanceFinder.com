@@ -4,270 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FairChance Finder</title>
-  <link rel="manifest" href="/manifest.json">
+
+  /manifest.json
   <meta name="theme-color" content="#1a237e">
-  <meta name="description" content="Connecting fair-chance job seekers with employers who believe in second chances.">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="FairChance Finder">
-  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --teal: #00897b;
-      --purple: #6a1b9a;
-      --dark: #0d0d0d;
-      --card: #1a1a2e;
-      --text: #f0f0f0;
-      --muted: #aaa;
-    }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; }
-    header { background: #000; padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--teal); position: sticky; top: 0; z-index: 100; }
-    header img { width: 40px; height: 40px; border-radius: 8px; }
-    header h1 { font-size: 20px; }
-    header h1 span:first-child { color: var(--teal); }
-    header h1 span:last-child { color: var(--purple); }
-    .hero { background: linear-gradient(135deg, #000 0%, #1a237e 100%); padding: 40px 20px; text-align: center; }
-    .hero h2 { font-size: 26px; margin-bottom: 10px; }
-    .hero p { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 400px; margin: 0 auto 24px; }
-    .search-bar { display: flex; gap: 8px; max-width: 480px; margin: 0 auto; }
-    .search-bar input { flex: 1; padding: 12px 16px; border-radius: 8px; border: 2px solid var(--teal); background: #111; color: #fff; font-size: 15px; outline: none; }
-    .search-bar input:focus { border-color: #00bfa5; }
-    .search-bar button { padding: 12px 20px; background: var(--teal); color: #fff; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: 600; }
-    .search-bar button:active { background: #00695c; }
-    .filter-row { display: flex; gap: 8px; padding: 14px 20px 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .filter-row::-webkit-scrollbar { display: none; }
-    .filter-chip { padding: 6px 14px; border-radius: 20px; border: 1px solid #444; background: transparent; color: var(--muted); font-size: 13px; cursor: pointer; white-space: nowrap; transition: all .2s; }
-    .filter-chip.active { background: var(--teal); color: #fff; border-color: var(--teal); }
-    .section { padding: 20px 20px; }
-    .section h3 { font-size: 18px; margin-bottom: 16px; color: var(--teal); }
-    .no-results { text-align: center; padding: 40px 20px; color: var(--muted); }
-    .no-results .icon { font-size: 48px; margin-bottom: 12px; }
-    .jobs-grid { display: grid; gap: 14px; }
-    .job-card { background: var(--card); border-radius: 12px; padding: 18px; border-left: 4px solid var(--teal); }
-    .job-card h4 { font-size: 16px; margin-bottom: 4px; }
-    .job-card .company { color: var(--teal); font-size: 14px; margin-bottom: 8px; }
-    .job-card .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
-    .tag { background: rgba(0,137,123,0.15); color: var(--teal); padding: 3px 10px; border-radius: 20px; font-size: 12px; border: 1px solid var(--teal); }
-    .tag.purple { background: rgba(106,27,154,0.15); color: #ce93d8; border-color: var(--purple); }
-    .fair-badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(255,193,7,0.15); color: #ffc107; padding: 3px 10px; border-radius: 20px; font-size: 12px; border: 1px solid #ffc107; margin-bottom: 8px; }
-    .apply-btn { display: block; width: 100%; margin-top: 14px; padding: 10px; background: var(--teal); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; transition: background .2s; }
-    .apply-btn:active { background: #00695c; }
-    .apply-btn.applied { background: #333; color: #00897b; border: 1px solid #00897b; cursor: default; }
-    .categories { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .cat-card { background: var(--card); border-radius: 10px; padding: 16px; text-align: center; border: 1px solid #333; cursor: pointer; transition: border-color .2s; }
-    .cat-card:active { border-color: var(--teal); }
-    .cat-card .icon { font-size: 28px; margin-bottom: 8px; }
-    .cat-card p { font-size: 13px; color: var(--muted); }
-    nav { position: fixed; bottom: 0; left: 0; right: 0; background: #000; display: flex; border-top: 1px solid #333; z-index: 100; }
-    nav a { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0; color: var(--muted); text-decoration: none; font-size: 11px; gap: 3px; }
-    nav a.active { color: var(--teal); }
-    nav a span { font-size: 20px; }
-    .spacer { height: 70px; }
-    #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--teal); color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 14px; display: none; z-index: 200; white-space: nowrap; }
-  </style>
+
+  /styles/app.css
 </head>
+
 <body>
 
 <header>
-  <img src="/icons/icon-192x192.png" alt="FairChance Finder Logo">
+  /icons/icon-192x192.png
   <h1><span>FairChance</span> <span>Finder</span></h1>
 </header>
 
 <div class="hero">
   <h2>Find Your Second Chance ⭐</h2>
-  <p>Connecting people with fair-chance employers who hire regardless of background.</p>
+
   <div class="search-bar">
-    <input type="search" id="searchInput" placeholder="Job title, skill, or city..." aria-label="Search jobs">
-    <button onclick="searchJobs()">Search</button>
+    <input id="searchInput" placeholder="Search jobs...">
+    <button id="searchBtn">Search</button>
   </div>
 </div>
 
-<div class="filter-row" id="filterRow">
-  <button class="filter-chip active" onclick="filterByCategory('all', this)">All Jobs</button>
-  <button class="filter-chip" onclick="filterByCategory('construction', this)">🏗️ Construction</button>
-  <button class="filter-chip" onclick="filterByCategory('driving', this)">🚛 Driving</button>
-  <button class="filter-chip" onclick="filterByCategory('food', this)">🍽️ Food Service</button>
-  <button class="filter-chip" onclick="filterByCategory('warehouse', this)">📦 Warehouse</button>
-  <button class="filter-chip" onclick="filterByCategory('trades', this)">🔧 Trades</button>
-  <button class="filter-chip" onclick="filterByCategory('healthcare', this)">🏥 Healthcare</button>
-</div>
+<div id="jobsGrid"></div>
 
-<div class="section">
-  <h3 id="sectionTitle">🌟 Fair-Chance Jobs Near You</h3>
-  <div class="jobs-grid" id="jobsGrid"></div>
-</div>
-
-<div class="section">
-  <h3>Browse by Category</h3>
-  <div class="categories">
-    <div class="cat-card" onclick="filterByCategory('construction', null)" role="button" tabindex="0" aria-label="Construction jobs">
-      <div class="icon">🏗️</div>
-      <strong>Construction</strong>
-      <p>48 jobs</p>
-    </div>
-    <div class="cat-card" onclick="filterByCategory('driving', null)" role="button" tabindex="0" aria-label="Driving jobs">
-      <div class="icon">🚛</div>
-      <strong>Driving</strong>
-      <p>63 jobs</p>
-    </div>
-    <div class="cat-card" onclick="filterByCategory('food', null)" role="button" tabindex="0" aria-label="Food service jobs">
-      <div class="icon">🍽️</div>
-      <strong>Food Service</strong>
-      <p>91 jobs</p>
-    </div>
-    <div class="cat-card" onclick="filterByCategory('warehouse', null)" role="button" tabindex="0" aria-label="Warehouse jobs">
-      <div class="icon">📦</div>
-      <strong>Warehouse</strong>
-      <p>57 jobs</p>
-    </div>
-    <div class="cat-card" onclick="filterByCategory('trades', null)" role="button" tabindex="0" aria-label="Trades jobs">
-      <div class="icon">🔧</div>
-      <strong>Trades</strong>
-      <p>34 jobs</p>
-    </div>
-    <div class="cat-card" onclick="filterByCategory('healthcare', null)" role="button" tabindex="0" aria-label="Healthcare jobs">
-      <div class="icon">🏥</div>
-      <strong>Healthcare</strong>
-      <p>22 jobs</p>
-    </div>
-  </div>
-</div>
-
-<div class="spacer"></div>
 <div id="toast"></div>
 
-<nav>
-  <a href="/" class="active" aria-current="page"><span>🔍</span> Search</a>
-  <a href="/my-apps.html"><span>📋</span> My Apps</a>
-  <a href="/resources.html"><span>🤝</span> Resources</a>
-  <a href="/profile.html"><span>👤</span> Profile</a>
-</nav>
+/app/main.jsscript>
 
-<script>
-const JOBS = [
-  {id:1,  title:"Warehouse Associate",         company:"Amazon Fulfillment",       location:"Phoenix, AZ",   type:"Full-Time",  pay:"$18-22/hr",  tags:["No Degree Required"],                  category:"warehouse"},
-  {id:2,  title:"Delivery Driver",             company:"FedEx Ground",             location:"Tempe, AZ",     type:"Full-Time",  pay:"$20-25/hr",  tags:["Background Friendly"],                 category:"driving"},
-  {id:3,  title:"Restaurant Team Member",      company:"Dave's Hot Chicken",       location:"Chandler, AZ",  type:"Part-Time",  pay:"$15-17/hr",  tags:["Flexible Hours"],                      category:"food"},
-  {id:4,  title:"Construction Laborer",        company:"Turner Construction",      location:"Scottsdale, AZ",type:"Full-Time",  pay:"$19-24/hr",  tags:["Training Provided"],                   category:"construction"},
-  {id:5,  title:"Forklift Operator",           company:"Walmart Distribution",     location:"Goodyear, AZ",  type:"Full-Time",  pay:"$21-26/hr",  tags:["No Degree Required"],                  category:"warehouse"},
-  {id:6,  title:"Landscape Technician",        company:"BrightView Landscapes",    location:"Phoenix, AZ",   type:"Full-Time",  pay:"$16-20/hr",  tags:["Outdoor Work"],                        category:"trades"},
-  {id:7,  title:"Medical Transport Driver",    company:"American Medical Response", location:"Mesa, AZ",     type:"Full-Time",  pay:"$18-22/hr",  tags:["Background Friendly","CDL Preferred"], category:"driving"},
-  {id:8,  title:"Kitchen Prep Cook",           company:"Cracker Barrel",           location:"Peoria, AZ",    type:"Part-Time",  pay:"$14-16/hr",  tags:["Flexible Hours"],                      category:"food"},
-  {id:9,  title:"HVAC Apprentice",             company:"Parker & Sons",            location:"Phoenix, AZ",   type:"Full-Time",  pay:"$20-28/hr",  tags:["Training Provided","Trade School OK"],  category:"trades"},
-  {id:10, title:"CNA – Certified Nursing Asst",company:"Banner Health",            location:"Chandler, AZ",  type:"Full-Time",  pay:"$18-24/hr",  tags:["Background Friendly"],                 category:"healthcare"},
-  {id:11, title:"Packer / Picker",             company:"Target Distribution",      location:"Phoenix, AZ",   type:"Full-Time",  pay:"$17-21/hr",  tags:["No Degree Required"],                  category:"warehouse"},
-  {id:12, title:"Concrete Finisher",           company:"Hensel Phelps",            location:"Tempe, AZ",     type:"Full-Time",  pay:"$22-27/hr",  tags:["Training Provided"],                   category:"construction"},
-  {id:13, title:"Shuttle Driver",              company:"PHX Sky Harbor Airport",   location:"Phoenix, AZ",   type:"Full-Time",  pay:"$16-19/hr",  tags:["Background Friendly","CDL A/B OK"],    category:"driving"},
-  {id:14, title:"Line Cook",                   company:"Buffalo Wild Wings",       location:"Glendale, AZ",  type:"Part-Time",  pay:"$15-18/hr",  tags:["Flexible Hours"],                      category:"food"},
-  {id:15, title:"Plumbing Apprentice",         company:"George Brazil Plumbing",   location:"Phoenix, AZ",   type:"Full-Time",  pay:"$19-25/hr",  tags:["Training Provided"],                   category:"trades"},
-];
-
-let appliedIds = new Set(
-  (JSON.parse(localStorage.getItem('fcf_applications') || '[]')).map(a => a.id)
-);
-
-function renderJobs(list) {
-  const grid = document.getElementById('jobsGrid');
-  if (!list.length) {
-    grid.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>No jobs match your search.<br>Try a different keyword or category.</p></div>`;
-    return;
-  }
-  grid.innerHTML = list.map(job => `
-    <div class="job-card" id="card-${job.id}">
-      <div class="fair-badge">⭐ Fair Chance Employer</div>
-      <h4>${job.title}</h4>
-      <div class="company">${job.company} — ${job.location}</div>
-      <div class="tags">
-        <span class="tag">${job.type}</span>
-        <span class="tag">${job.pay}</span>
-        ${job.tags.map(t => `<span class="tag purple">${t}</span>`).join('')}
-      </div>
-      <button class="apply-btn ${appliedIds.has(job.id) ? 'applied' : ''}"
-        id="btn-${job.id}"
-        onclick="applyToJob(${job.id})"
-        ${appliedIds.has(job.id) ? 'disabled aria-label="Already applied"' : `aria-label="Apply to ${job.title} at ${job.company}"`}>
-        ${appliedIds.has(job.id) ? '✓ Applied' : 'Apply Now'}
-      </button>
-    </div>
-  `).join('');
-}
-
-function applyToJob(id) {
-  if (appliedIds.has(id)) return;
-  const job = JOBS.find(j => j.id === id);
-  if (!job) return;
-  appliedIds.add(id);
-  const apps = JSON.parse(localStorage.getItem('fcf_applications') || '[]');
-  apps.push({ ...job, appliedAt: new Date().toISOString() });
-  localStorage.setItem('fcf_applications', JSON.stringify(apps));
-  const btn = document.getElementById('btn-' + id);
-  if (btn) { btn.textContent = '✓ Applied'; btn.classList.add('applied'); btn.disabled = true; }
-  showToast('Application saved! View in My Apps →');
-}
-
-let currentCategory = 'all';
-let currentQuery = '';
-
-function filterByCategory(cat, chipEl) {
-  currentCategory = cat;
-  currentQuery = '';
-  document.getElementById('searchInput').value = '';
-  if (chipEl) {
-    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-    chipEl.classList.add('active');
-  } else {
-    // scroll filter row to show active chip
-    document.querySelectorAll('.filter-chip').forEach(c => {
-      c.classList.toggle('active', c.textContent.toLowerCase().includes(cat));
-    });
-  }
-  const title = document.getElementById('sectionTitle');
-  title.textContent = cat === 'all' ? '🌟 Fair-Chance Jobs Near You' : `🔍 ${cat.charAt(0).toUpperCase()+cat.slice(1)} Jobs`;
-  const filtered = cat === 'all' ? JOBS : JOBS.filter(j => j.category === cat);
-  renderJobs(filtered);
-  window.scrollTo({top: 0, behavior: 'smooth'});
-}
-
-function searchJobs() {
-  const q = document.getElementById('searchInput').value.trim().toLowerCase();
-  currentQuery = q;
-  if (!q) { filterByCategory('all', document.querySelector('.filter-chip')); return; }
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  document.getElementById('sectionTitle').textContent = `🔍 Results for "${document.getElementById('searchInput').value.trim()}"`;
-  const filtered = JOBS.filter(j =>
-    j.title.toLowerCase().includes(q) ||
-    j.company.toLowerCase().includes(q) ||
-    j.location.toLowerCase().includes(q) ||
-    j.tags.some(t => t.toLowerCase().includes(q)) ||
-    j.category.toLowerCase().includes(q)
-  );
-  renderJobs(filtered);
-  window.scrollTo({top: document.querySelector('.section').offsetTop - 10, behavior: 'smooth'});
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.display = 'block';
-  setTimeout(() => { t.style.display = 'none'; }, 3000);
-}
-
-document.getElementById('searchInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') searchJobs();
-});
-
-// Initial render
-renderJobs(JOBS);
-
-// Service worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(r => console.log('FCF SW registered:', r.scope))
-      .catch(e => console.error('FCF SW error:', e));
-  });
-}
-</script>
 </body>
 </html>
