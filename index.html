@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FairChance Finder</title>
 
   /manifest.json
-  <meta name="theme-color" content="#1a237e">
+  <meta name="theme-color" content="#1a237e" />
+  <meta name="description" content="Connecting fair-chance job seekers with employers who believe in second chances." />
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="FairChance Finder" />
+  /icons/icon-192x192.png
 
   /styles/app.css
 </head>
@@ -20,17 +26,80 @@
 
 <div class="hero">
   <h2>Find Your Second Chance ⭐</h2>
-  <p>Connecting people with fair‑chance employers who hire regardless of background.</p>
+  <p>Connecting people with fair-chance employers who hire regardless of background.</p>
 
-  <button class="cta-btn" data-scroll="jobs">
-    🔍 Find Fair‑Chance Jobs
-  </button>
+  <!-- CTA buttons you wanted (no inline onclick; main.js handles these) -->
+  <button class="cta-btn" data-scroll="jobs">🔍 Find Fair‑Chance Jobs</button>
+  <button class="cta-btn secondary" data-link="/resources.html">🤝 Explore Resources</button>
+  <button class="cta-btn tertiary" data-link="/rights.html">⚖️ Learn Your Rights</button>
 
-  <button class="cta-btn secondary" data-link="/resources.html">
-    🤝 Explore Resources
-  </button>
-
-  <button class="cta-btn tertiary" data-link="/rights.html">
-    ⚖️ Learn Your Rights
-  </button>
+  <div class="search-bar" style="margin-top: 18px;">
+    <input type="search" id="searchInput" placeholder="Job title, skill, or city..." aria-label="Search jobs" />
+    <button id="searchBtn" type="button">Search</button>
+  </div>
 </div>
+
+<div class="filter-row" id="filterRow">
+  <button class="filter-chip active" data-category="all">All Jobs</button>
+  <button class="filter-chip" data-category="construction">🏗️ Construction</button>
+  <button class="filter-chip" data-category="driving">🚛 Driving</button>
+  <button class="filter-chip" data-category="food">🍽️ Food Service</button>
+  <button class="filter-chip" data-category="warehouse">📦 Warehouse</button>
+  <button class="filter-chip" data-category="trades">🔧 Trades</button>
+  <button class="filter-chip" data-category="healthcare">🏥 Healthcare</button>
+</div>
+
+<div class="section">
+  <h3 id="sectionTitle">🌟 Fair‑Chance Jobs Near You</h3>
+  <div class="jobs-grid" id="jobsGrid"></div>
+</div>
+
+<div class="section">
+  <h3>Browse by Category</h3>
+  <div class="categories">
+    <div class="cat-card" data-category="construction" role="button" tabindex="0" aria-label="Construction jobs">
+      <div class="icon">🏗️</div>
+      <strong>Construction</strong>
+      <p>Browse</p>
+    </div>
+    <div class="cat-card" data-category="driving" role="button" tabindex="0" aria-label="Driving jobs">
+      <div class="icon">🚛</div>
+      <strong>Driving</strong>
+      <p>Browse</p>
+    </div>
+    <div class="cat-card" data-category="food" role="button" tabindex="0" aria-label="Food service jobs">
+      <div class="icon">🍽️</div>
+      <strong>Food Service</strong>
+      <p>Browse</p>
+    </div>
+    <div class="cat-card" data-category="warehouse" role="button" tabindex="0" aria-label="Warehouse jobs">
+      <div class="icon">📦</div>
+      <strong>Warehouse</strong>
+      <p>Browse</p>
+    </div>
+    <div class="cat-card" data-category="trades" role="button" tabindex="0" aria-label="Trades jobs">
+      <div class="icon">🔧</div>
+      <strong>Trades</strong>
+      <p>Browse</p>
+    </div>
+    <div class="cat-card" data-category="healthcare" role="button" tabindex="0" aria-label="Healthcare jobs">
+      <div class="icon">🏥</div>
+      <strong>Healthcare</strong>
+      <p>Browse</p>
+    </div>
+  </div>
+</div>
+
+<div class="spacer"></div>
+<div id="toast" aria-live="polite"></div>
+
+<nav>
+  /<span>🔍</span> Search</a>
+  /my-apps.html<span>📋</span> My Apps</a>
+  /resources.html<span>🤝</span> Resources</a>
+  /profile.html<span>👤</span> Profile</a>
+</nav>
+
+/app/main.jsscript>
+</body>
+</html>
