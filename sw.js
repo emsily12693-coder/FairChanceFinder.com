@@ -4,7 +4,7 @@
 // - JS/CSS & data: stale-while-revalidate (fast + refresh in background)
 // - icons/images: cache-first
 
-const CACHE_NAME = 'fairchancefinder-v3';
+const CACHE_NAME = 'fairchancefinder-v4';
 
 const PRECACHE_URLS = [
   '/',
@@ -18,8 +18,7 @@ const PRECACHE_URLS = [
   '/styles/app.css',
   '/app/jobs.js',
   '/app/main.js',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/icons/16724.jpg'
 ];
 
 self.addEventListener('install', (event) => {

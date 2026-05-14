@@ -1,11 +1,12 @@
 import { getStore } from "@netlify/blobs";
 
 export default async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders() });
+  }
+
   if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), {
-      status: 405,
-      headers: { "Content-Type": "application/json" }
-    });
+    return json({ error: "Method not allowed" }, 405);
   }
 
   const formData = await req.formData();
@@ -13,18 +14,12 @@ export default async (req) => {
   const userId = formData.get("userId");
 
   if (!file || !userId) {
-    return new Response(JSON.stringify({ error: "Missing file or userId" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" }
-    });
+    return json({ error: "Missing file or userId" }, 400);
   }
 
   const MAX_SIZE = 10 * 1024 * 1024;
   if (file.size > MAX_SIZE) {
-    return new Response(JSON.stringify({ error: "File too large. Maximum size is 10 MB." }), {
-      status: 413,
-      headers: { "Content-Type": "application/json" }
-    });
+    return json({ error: "File too large. Maximum size is 10 MB." }, 413);
   }
 
   const ALLOWED_TYPES = [
@@ -37,10 +32,7 @@ export default async (req) => {
   ];
 
   if (!ALLOWED_TYPES.includes(file.type)) {
-    return new Response(JSON.stringify({ error: "File type not allowed. Please upload PDF, DOC, DOCX, TXT, JPG, or PNG." }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" }
-    });
+    return json({ error: "File type not allowed. Please upload PDF, DOC, DOCX, TXT, JPG, or PNG." }, 400);
   }
 
   const store = getStore("resumes");
@@ -55,16 +47,31 @@ export default async (req) => {
     }
   });
 
-  return new Response(JSON.stringify({
+  return json({
     key: key,
     filename: file.name,
     size: file.size,
     uploadedAt: new Date().toISOString()
-  }), {
-    status: 200,
-    headers: { "Content-Type": "application/json" }
-  });
+  }, 200);
 };
+
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
+  };
+}
+
+function json(payload, status) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: {
+      ...corsHeaders(),
+      "Content-Type": "application/json"
+    }
+  });
+}
 
 export const config = {
   path: "/api/upload"

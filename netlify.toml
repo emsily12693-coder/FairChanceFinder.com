@@ -3,6 +3,7 @@
 
 [build.environment]
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  NEXT_DISABLE_NETLIFY_EDGE = "true"
 
 [functions]
   directory = "netlify/functions"

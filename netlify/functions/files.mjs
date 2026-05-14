@@ -1,39 +1,35 @@
 import { getStore } from "@netlify/blobs";
 
 export default async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders() });
+  }
+
+  if (req.method !== "GET" && req.method !== "DELETE") {
+    return json({ error: "Method not allowed" }, 405);
+  }
+
   const url = new URL(req.url);
   const userId = url.searchParams.get("userId");
 
   if (!userId) {
-    return new Response(JSON.stringify({ error: "Missing userId" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" }
-    });
+    return json({ error: "Missing userId" }, 400);
   }
 
   if (req.method === "DELETE") {
     const key = url.searchParams.get("key");
     if (!key) {
-      return new Response(JSON.stringify({ error: "Missing file key" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" }
-      });
+      return json({ error: "Missing file key" }, 400);
     }
 
     if (!key.startsWith(userId + "/")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 403,
-        headers: { "Content-Type": "application/json" }
-      });
+      return json({ error: "Unauthorized" }, 403);
     }
 
     const store = getStore("resumes");
     await store.delete(key);
 
-    return new Response(JSON.stringify({ deleted: true }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
-    });
+    return json({ deleted: true }, 200);
   }
 
   const store = getStore("resumes");
@@ -54,11 +50,26 @@ export default async (req) => {
     }
   }
 
-  return new Response(JSON.stringify({ files: files }), {
-    status: 200,
-    headers: { "Content-Type": "application/json" }
-  });
+  return json({ files: files }, 200);
 };
+
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
+  };
+}
+
+function json(payload, status) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: {
+      ...corsHeaders(),
+      "Content-Type": "application/json"
+    }
+  });
+}
 
 export const config = {
   path: "/api/files"

@@ -11,44 +11,7 @@
   "lang": "en-US",
   "categories": ["business", "productivity"],
   "icons": [
-    { "src": "/icons/icon-72x72.png",   "sizes": "72x72",   "type": "image/png", "purpose": "maskable any" },
-    { "src": "/icons/icon-96x96.png",   "sizes": "96x96",   "type": "image/png", "purpose": "maskable any" },
-    { "src": "/icons/icon-128x128.png", "sizes": "128x128", "type": "image/png", "purpose": "maskable any" },
-    { "src": "/icons/icon-144x144.png", "sizes": "144x144", "type": "image/png", "purpose": "maskable any" },
-    { "src": "/icons/icon-152x152.png", "sizes": "152x152", "type": "image/png", "purpose": "maskable any" },
-    { "src": "/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable any" },
-    { "src": "/icons/icon-384x384.png", "sizes": "384x384", "type": "image/png", "purpose": "maskable any" },
-    { "src": "/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable any" }
-  ],
-  "screenshots": [
-    {
-      "src": "/screenshots/screen1.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Home – Fair-chance job listings near Phoenix, AZ"
-    },
-    {
-      "src": "/screenshots/screen2.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "My Applications – Track your job applications"
-    },
-    {
-      "src": "/screenshots/screen3.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Resources – Free reentry support and legal aid"
-    },
-    {
-      "src": "/screenshots/screen4.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Profile – Manage your job preferences"
-    }
+    { "src": "/icons/16724.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "maskable any" }
   ],
   "shortcuts": [
     {
@@ -56,21 +19,21 @@
       "short_name": "Search",
       "description": "Search for fair-chance jobs near you",
       "url": "/?action=search",
-      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+      "icons": [{ "src": "/icons/16724.jpg", "sizes": "512x512", "type": "image/jpeg" }]
     },
     {
       "name": "My Applications",
       "short_name": "My Apps",
       "description": "View your saved job applications",
       "url": "/my-apps.html",
-      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+      "icons": [{ "src": "/icons/16724.jpg", "sizes": "512x512", "type": "image/jpeg" }]
     },
     {
       "name": "Resources",
       "short_name": "Resources",
       "description": "Free reentry and support resources",
       "url": "/resources.html",
-      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+      "icons": [{ "src": "/icons/16724.jpg", "sizes": "512x512", "type": "image/jpeg" }]
     }
   ]
 }

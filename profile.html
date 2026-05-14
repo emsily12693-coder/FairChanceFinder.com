@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#1a237e">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <link rel="apple-touch-icon" href="/icons/16724.jpg">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root { --teal:#00897b; --purple:#6a1b9a; --dark:#0d0d0d; --card:#1a1a2e; --text:#f0f0f0; --muted:#aaa; }
@@ -98,7 +98,7 @@
 <body>
 
 <header>
-  <img src="/icons/icon-192x192.png" alt="FairChance Finder Logo">
+  <img src="/icons/16724.jpg" alt="FairChance Finder Logo">
   <h1><span>FairChance</span> <span>Finder</span></h1>
 </header>
 
@@ -326,9 +326,9 @@ function saveProfile() {
 
 function shareApp() {
   if (navigator.share) {
-    navigator.share({ title: 'FairChance Finder', text: 'Find fair-chance jobs that hire regardless of background!', url: 'https://fairchancefinder.netlify.app' });
+    navigator.share({ title: 'FairChance Finder', text: 'Find fair-chance jobs that hire regardless of background!', url: 'https://fairchancefinder.com' });
   } else {
-    navigator.clipboard.writeText('https://fairchancefinder.netlify.app').then(() => showToast('Link copied!'));
+    navigator.clipboard.writeText('https://fairchancefinder.com').then(() => showToast('Link copied!'));
   }
 }
 
@@ -429,7 +429,7 @@ function uploadResume(input) {
 function downloadResume() {
   var resume = JSON.parse(localStorage.getItem('fcf_resume') || 'null');
   if (!resume) return;
-  window.open('/api/download?key=' + encodeURIComponent(resume.key), '_blank');
+  window.open('/api/download?userId=' + encodeURIComponent(getUserId()) + '&key=' + encodeURIComponent(resume.key), '_blank');
 }
 
 function deleteResume() {

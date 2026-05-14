@@ -1,0 +1,9 @@
+/api/upload /.netlify/functions/upload 200
+/api/download /.netlify/functions/download 200
+/api/files /.netlify/functions/files 200
+/search / 200
+/apps /my-apps.html 200
+/privacy /privacy-policy.html 200
+/rights /resources.html 301
+/rights.html /resources.html 301
+/* /index.html 200

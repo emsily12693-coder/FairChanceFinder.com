@@ -1,12 +1,11 @@
 // FairChance Finder — Service Worker
-const CACHE_NAME = 'fairchancefinder-v1';
+const CACHE_NAME = 'fairchancefinder-v2';
 
 const PRECACHE_URLS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/icons/16724.jpg'
 ];
 
 self.addEventListener('install', (event) => {
