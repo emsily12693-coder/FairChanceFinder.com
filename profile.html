@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#1a237e">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <link rel="apple-touch-icon" href="/icons/16724.jpg">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root { --teal:#00897b; --purple:#6a1b9a; --dark:#0d0d0d; --card:#1a1a2e; --text:#f0f0f0; --muted:#aaa; }
@@ -70,6 +70,12 @@
     .modal input { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1.5px solid #333; background: #111; color: #fff; font-size: 15px; margin-bottom: 14px; outline: none; }
     .modal input:focus { border-color: var(--teal); }
     .modal-btns { display: flex; gap: 10px; margin-top: 4px; }
+    .site-footer { background: #000; border-top: 2px solid var(--teal); padding: 24px 20px; text-align: center; margin-top: 20px; }
+    .footer-inner p { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+    .footer-inner a { color: var(--teal); text-decoration: none; }
+    .footer-links { display: flex; justify-content: center; gap: 20px; margin: 12px 0; flex-wrap: wrap; }
+    .footer-links a { font-size: 13px; color: var(--teal); font-weight: 600; }
+    .footer-copy { font-size: 12px; color: #555; margin-top: 8px; }
     .btn-save { flex: 1; padding: 12px; background: var(--teal); color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
     .btn-cancel { flex: 1; padding: 12px; background: #222; color: var(--muted); border: none; border-radius: 8px; font-size: 15px; cursor: pointer; }
   </style>
@@ -77,7 +83,7 @@
 <body>
 
 <header>
-  <img src="/icons/icon-192x192.png" alt="FairChance Finder Logo">
+  <img src="/icons/16724.jpg" alt="FairChance Finder Logo">
   <h1><span>FairChance</span> <span>Finder</span></h1>
 </header>
 
@@ -140,7 +146,7 @@
       <span class="m-label">Terms of Service</span>
       <span class="m-arrow">›</span>
     </div>
-    <div class="menu-item" onclick="showToast('Support: support@fairchancefinder.com')">
+    <div class="menu-item" onclick="showToast('Support: EPCSR@fairchancefinder.com')">
       <span class="m-icon">💬</span>
       <span class="m-label">Contact Support</span>
       <span class="m-arrow">›</span>
@@ -159,6 +165,19 @@
 </div>
 
 <div class="version-text">FairChance Finder v1.0.0 · Made with ❤️ in Phoenix, AZ</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p>FairChance Finder &mdash; Connecting people with second-chance employers.</p>
+    <p>Contact: <a href="mailto:EPCSR@fairchancefinder.com">EPCSR@fairchancefinder.com</a></p>
+    <div class="footer-links">
+      <a href="/privacy-policy.html">Privacy Policy</a>
+      <a href="/rights.html">Your Rights</a>
+      <a href="/resources.html">Resources</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 FairChance Finder. All rights reserved.</p>
+  </div>
+</footer>
 
 <div class="spacer"></div>
 <div id="toast"></div>
@@ -263,9 +282,9 @@ function saveProfile() {
 
 function shareApp() {
   if (navigator.share) {
-    navigator.share({ title: 'FairChance Finder', text: 'Find fair-chance jobs that hire regardless of background!', url: 'https://fairchancefinder.netlify.app' });
+    navigator.share({ title: 'FairChance Finder', text: 'Find fair-chance jobs that hire regardless of background!', url: 'https://fairchancefinder.com' });
   } else {
-    navigator.clipboard.writeText('https://fairchancefinder.netlify.app').then(() => showToast('Link copied!'));
+    navigator.clipboard.writeText('https://fairchancefinder.com').then(() => showToast('Link copied!'));
   }
 }
 

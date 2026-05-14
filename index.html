@@ -5,33 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FairChance Finder</title>
 
-  /manifest.json
+  <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#1a237e" />
   <meta name="description" content="Connecting fair-chance job seekers with employers who believe in second chances." />
 
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="FairChance Finder" />
-  /icons/icon-192x192.png
+  <link rel="apple-touch-icon" href="/icons/16724.jpg">
 
-  /styles/app.css
+  <link rel="stylesheet" href="/styles/app.css">
 </head>
 
 <body>
 
 <header>
-  /icons/icon-192x192.png
+  <img src="/icons/16724.jpg" alt="FairChance Finder" style="width:40px;height:40px;border-radius:8px;">
   <h1><span>FairChance</span> <span>Finder</span></h1>
 </header>
 
 <div class="hero">
-  <h2>Find Your Second Chance ⭐</h2>
+  <h2>Find Your Second Chance</h2>
   <p>Connecting people with fair-chance employers who hire regardless of background.</p>
 
-  <!-- CTA buttons you wanted (no inline onclick; main.js handles these) -->
-  <button class="cta-btn" data-scroll="jobs">🔍 Find Fair‑Chance Jobs</button>
-  <button class="cta-btn secondary" data-link="/resources.html">🤝 Explore Resources</button>
-  <button class="cta-btn tertiary" data-link="/rights.html">⚖️ Learn Your Rights</button>
+  <button class="cta-btn" data-scroll="jobs">Find Fair-Chance Jobs</button>
+  <button class="cta-btn secondary" data-link="/resources.html">Explore Resources</button>
+  <button class="cta-btn tertiary" data-link="/rights.html">Learn Your Rights</button>
 
   <div class="search-bar" style="margin-top: 18px;">
     <input type="search" id="searchInput" placeholder="Job title, skill, or city..." aria-label="Search jobs" />
@@ -41,16 +40,16 @@
 
 <div class="filter-row" id="filterRow">
   <button class="filter-chip active" data-category="all">All Jobs</button>
-  <button class="filter-chip" data-category="construction">🏗️ Construction</button>
-  <button class="filter-chip" data-category="driving">🚛 Driving</button>
-  <button class="filter-chip" data-category="food">🍽️ Food Service</button>
-  <button class="filter-chip" data-category="warehouse">📦 Warehouse</button>
-  <button class="filter-chip" data-category="trades">🔧 Trades</button>
-  <button class="filter-chip" data-category="healthcare">🏥 Healthcare</button>
+  <button class="filter-chip" data-category="construction">Construction</button>
+  <button class="filter-chip" data-category="driving">Driving</button>
+  <button class="filter-chip" data-category="food">Food Service</button>
+  <button class="filter-chip" data-category="warehouse">Warehouse</button>
+  <button class="filter-chip" data-category="trades">Trades</button>
+  <button class="filter-chip" data-category="healthcare">Healthcare</button>
 </div>
 
 <div class="section">
-  <h3 id="sectionTitle">🌟 Fair‑Chance Jobs Near You</h3>
+  <h3 id="sectionTitle">Fair-Chance Jobs Near You</h3>
   <div class="jobs-grid" id="jobsGrid"></div>
 </div>
 
@@ -58,48 +57,69 @@
   <h3>Browse by Category</h3>
   <div class="categories">
     <div class="cat-card" data-category="construction" role="button" tabindex="0" aria-label="Construction jobs">
-      <div class="icon">🏗️</div>
+      <div class="icon">&#128679;</div>
       <strong>Construction</strong>
       <p>Browse</p>
     </div>
     <div class="cat-card" data-category="driving" role="button" tabindex="0" aria-label="Driving jobs">
-      <div class="icon">🚛</div>
+      <div class="icon">&#128667;</div>
       <strong>Driving</strong>
       <p>Browse</p>
     </div>
     <div class="cat-card" data-category="food" role="button" tabindex="0" aria-label="Food service jobs">
-      <div class="icon">🍽️</div>
+      <div class="icon">&#127869;</div>
       <strong>Food Service</strong>
       <p>Browse</p>
     </div>
     <div class="cat-card" data-category="warehouse" role="button" tabindex="0" aria-label="Warehouse jobs">
-      <div class="icon">📦</div>
+      <div class="icon">&#128230;</div>
       <strong>Warehouse</strong>
       <p>Browse</p>
     </div>
     <div class="cat-card" data-category="trades" role="button" tabindex="0" aria-label="Trades jobs">
-      <div class="icon">🔧</div>
+      <div class="icon">&#128295;</div>
       <strong>Trades</strong>
       <p>Browse</p>
     </div>
     <div class="cat-card" data-category="healthcare" role="button" tabindex="0" aria-label="Healthcare jobs">
-      <div class="icon">🏥</div>
+      <div class="icon">&#127973;</div>
       <strong>Healthcare</strong>
       <p>Browse</p>
     </div>
   </div>
 </div>
 
+<!-- Job Detail Modal -->
+<div class="modal-overlay" id="jobModal">
+  <div class="modal job-modal">
+    <button class="modal-close" id="closeJobModal" aria-label="Close">&times;</button>
+    <div id="jobModalContent"></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p>FairChance Finder &mdash; Connecting people with second-chance employers.</p>
+    <p>Contact: <a href="mailto:EPCSR@fairchancefinder.com">EPCSR@fairchancefinder.com</a></p>
+    <div class="footer-links">
+      <a href="/privacy-policy.html">Privacy Policy</a>
+      <a href="/rights.html">Your Rights</a>
+      <a href="/resources.html">Resources</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 FairChance Finder. All rights reserved.</p>
+  </div>
+</footer>
+
 <div class="spacer"></div>
 <div id="toast" aria-live="polite"></div>
 
 <nav>
-  /<span>🔍</span> Search</a>
-  /my-apps.html<span>📋</span> My Apps</a>
-  /resources.html<span>🤝</span> Resources</a>
-  /profile.html<span>👤</span> Profile</a>
+  <a href="/" class="active" aria-current="page"><span>&#128269;</span> Search</a>
+  <a href="/my-apps.html"><span>&#128203;</span> My Apps</a>
+  <a href="/resources.html"><span>&#129309;</span> Resources</a>
+  <a href="/profile.html"><span>&#128100;</span> Profile</a>
 </nav>
 
-/app/main.jsscript>
+<script src="/app/main.js"></script>
 </body>
 </html>

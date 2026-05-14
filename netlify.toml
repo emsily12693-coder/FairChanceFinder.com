@@ -1,5 +1,10 @@
 [build]
-  publish = "public"
+  command = "mkdir -p dist && cp -r index.html my-apps.html resources.html profile.html privacy-policy.html rights.html manifest.json sw.js app styles icons public dist/"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
 
 [[headers]]
   for = "/.well-known/assetlinks.json"
@@ -50,3 +55,14 @@
   from = "/privacy"
   to = "/privacy-policy.html"
   status = 200
+
+[[redirects]]
+  from = "/rights"
+  to = "/rights.html"
+  status = 200
+
+[[redirects]]
+  from = "https://fairchancefinder.netlify.app/*"
+  to = "https://fairchancefinder.com/:splat"
+  status = 301
+  force = true
