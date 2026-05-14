@@ -1,76 +1,110 @@
-// --- MOCK JOB DATA (temporary, like your old version)
-const JOBS = [
-  { id: 1, title: "Warehouse Associate", company: "Amazon", location: "Phoenix, AZ", category: "warehouse" },
-  { id: 2, title: "Delivery Driver", company: "FedEx", location: "Tempe, AZ", category: "driving" },
-  { id: 3, title: "Line Cook", company: "Buffalo Wild Wings", location: "Mesa, AZ", category: "food" },
-  { id: 4, title: "Construction Laborer", company: "Turner Construction", location: "Phoenix, AZ", category: "construction" }
-];
+var CATEGORY_ICONS = {
+  warehouse: "&#128230;",
+  driving: "&#128667;",
+  food: "&#127869;",
+  construction: "&#127959;",
+  trades: "&#128295;",
+  healthcare: "&#127973;"
+};
 
-// --- STATE
-let currentCategory = "all";
+var currentCategory = "all";
 
-// --- RENDER JOBS (this fills the screen)
 function renderJobs(list) {
-  const grid = document.getElementById("jobsGrid");
+  var grid = document.getElementById("jobsGrid");
+  if (!grid) return;
 
   if (!list.length) {
-    grid.innerHTML = "<p style='text-align:center;color:#aaa'>No jobs found</p>";
+    grid.innerHTML = '<p style="text-align:center;color:#aaa;padding:40px 0">No jobs found. Try a different search or category.</p>';
     return;
   }
 
-  grid.innerHTML = list.map(job => `
-    <div style="background:#1a1a2e;padding:16px;border-radius:10px;margin:10px;">
-      <h3>${job.title}</h3>
-      <p>${job.company} — ${job.location}</p>
-    </div>
-  `).join("");
+  grid.innerHTML = list.map(function(job) {
+    return '<a href="/job-detail.html?id=' + job.id + '" class="job-card">' +
+      '<div class="job-card-header">' +
+        '<span class="job-icon">' + (CATEGORY_ICONS[job.category] || '') + '</span>' +
+        '<span class="fair-chance-badge">Fair Chance</span>' +
+      '</div>' +
+      '<h4 class="job-title">' + job.title + '</h4>' +
+      '<p class="job-company">' + job.company + '</p>' +
+      '<p class="job-location">' + job.location + '</p>' +
+      '<div class="job-tags">' +
+        '<span class="job-tag">' + job.type + '</span>' +
+        '<span class="job-tag pay-tag">' + job.pay + '</span>' +
+      '</div>' +
+      '<span class="job-card-cta">View Details &rarr;</span>' +
+    '</a>';
+  }).join("");
 }
 
-// --- FILTER
 function applyFilter(category) {
   currentCategory = category;
-
-  let filtered = JOBS;
-
+  var filtered = JOBS;
   if (category !== "all") {
-    filtered = JOBS.filter(j => j.category === category);
+    filtered = JOBS.filter(function(j) { return j.category === category; });
   }
-
   renderJobs(filtered);
+
+  document.querySelectorAll(".filter-chip").forEach(function(c) {
+    c.classList.toggle("active", c.dataset.category === category);
+  });
 }
 
-// --- BUTTON HANDLING (this replaces onclick)
-document.addEventListener("click", (e) => {
+document.addEventListener("click", function(e) {
+  var target = e.target;
 
-  // scroll button
-  if (e.target.matches("[data-scroll]")) {
+  if (target.matches("[data-scroll]")) {
+    e.preventDefault();
     document.getElementById("jobsGrid").scrollIntoView({ behavior: "smooth" });
   }
 
-  // navigation buttons
-  if (e.target.matches("[data-link]")) {
-    window.location.href = e.target.dataset.link;
+  if (target.matches("[data-link]")) {
+    e.preventDefault();
+    window.location.href = target.dataset.link;
   }
 
-  // filter chips
-  if (e.target.matches(".filter-chip")) {
-    const category = e.target.dataset.category;
-    applyFilter(category);
+  if (target.matches(".filter-chip")) {
+    applyFilter(target.dataset.category);
   }
 
+  var catCard = target.closest(".cat-card");
+  if (catCard) {
+    var cat = catCard.dataset.category;
+    applyFilter(cat);
+    document.getElementById("jobsGrid").scrollIntoView({ behavior: "smooth" });
+  }
 });
 
-// --- SEARCH BUTTON
-document.getElementById("searchBtn")?.addEventListener("click", () => {
-  const query = document.getElementById("searchInput").value.toLowerCase();
+var searchBtn = document.getElementById("searchBtn");
+var searchInput = document.getElementById("searchInput");
 
-  const filtered = JOBS.filter(job =>
-    job.title.toLowerCase().includes(query) ||
-    job.company.toLowerCase().includes(query)
-  );
+if (searchBtn) {
+  searchBtn.addEventListener("click", function() {
+    var query = searchInput.value.toLowerCase().trim();
+    if (!query) {
+      applyFilter(currentCategory);
+      return;
+    }
+    var filtered = JOBS.filter(function(job) {
+      return job.title.toLowerCase().indexOf(query) !== -1 ||
+             job.company.toLowerCase().indexOf(query) !== -1 ||
+             job.location.toLowerCase().indexOf(query) !== -1 ||
+             job.category.toLowerCase().indexOf(query) !== -1;
+    });
+    renderJobs(filtered);
+  });
+}
 
-  renderJobs(filtered);
-});
+if (searchInput) {
+  searchInput.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      searchBtn.click();
+    }
+  });
+}
 
-// --- INITIAL LOAD
 renderJobs(JOBS);
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(function() {});
+}

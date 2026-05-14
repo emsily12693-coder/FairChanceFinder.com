@@ -1,5 +1,11 @@
 [build]
-  publish = "public"
+  publish = "."
+
+[build.environment]
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+
+[functions]
+  directory = "netlify/functions"
 
 [[headers]]
   for = "/.well-known/assetlinks.json"
@@ -50,3 +56,13 @@
   from = "/privacy"
   to = "/privacy-policy.html"
   status = 200
+
+[[redirects]]
+  from = "/rights"
+  to = "/resources.html"
+  status = 301
+
+[[redirects]]
+  from = "/rights.html"
+  to = "/resources.html"
+  status = 301

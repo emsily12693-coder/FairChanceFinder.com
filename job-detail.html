@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Details - FairChance Finder</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1a237e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <link rel="stylesheet" href="/styles/app.css">
+  <style>
+    .detail-hero { background: linear-gradient(135deg, #000 0%, #1a237e 100%); padding: 24px 20px 28px; }
+    .back-link { color: var(--teal); text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 16px; }
+    .back-link:hover { text-decoration: underline; }
+    .detail-hero h2 { font-size: 24px; margin-bottom: 6px; }
+    .detail-hero .company-name { color: var(--teal); font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+    .detail-hero .location-text { color: var(--muted); font-size: 14px; }
+    .detail-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+    .detail-tag { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .detail-tag.type-tag { background: rgba(0,137,123,0.15); color: var(--teal); border: 1px solid var(--teal); }
+    .detail-tag.pay-tag { background: rgba(106,27,154,0.15); color: #ce93d8; border: 1px solid var(--purple); }
+    .detail-tag.fc-tag { background: rgba(76,175,80,0.15); color: #81c784; border: 1px solid #4caf50; }
+    .detail-section { padding: 20px; }
+    .detail-section h3 { font-size: 16px; color: var(--teal); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #222; }
+    .detail-section p { font-size: 14px; color: #ccc; line-height: 1.7; margin-bottom: 12px; }
+    .req-list { list-style: none; padding: 0; }
+    .req-list li { font-size: 14px; color: #ccc; padding: 8px 0; border-bottom: 1px solid #1a1a2e; display: flex; align-items: flex-start; gap: 10px; }
+    .req-list li:last-child { border-bottom: none; }
+    .req-check { color: var(--teal); flex-shrink: 0; }
+    .fc-box { background: var(--card); border-left: 4px solid #4caf50; border-radius: 0 8px 8px 0; padding: 14px 16px; margin-bottom: 16px; }
+    .fc-box p { font-size: 14px; color: #ccc; line-height: 1.6; margin: 0; }
+    .apply-section { padding: 0 20px 24px; }
+    .apply-btn { display: block; width: 100%; padding: 16px; background: var(--teal); color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; text-align: center; transition: transform .15s, background .2s; }
+    .apply-btn:hover { transform: scale(1.02); background: #00a08f; }
+    .apply-btn.applied { background: #333; color: var(--teal); border: 2px solid var(--teal); cursor: default; }
+    .resume-note { text-align: center; font-size: 13px; color: var(--muted); margin-top: 10px; }
+    .resume-note a { color: var(--teal); }
+    .external-note { text-align: center; font-size: 12px; color: var(--muted); margin-top: 8px; }
+    .not-found { text-align: center; padding: 80px 20px; }
+    .not-found h2 { font-size: 22px; margin-bottom: 12px; }
+    .not-found p { color: var(--muted); margin-bottom: 24px; }
+    .not-found a { display: inline-block; padding: 12px 28px; background: var(--teal); color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="/icons/icon-192x192.png" alt="FairChance Finder Logo">
+  <h1><span>FairChance</span> <span>Finder</span></h1>
+</header>
+
+<div id="jobContent"></div>
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="/privacy-policy.html">Privacy Notice</a>
+    <span class="footer-sep">|</span>
+    <a href="mailto:EPCSR@fairchancefinder.com">Contact Us</a>
+    <span class="footer-sep">|</span>
+    <a href="/resources.html">Resources</a>
+  </div>
+  <p>&copy; 2026 FairChance Finder. Made with care in Phoenix, AZ.</p>
+</footer>
+
+<div class="spacer"></div>
+<div id="toast" aria-live="polite"></div>
+
+<nav>
+  <a href="/"><span>&#128269;</span> Search</a>
+  <a href="/my-apps.html"><span>&#128203;</span> My Apps</a>
+  <a href="/resources.html"><span>&#129309;</span> Resources</a>
+  <a href="/profile.html"><span>&#128100;</span> Profile</a>
+</nav>
+
+<script src="/app/jobs.js"></script>
+<script>
+var params = new URLSearchParams(window.location.search);
+var jobId = parseInt(params.get('id'));
+var job = JOBS.find(function(j) { return j.id === jobId; });
+var container = document.getElementById('jobContent');
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(function() { t.style.display = 'none'; }, 3000);
+}
+
+function isAlreadyApplied(id) {
+  var apps = JSON.parse(localStorage.getItem('fcf_applications') || '[]');
+  return apps.some(function(a) { return a.id === id; });
+}
+
+function applyToJob(job) {
+  if (isAlreadyApplied(job.id)) {
+    showToast('You already applied to this job!');
+    return;
+  }
+
+  var apps = JSON.parse(localStorage.getItem('fcf_applications') || '[]');
+  var resume = JSON.parse(localStorage.getItem('fcf_resume') || 'null');
+
+  apps.push({
+    id: job.id,
+    title: job.title,
+    company: job.company,
+    location: job.location,
+    type: job.type,
+    pay: job.pay,
+    appliedAt: new Date().toISOString(),
+    resumeKey: resume ? resume.key : null,
+    resumeName: resume ? resume.filename : null
+  });
+
+  localStorage.setItem('fcf_applications', JSON.stringify(apps));
+
+  document.getElementById('applyBtn').className = 'apply-btn applied';
+  document.getElementById('applyBtn').textContent = 'Applied!';
+  document.getElementById('applyBtn').onclick = null;
+
+  if (job.applyUrl) {
+    showToast('Application tracked! Redirecting to employer site...');
+    setTimeout(function() {
+      window.open(job.applyUrl, '_blank', 'noopener');
+    }, 1500);
+  } else {
+    showToast('Application saved! Check My Apps to track it.');
+  }
+}
+
+if (job) {
+  document.title = job.title + ' - FairChance Finder';
+  var applied = isAlreadyApplied(job.id);
+  var resume = JSON.parse(localStorage.getItem('fcf_resume') || 'null');
+
+  var reqHtml = job.requirements.map(function(r) {
+    return '<li><span class="req-check">&#10003;</span><span>' + r + '</span></li>';
+  }).join('');
+
+  container.innerHTML =
+    '<div class="detail-hero">' +
+      '<a href="/" class="back-link">&larr; Back to Jobs</a>' +
+      '<h2>' + job.title + '</h2>' +
+      '<div class="company-name">' + job.company + '</div>' +
+      '<div class="location-text">' + job.location + '</div>' +
+      '<div class="detail-tags">' +
+        '<span class="detail-tag type-tag">' + job.type + '</span>' +
+        '<span class="detail-tag pay-tag">' + job.pay + '</span>' +
+        (job.fairChance ? '<span class="detail-tag fc-tag">Fair Chance Employer</span>' : '') +
+      '</div>' +
+    '</div>' +
+    '<div class="detail-section">' +
+      '<h3>About This Role</h3>' +
+      '<p>' + job.description + '</p>' +
+    '</div>' +
+    '<div class="detail-section">' +
+      '<h3>Requirements</h3>' +
+      '<ul class="req-list">' + reqHtml + '</ul>' +
+    '</div>' +
+    (job.fairChanceNote ?
+      '<div class="detail-section">' +
+        '<h3>Fair Chance Policy</h3>' +
+        '<div class="fc-box"><p>' + job.fairChanceNote + '</p></div>' +
+      '</div>' : '') +
+    '<div class="apply-section">' +
+      '<button id="applyBtn" class="apply-btn' + (applied ? ' applied' : '') + '">' +
+        (applied ? 'Applied!' : 'Apply Now') +
+      '</button>' +
+      (resume ? '<p class="resume-note">Your resume (' + resume.filename + ') will be noted with this application.</p>' :
+                '<p class="resume-note">No resume uploaded. <a href="/profile.html">Upload one</a> to include it with applications.</p>') +
+      (job.applyUrl ? '<p class="external-note">You will be redirected to the employer\'s website to complete your application.</p>' : '') +
+    '</div>';
+
+  if (!applied) {
+    document.getElementById('applyBtn').addEventListener('click', function() {
+      applyToJob(job);
+    });
+  }
+} else {
+  container.innerHTML =
+    '<div class="not-found">' +
+      '<h2>Job Not Found</h2>' +
+      '<p>This job listing may have been removed or the link is incorrect.</p>' +
+      '<a href="/">Browse All Jobs</a>' +
+    '</div>';
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(function() {});
+}
+</script>
+</body>
+</html>

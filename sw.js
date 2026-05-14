@@ -4,13 +4,19 @@
 // - JS/CSS & data: stale-while-revalidate (fast + refresh in background)
 // - icons/images: cache-first
 
-const CACHE_NAME = 'fairchancefinder-v2';
+const CACHE_NAME = 'fairchancefinder-v3';
 
 const PRECACHE_URLS = [
   '/',
   '/index.html',
+  '/job-detail.html',
+  '/my-apps.html',
+  '/profile.html',
+  '/resources.html',
+  '/privacy-policy.html',
   '/manifest.json',
   '/styles/app.css',
+  '/app/jobs.js',
   '/app/main.js',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png'
@@ -74,6 +80,9 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
 
   const url = new URL(req.url);
+
+  // Never cache API calls
+  if (url.pathname.startsWith('/api/')) return;
 
   // HTML navigations
   if (req.mode === 'navigate') {

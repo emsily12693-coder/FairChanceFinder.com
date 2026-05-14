@@ -148,3 +148,149 @@ nav a span { font-size: 20px; }
 .cta-btn.tertiary:hover {
   background: #444;
 }
+
+/* Job Cards */
+.job-card {
+  display: block;
+  background: var(--card);
+  padding: 18px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text);
+  border-left: 4px solid var(--teal);
+  transition: transform .15s ease, box-shadow .2s ease;
+  cursor: pointer;
+}
+.job-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,137,123,0.15);
+}
+.job-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.job-icon { font-size: 24px; }
+.fair-chance-badge {
+  background: rgba(76,175,80,0.15);
+  color: #81c784;
+  border: 1px solid #4caf50;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.job-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.job-company { color: var(--teal); font-size: 14px; margin-bottom: 2px; }
+.job-location { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+.job-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.job-tag {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  background: rgba(0,137,123,0.12);
+  color: var(--teal);
+  border: 1px solid rgba(0,137,123,0.3);
+}
+.job-tag.pay-tag {
+  background: rgba(106,27,154,0.12);
+  color: #ce93d8;
+  border-color: rgba(106,27,154,0.3);
+}
+.job-card-cta {
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 600;
+}
+
+/* Categories Grid */
+.categories {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.cat-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 18px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform .15s ease, border-color .2s;
+  border: 1px solid transparent;
+}
+.cat-card:hover, .cat-card:focus {
+  transform: translateY(-2px);
+  border-color: var(--teal);
+}
+.cat-card .icon { font-size: 28px; margin-bottom: 8px; }
+.cat-card strong { font-size: 13px; display: block; margin-bottom: 2px; }
+.cat-card p { font-size: 11px; color: var(--muted); margin: 0; }
+
+/* Site Footer */
+.site-footer {
+  text-align: center;
+  padding: 24px 20px 12px;
+  border-top: 1px solid #222;
+  margin-top: 20px;
+}
+.footer-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.footer-links a {
+  color: var(--teal);
+  text-decoration: none;
+  font-size: 13px;
+}
+.footer-links a:hover { text-decoration: underline; }
+.footer-sep { color: #444; font-size: 12px; }
+.site-footer p {
+  font-size: 12px;
+  color: #555;
+  margin: 0;
+}
+
+/* Upload Section */
+.upload-section { padding: 20px; }
+.upload-area {
+  background: var(--card);
+  border: 2px dashed #333;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.upload-area:hover { border-color: var(--teal); }
+.upload-area .upload-icon { font-size: 36px; margin-bottom: 10px; }
+.upload-area p { color: var(--muted); font-size: 14px; margin-bottom: 8px; }
+.upload-area .upload-hint { font-size: 12px; color: #555; }
+.file-display {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.file-display .file-icon { font-size: 28px; flex-shrink: 0; }
+.file-display .file-info { flex: 1; }
+.file-display .file-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.file-display .file-meta { font-size: 12px; color: var(--muted); }
+.file-actions { display: flex; gap: 8px; margin-top: 10px; }
+.file-actions button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-download { background: var(--teal); color: #fff; }
+.btn-delete-file { background: #333; color: #e53935; }
+input[type="file"] { display: none; }

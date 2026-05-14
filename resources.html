@@ -48,6 +48,12 @@
     .spacer { height: 80px; }
     #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--teal); color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 14px; display: none; z-index: 200; white-space: nowrap; }
     .hidden { display: none !important; }
+    .site-footer { text-align: center; padding: 24px 20px 12px; border-top: 1px solid #222; margin-top: 20px; }
+    .footer-links { display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+    .footer-links a { color: var(--teal); text-decoration: none; font-size: 13px; }
+    .footer-links a:hover { text-decoration: underline; }
+    .footer-sep { color: #444; font-size: 12px; }
+    .site-footer p { font-size: 12px; color: #555; margin: 0; }
   </style>
 </head>
 <body>
@@ -276,6 +282,17 @@
     <p>Employers cannot use an arrest record that didn't result in a conviction to deny you a job in many circumstances. Older offenses may also be limited from consideration.</p>
   </div>
 </div>
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="/privacy-policy.html">Privacy Notice</a>
+    <span class="footer-sep">|</span>
+    <a href="mailto:EPCSR@fairchancefinder.com">Contact Us</a>
+    <span class="footer-sep">|</span>
+    <a href="/resources.html">Resources</a>
+  </div>
+  <p>&copy; 2026 FairChance Finder. Made with care in Phoenix, AZ.</p>
+</footer>
 
 <div class="spacer"></div>
 <div id="toast"></div>

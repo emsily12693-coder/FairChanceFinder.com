@@ -49,6 +49,13 @@
     nav a span { font-size: 20px; }
     .spacer { height: 80px; }
     #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #e53935; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 14px; display: none; z-index: 200; white-space: nowrap; }
+    .site-footer { text-align: center; padding: 24px 20px 12px; border-top: 1px solid #222; margin-top: 20px; }
+    .footer-links { display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+    .footer-links a { color: var(--teal); text-decoration: none; font-size: 13px; }
+    .footer-links a:hover { text-decoration: underline; }
+    .footer-sep { color: #444; font-size: 12px; }
+    .site-footer p { font-size: 12px; color: #555; margin: 0; }
+    .resume-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 20px; font-size: 11px; background: rgba(106,27,154,0.15); color: #ce93d8; border: 1px solid var(--purple); }
   </style>
 </head>
 <body>
@@ -85,6 +92,17 @@
   </div>
   <div id="appsList"></div>
 </div>
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="/privacy-policy.html">Privacy Notice</a>
+    <span class="footer-sep">|</span>
+    <a href="mailto:EPCSR@fairchancefinder.com">Contact Us</a>
+    <span class="footer-sep">|</span>
+    <a href="/resources.html">Resources</a>
+  </div>
+  <p>&copy; 2026 FairChance Finder. Made with care in Phoenix, AZ.</p>
+</footer>
 
 <div class="spacer"></div>
 <div id="toast"></div>
@@ -159,7 +177,7 @@ function render() {
     const status = getStatus(app);
     return `
       <div class="app-card" id="app-${app.id}">
-        <button class="delete-btn" onclick="deleteApp(${app.id})" aria-label="Remove application for ${app.title}">✕</button>
+        <button class="delete-btn" onclick="deleteApp(${app.id})" aria-label="Remove application for ${app.title}">&#10005;</button>
         <h4>${app.title}</h4>
         <div class="company">${app.company} — ${app.location}</div>
         <div class="meta">
@@ -167,8 +185,9 @@ function render() {
           <span class="date">Applied ${formatDate(app.appliedAt)}</span>
         </div>
         <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
-          <span class="tag">${app.type}</span>
-          <span class="tag">${app.pay}</span>
+          <span class="tag">${app.type || 'Job'}</span>
+          <span class="tag">${app.pay || ''}</span>
+          ${app.resumeName ? '<span class="resume-badge">&#128196; Resume attached</span>' : ''}
         </div>
       </div>
     `;
