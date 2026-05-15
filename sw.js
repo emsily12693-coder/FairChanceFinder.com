@@ -1,17 +1,15 @@
-// FairChance Finder — Service Worker (v2)
+// FairChance Finder — Service Worker (v4)
 // Hybrid strategy:
 // - HTML navigations: network-first (fresh updates), fallback to cached shell
 // - JS/CSS & data: stale-while-revalidate (fast + refresh in background)
 // - icons/images: cache-first
 
-const CACHE_NAME = 'fairchancefinder-v3';
+const CACHE_NAME = 'fairchancefinder-v4';
 
 const PRECACHE_URLS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/styles/app.css',
-  '/app/main.js',
   '/public/icons/16724.jpg'
 ];
 

@@ -811,6 +811,10 @@
         updateUI();
         const initialJob = new URLSearchParams(location.search).get('job');
         if(initialJob) openJobDetail(initialJob);
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(() => {});
+        }
     </script>
 </body>
 </html>
