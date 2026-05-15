@@ -1,105 +1,634 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FairChance Finder</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FairChance Finder — Phoenix, AZ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #f0f4f8;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,.1);
+            --radius: 12px;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding-bottom: 80px;
+            line-height: 1.5;
+        }
+        a { color: var(--primary); text-decoration: none; transition: 0.2s; }
+        a:hover { text-decoration: underline; }
 
-  /manifest.json
-  <meta name="theme-color" content="#1a237e" />
-  <meta name="description" content="Connecting fair-chance job seekers with employers who believe in second chances." />
+        /* NAVIGATION */
+        .top-bar {
+            background: var(--primary);
+            color: #fff;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .top-bar h1 { font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .top-bar .acct-btn {
+            background: rgba(255,255,255,.2);
+            border: none;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: .82rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .top-bar .acct-btn:hover { background: rgba(255,255,255,.35); }
 
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="FairChance Finder" />
-  /icons/icon-192x192.png
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-top: 1px solid var(--border);
+            display: flex;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0,0,0,.06);
+        }
+        .bottom-nav button {
+            flex: 1;
+            border: none;
+            background: none;
+            padding: 10px 4px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-size: .65rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 500;
+            transition: .2s;
+        }
+        .bottom-nav button.active { color: var(--primary); font-weight: 700; }
+        .bottom-nav button svg { width: 22px; height: 22px; }
 
-  /styles/app.css
+        /* PAGES */
+        .page { display: none; max-width: 600px; margin: 0 auto; padding: 16px; animation: fadeIn 0.3s ease-in-out; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* COMPONENTS */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+        .card .company { color: var(--primary); font-weight: 600; font-size: .85rem; }
+        .card .meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; font-size: .78rem; color: var(--text-muted); }
+        .card .meta span { display: flex; align-items: center; gap: 4px; }
+        
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: .7rem; font-weight: 600; margin-right: 6px; margin-top: 6px; }
+        .badge-green { background: #d1fae5; color: #065f46; }
+        .badge-blue { background: var(--primary-light); color: var(--primary-dark); }
+        .badge-amber { background: #fef3c7; color: #92400e; }
+
+        .save-btn {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-size: .75rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-top: 12px;
+            transition: .2s;
+        }
+        .save-btn:hover, .save-btn.saved { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        /* HERO & STATS */
+        .hero {
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            border-radius: var(--radius);
+            padding: 28px 20px;
+            color: #fff;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .hero h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
+        .hero p { font-size: .9rem; opacity: .9; line-height: 1.5; }
+
+        .stats { display: flex; gap: 12px; margin: 16px 0; }
+        .stat {
+            flex: 1;
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 16px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .stat .num { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+        .stat .label { font-size: .75rem; color: var(--text-muted); margin-top: 2px; }
+
+        /* SEARCH & FILTERS */
+        .search-box { position: relative; margin-bottom: 12px; }
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            font-size: .9rem;
+            background: var(--card);
+            transition: .2s;
+        }
+        .search-box input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+        .search-box svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px; height: 18px; }
+        
+        .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+        .filter-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1.5px solid var(--border);
+            background: var(--card);
+            font-size: .78rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: .2s;
+            color: var(--text);
+        }
+        .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        /* AD BANNERS */
+        .ad-banner {
+            background: linear-gradient(135deg, #f8fafc, #eef2ff);
+            border: 1.5px dashed #cbd5e1;
+            border-radius: var(--radius);
+            padding: 18px;
+            text-align: center;
+            margin: 16px 0;
+            position: relative;
+        }
+        .ad-banner .ad-label { position: absolute; top: 6px; right: 10px; font-size: .6rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .ad-banner h4 { font-size: .95rem; color: var(--primary); margin-bottom: 4px; }
+        .ad-banner p { font-size: .78rem; color: var(--text-muted); }
+        .ad-cta {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 7px 20px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 20px;
+            font-size: .8rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .ad-contact { font-size: .7rem; color: #94a3b8; margin-top: 8px; }
+
+        /* RESOURCES */
+        .resource-section { background: var(--card); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .resource-section h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .resource-section p { font-size: .85rem; color: var(--text-muted); margin-bottom: 12px; }
+        .resource-links { display: flex; flex-direction: column; gap: 8px; }
+        .resource-links a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 14px;
+            background: #f8fafc;
+            border-radius: 8px;
+            font-size: .83rem;
+            font-weight: 500;
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+        .resource-links a:hover { background: var(--primary-light); border-color: var(--primary); text-decoration: none; }
+        .resource-links a .arrow { margin-left: auto; font-size: .75rem; color: #94a3b8; }
+
+        /* AUTH & PROFILE */
+        .auth-container { max-width: 400px; margin: 40px auto; }
+        .auth-container h2 { text-align: center; margin-bottom: 24px; font-size: 1.3rem; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: .82rem; font-weight: 600; margin-bottom: 6px; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: .88rem;
+            transition: .2s;
+        }
+        .form-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: .9rem; font-weight: 700; cursor: pointer; transition: .2s; text-align: center; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .auth-toggle { text-align: center; margin-top: 16px; font-size: .84rem; color: var(--text-muted); }
+        .auth-toggle a { cursor: pointer; font-weight: 600; color: var(--primary); }
+
+        .profile-header { text-align: center; padding: 24px 0; }
+        .avatar { width: 72px; height: 72px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; margin: 0 auto 12px; }
+        .profile-menu .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--card);
+            border-radius: var(--radius);
+            margin-bottom: 8px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: .88rem;
+            font-weight: 500;
+        }
+        .profile-menu .menu-item:hover { border-color: var(--primary); color: var(--primary); }
+
+        .alert { padding: 12px 16px; border-radius: 8px; font-size: .84rem; margin-bottom: 12px; font-weight: 500; }
+        .alert-success { background: #d1fae5; color: #065f46; }
+        .alert-error { background: #fee2e2; color: #991b1b; }
+
+        .section-title { font-size: 1.1rem; font-weight: 700; margin: 24px 0 12px; display: flex; align-items: center; gap: 8px; }
+        .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
+        .empty-state svg { width: 48px; height: 48px; margin-bottom: 12px; color: #cbd5e1; }
+    </style>
 </head>
-
 <body>
 
-<header>
-  /icons/icon-192x192.png
-  <h1><span>FairChance</span> <span>Finder</span></h1>
-</header>
-
-<div class="hero">
-  <h2>Find Your Second Chance ⭐</h2>
-  <p>Connecting people with fair-chance employers who hire regardless of background.</p>
-
-  <!-- CTA buttons you wanted (no inline onclick; main.js handles these) -->
-  <button class="cta-btn" data-scroll="jobs">🔍 Find Fair‑Chance Jobs</button>
-  <button class="cta-btn secondary" data-link="/resources.html">🤝 Explore Resources</button>
-  <button class="cta-btn tertiary" data-link="/rights.html">⚖️ Learn Your Rights</button>
-
-  <div class="search-bar" style="margin-top: 18px;">
-    <input type="search" id="searchInput" placeholder="Job title, skill, or city..." aria-label="Search jobs" />
-    <button id="searchBtn" type="button">Search</button>
-  </div>
-</div>
-
-<div class="filter-row" id="filterRow">
-  <button class="filter-chip active" data-category="all">All Jobs</button>
-  <button class="filter-chip" data-category="construction">🏗️ Construction</button>
-  <button class="filter-chip" data-category="driving">🚛 Driving</button>
-  <button class="filter-chip" data-category="food">🍽️ Food Service</button>
-  <button class="filter-chip" data-category="warehouse">📦 Warehouse</button>
-  <button class="filter-chip" data-category="trades">🔧 Trades</button>
-  <button class="filter-chip" data-category="healthcare">🏥 Healthcare</button>
-</div>
-
-<div class="section">
-  <h3 id="sectionTitle">🌟 Fair‑Chance Jobs Near You</h3>
-  <div class="jobs-grid" id="jobsGrid"></div>
-</div>
-
-<div class="section">
-  <h3>Browse by Category</h3>
-  <div class="categories">
-    <div class="cat-card" data-category="construction" role="button" tabindex="0" aria-label="Construction jobs">
-      <div class="icon">🏗️</div>
-      <strong>Construction</strong>
-      <p>Browse</p>
+    <div class="top-bar">
+        <h1>⚖️ FairChance Finder</h1>
+        <button class="acct-btn" onclick="showPage('account')" id="acctTopBtn">Sign In</button>
     </div>
-    <div class="cat-card" data-category="driving" role="button" tabindex="0" aria-label="Driving jobs">
-      <div class="icon">🚛</div>
-      <strong>Driving</strong>
-      <p>Browse</p>
-    </div>
-    <div class="cat-card" data-category="food" role="button" tabindex="0" aria-label="Food service jobs">
-      <div class="icon">🍽️</div>
-      <strong>Food Service</strong>
-      <p>Browse</p>
-    </div>
-    <div class="cat-card" data-category="warehouse" role="button" tabindex="0" aria-label="Warehouse jobs">
-      <div class="icon">📦</div>
-      <strong>Warehouse</strong>
-      <p>Browse</p>
-    </div>
-    <div class="cat-card" data-category="trades" role="button" tabindex="0" aria-label="Trades jobs">
-      <div class="icon">🔧</div>
-      <strong>Trades</strong>
-      <p>Browse</p>
-    </div>
-    <div class="cat-card" data-category="healthcare" role="button" tabindex="0" aria-label="Healthcare jobs">
-      <div class="icon">🏥</div>
-      <strong>Healthcare</strong>
-      <p>Browse</p>
-    </div>
-  </div>
-</div>
 
-<div class="spacer"></div>
-<div id="toast" aria-live="polite"></div>
+    <!-- HOME PAGE -->
+    <div class="page active" id="page-home">
+        <div class="hero">
+            <h2>Your Second Chance Starts Here</h2>
+            <p>Connecting justice-impacted individuals with verified fair-chance employers in Phoenix, AZ and beyond.</p>
+        </div>
+        <div class="stats">
+            <div class="stat"><div class="num">250+</div><div class="label">Jobs Listed</div></div>
+            <div class="stat"><div class="num">85+</div><div class="label">Employers</div></div>
+            <div class="stat"><div class="num">12</div><div class="label">Categories</div></div>
+        </div>
 
-<nav>
-  /<span>🔍</span> Search</a>
-  /my-apps.html<span>📋</span> My Apps</a>
-  /resources.html<span>🤝</span> Resources</a>
-  /profile.html<span>👤</span> Profile</a>
-</nav>
+        <div class="ad-banner">
+            <div class="ad-label">Advertisement</div>
+            <h4>📢 Your Ad Here</h4>
+            <p>Reach thousands of motivated job seekers in Phoenix, AZ.</p>
+            <div class="ad-cta" onclick="showPage('advertise')">Advertise With Us</div>
+            <div class="ad-contact">Email: <a href="mailto:advertise@fairchancefinder.com">advertise@fairchancefinder.com</a></div>
+        </div>
 
-/app/main.jsscript>
+        <div class="section-title">🔥 Featured Jobs</div>
+        <div id="featured-jobs"></div>
+
+        <div class="ad-banner">
+            <div class="ad-label">Advertisement</div>
+            <h4>🏢 Employers: Post Your Jobs</h4>
+            <p>Get your listings in front of qualified, motivated candidates.</p>
+            <div class="ad-cta" onclick="showPage('advertise')">Learn More</div>
+        </div>
+    </div>
+
+    <!-- SEARCH PAGE -->
+    <div class="page" id="page-search">
+        <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" id="searchInput" placeholder="Search jobs, companies, keywords..." oninput="renderJobs()">
+        </div>
+        <div class="filters" id="categoryFilters"></div>
+        <div id="job-list"></div>
+    </div>
+
+    <!-- EMPLOYERS PAGE -->
+    <div class="page" id="page-employers">
+        <div class="section-title">🏢 Fair-Chance Employers</div>
+        <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px">These companies have committed to fair-chance hiring practices in Phoenix, AZ.</p>
+        <div id="employer-list"></div>
+    </div>
+
+    <!-- SAVED PAGE -->
+    <div class="page" id="page-saved">
+        <div class="section-title">💾 Saved Jobs</div>
+        <div id="saved-list"></div>
+    </div>
+
+    <!-- RESOURCES PAGE -->
+    <div class="page" id="page-resources">
+        <div class="section-title">📚 Resources & Support</div>
+        <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px">Real links to real help — legal rights, training, and more for Phoenix, AZ.</p>
+        
+        <div class="resource-section">
+            <h3>⚖️ Know Your Rights</h3>
+            <p>Arizona's Ban the Box law protects you. Know what applies to you.</p>
+            <div class="resource-links">
+                <a href="https://www.eeoc.gov/laws/guidance/what-you-should-know-eeoc-and-arrest-and-conviction-records-employment-decisions" target="_blank">EEOC Guidance <span class="arrow">→</span></a>
+                <a href="https://www.azleg.gov/legtext/56leg/1R/bills/HB2431P.htm" target="_blank">Arizona HB 2431 <span class="arrow">→</span></a>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h3>🔓 Record Sealing</h3>
+            <p>Arizona allows "setting aside" or sealing certain convictions.</p>
+            <div class="resource-links">
+                <a href="https://www.azcourts.gov/selfservicecenter/Self-Service-Forms/Set-Aside-Background" target="_blank">Set Aside Application <span class="arrow">→</span></a>
+                <a href="https://clsaz.org/" target="_blank">Community Legal Services <span class="arrow">→</span></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACCOUNT PAGE -->
+    <div class="page" id="page-account">
+        <div id="auth-section"></div>
+    </div>
+
+    <!-- ADVERTISE PAGE -->
+    <div class="page" id="page-advertise">
+        <div class="section-title">📢 Advertise With Us</div>
+        <div class="card">
+            <h3>Reach Phoenix Job Seekers</h3>
+            <p style="font-size:.88rem; margin-top:10px;">Connect with motivated individuals looking for a second chance.</p>
+            <a href="mailto:advertise@fairchancefinder.com" class="btn btn-primary" style="display:block; margin-top:20px; text-decoration:none;">📧 Email Us for Rates</a>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+        <button class="active" onclick="showPage('home')" id="nav-home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Home
+        </button>
+        <button onclick="showPage('search')" id="nav-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            Search
+        </button>
+        <button onclick="showPage('employers')" id="nav-employers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+            Employers
+        </button>
+        <button onclick="showPage('saved')" id="nav-saved">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+            Saved
+        </button>
+        <button onclick="showPage('resources')" id="nav-resources">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+            Resources
+        </button>
+    </div>
+
+    <script>
+        // DATA
+        const jobs = [
+            {id:1,title:"Customer Service Representative",company:"T-Mobile",location:"Phoenix, AZ",pay:"$18–22/hr",type:"Full-Time",category:"Customer Service",perks:["Benefits","Training"],featured:true},
+            {id:2,title:"Administrative Assistant",company:"JPMorgan Chase",location:"Tempe, AZ",pay:"$19–24/hr",type:"Full-Time",category:"Office & Admin",perks:["Benefits","401k"],featured:true},
+            {id:3,title:"Warehouse Associate",company:"Amazon",location:"Phoenix, AZ",pay:"$17–21/hr",type:"Full-Time",category:"Warehouse",perks:["Flexible","Benefits"],featured:true},
+            {id:4,title:"Customer Support Specialist",company:"Concentrix",location:"Remote (AZ)",pay:"$16–20/hr",type:"Full-Time",category:"Customer Service",perks:["Remote","Training"],featured:true},
+            {id:5,title:"HVAC Apprentice",company:"Comfort Systems USA",location:"Mesa, AZ",pay:"$20–26/hr",type:"Full-Time",category:"Skilled Trades",perks:["Apprenticeship"]},
+            {id:6,title:"Maintenance Technician",company:"Waste Management",location:"Phoenix, AZ",pay:"$22–28/hr",type:"Full-Time",category:"Skilled Trades",perks:["Benefits"]},
+            {id:7,title:"IT Help Desk",company:"TEKsystems",location:"Tempe, AZ",pay:"$20–26/hr",type:"Full-Time",category:"Tech",perks:["Growth"]},
+            {id:8,title:"Crew Member",company:"Chipotle",location:"Phoenix, AZ",pay:"$15–18/hr",type:"Full-Time",category:"Food Service",perks:["Tuition"]},
+            {id:9,title:"Package Handler",company:"FedEx Ground",location:"Phoenix, AZ",pay:"$17–20/hr",type:"Part-Time",category:"Warehouse",perks:["Flexible"]},
+            {id:10,title:"Front Desk Agent",company:"Hilton",location:"Scottsdale, AZ",pay:"$16–20/hr",type:"Full-Time",category:"Hospitality",perks:["Discounts"]},
+            {id:11,title:"Delivery Driver",company:"Amazon Flex",location:"Phoenix Metro",pay:"$18–25/hr",type:"Flexible",category:"Transport",perks:["Weekly Pay"]},
+            {id:12,title:"Retail Associate",company:"Home Depot",location:"Chandler, AZ",pay:"$16–19/hr",type:"Full-Time",category:"Retail",perks:["Discount"]},
+            {id:13,title:"Forklift Operator",company:"XPO Logistics",location:"Goodyear, AZ",pay:"$19–24/hr",type:"Full-Time",category:"Warehouse",perks:["Overtime"]},
+            {id:14,title:"Prep Cook",company:"Cracker Barrel",location:"Gilbert, AZ",pay:"$15–18/hr",type:"Full-Time",category:"Food Service",perks:["Flexible"]},
+            {id:15,title:"CDL Driver Trainee",company:"Schneider",location:"Phoenix, AZ",pay:"$22–30/hr",type:"Full-Time",category:"Transport",perks:["Paid Training"]},
+            {id:16,title:"Data Entry Clerk",company:"Robert Half",location:"Remote (AZ)",pay:"$17–22/hr",type:"Contract",category:"Office & Admin",perks:["Remote"]}
+        ];
+
+        const employers = [
+            {name:"Amazon",industry:"Logistics",desc:"Amazon pledged to fair-chance hiring and evaluates candidates individually."},
+            {name:"JPMorgan Chase",industry:"Finance",desc:"Second Chance program has hired thousands with records."},
+            {name:"T-Mobile",industry:"Telecom",desc:"Actively recruits fair-chance candidates for service roles."},
+            {name:"Home Depot",industry:"Retail",desc:"Removed the box from applications nationwide."},
+            {name:"Hilton",industry:"Hospitality",desc:"Partners with reentry organizations for staffing."},
+            {name:"Chipotle",industry:"Food Service",desc:"Offers tuition reimbursement and crew bonuses to all."},
+            {name:"FedEx",industry:"Logistics",desc:"Evaluates candidates individually with tuition assistance."},
+            {name:"Waste Management",industry:"Environmental",desc:"Strong fair-chance policy with competitive wages."},
+            {name:"XPO Logistics",industry:"Supply Chain",desc:"Warehouse careers with clear growth paths."},
+            {name:"Schneider",industry:"Transport",desc:"Paid CDL training for candidates with backgrounds."},
+            {name:"Concentrix",industry:"Business Services",desc:"Remote customer support with paid training."},
+            {name:"TEKsystems",industry:"IT Staffing",desc:"Places fair-chance candidates in tech roles."}
+        ];
+
+        const categories = ["All", ...new Set(jobs.map(j => j.category))];
+
+        // STATE & STORAGE
+        function getUser() { return JSON.parse(localStorage.getItem('fcf_user') || 'null'); }
+        function setUser(u) { localStorage.setItem('fcf_user', JSON.stringify(u)); updateUI(); }
+        function logout() { localStorage.removeItem('fcf_user'); updateUI(); showPage('home'); }
+        function getUsers() { return JSON.parse(localStorage.getItem('fcf_users') || '{}'); }
+        function saveUsers(u) { localStorage.setItem('fcf_users', JSON.stringify(u)); }
+        function getSavedIds() {
+            const user = getUser();
+            return user ? (user.savedJobs || []) : JSON.parse(localStorage.getItem('fcf_saved') || '[]');
+        }
+        function setSavedIds(ids) {
+            const user = getUser();
+            if(user) {
+                user.savedJobs = ids;
+                setUser(user);
+                const users = getUsers();
+                if(users[user.email]) { users[user.email].savedJobs = ids; saveUsers(users); }
+            } else {
+                localStorage.setItem('fcf_saved', JSON.stringify(ids));
+            }
+        }
+
+        // NAVIGATION
+        function showPage(name) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('active'));
+            const page = document.getElementById('page-' + name);
+            if(page) page.classList.add('active');
+            const nav = document.getElementById('nav-' + name);
+            if(nav) nav.classList.add('active');
+            window.scrollTo(0,0);
+            if(name === 'account') renderAccountPage();
+        }
+
+        // UI RENDERING
+        function updateUI() {
+            const user = getUser();
+            document.getElementById('acctTopBtn').textContent = user ? user.name.split(' ')[0] : 'Sign In';
+            renderFeatured();
+            renderJobs();
+            renderSaved();
+        }
+
+        function jobCard(job) {
+            const saved = getSavedIds().includes(job.id);
+            return `
+                <div class="card">
+                    <h3>${job.title}</h3>
+                    <div class="company">${job.company}</div>
+                    <div class="meta">
+                        <span>📍 ${job.location}</span>
+                        <span>💰 ${job.pay}</span>
+                        <span>🕐 ${job.type}</span>
+                    </div>
+                    <div>
+                        ${job.perks.map(p => `<span class="badge badge-green">${p}</span>`).join('')}
+                        <span class="badge badge-blue">${job.category}</span>
+                    </div>
+                    <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSave(${job.id})">
+                        ${saved ? '★ Saved' : '☆ Save Job'}
+                    </button>
+                </div>`;
+        }
+
+        function renderFeatured() {
+            document.getElementById('featured-jobs').innerHTML = jobs.filter(j => j.featured).map(jobCard).join('');
+        }
+
+        function renderJobs() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const activeBtn = document.querySelector('.filter-btn.active');
+            const cat = activeBtn ? activeBtn.dataset.cat : 'All';
+            
+            let filtered = jobs.filter(j => {
+                const matchesCat = (cat === 'All' || j.category === cat);
+                const matchesSearch = (j.title + j.company + j.location).toLowerCase().includes(q);
+                return matchesCat && matchesSearch;
+            });
+
+            document.getElementById('job-list').innerHTML = filtered.length 
+                ? filtered.map(jobCard).join('') 
+                : '<div class="empty-state"><h3>No jobs found</h3><p>Try a different search.</p></div>';
+        }
+
+        function renderFilters() {
+            document.getElementById('categoryFilters').innerHTML = categories.map(c => `
+                <button class="filter-btn ${c === 'All' ? 'active' : ''}" data-cat="${c}" onclick="setFilter(this)">
+                    ${c}
+                </button>`).join('');
+        }
+
+        function setFilter(btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderJobs();
+        }
+
+        function renderEmployers() {
+            document.getElementById('employer-list').innerHTML = employers.map(e => `
+                <div class="card">
+                    <h3>🏢 ${e.name}</h3>
+                    <div class="company">${e.industry}</div>
+                    <p style="font-size:.85rem; margin-top:8px;">${e.desc}</p>
+                </div>`).join('');
+        }
+
+        function renderSaved() {
+            const ids = getSavedIds();
+            const el = document.getElementById('saved-list');
+            if(!ids.length) {
+                el.innerHTML = `<div class="empty-state"><h3>No saved jobs</h3><p>Tap Save on any job to bookmark it.</p></div>`;
+                return;
+            }
+            el.innerHTML = jobs.filter(j => ids.includes(j.id)).map(jobCard).join('');
+        }
+
+        function toggleSave(id) {
+            let ids = getSavedIds();
+            ids = ids.includes(id) ? ids.filter(i => i !== id) : [...ids, id];
+            setSavedIds(ids);
+            updateUI();
+        }
+
+        // ACCOUNT SYSTEM
+        function renderAccountPage() {
+            const section = document.getElementById('auth-section');
+            const user = getUser();
+            if(user) {
+                section.innerHTML = `
+                    <div class="profile-header">
+                        <div class="avatar">${user.name.charAt(0).toUpperCase()}</div>
+                        <h3>${user.name}</h3>
+                        <p>${user.email}</p>
+                    </div>
+                    <div class="profile-menu">
+                        <div class="menu-item" onclick="showPage('saved')">💾 Saved Jobs (${getSavedIds().length})</div>
+                        <div class="menu-item" onclick="logout()" style="color:var(--danger)">🚪 Sign Out</div>
+                    </div>`;
+            } else {
+                section.innerHTML = `
+                    <div class="auth-container" id="loginForm">
+                        <h2>Sign In</h2>
+                        <div id="authAlert"></div>
+                        <div class="form-group"><label>Email</label><input type="email" id="loginEmail"></div>
+                        <div class="form-group"><label>Password</label><input type="password" id="loginPass"></div>
+                        <button class="btn btn-primary" onclick="doLogin()">Sign In</button>
+                        <div class="auth-toggle">No account? <a onclick="toggleAuth(true)">Create one</a></div>
+                    </div>
+                    <div class="auth-container" id="signupForm" style="display:none">
+                        <h2>Create Account</h2>
+                        <div id="signupAlert"></div>
+                        <div class="form-group"><label>Full Name</label><input type="text" id="signupName"></div>
+                        <div class="form-group"><label>Email</label><input type="email" id="signupEmail"></div>
+                        <div class="form-group"><label>Password</label><input type="password" id="signupPass"></div>
+                        <button class="btn btn-primary" onclick="doSignup()">Create Account</button>
+                        <div class="auth-toggle">Have an account? <a onclick="toggleAuth(false)">Sign In</a></div>
+                    </div>`;
+            }
+        }
+
+        function toggleAuth(showSignup) {
+            document.getElementById('loginForm').style.display = showSignup ? 'none' : 'block';
+            document.getElementById('signupForm').style.display = showSignup ? 'block' : 'none';
+        }
+
+        function doSignup() {
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+            const pass = document.getElementById('signupPass').value;
+            if(!name || !email || !pass) return;
+            const users = getUsers();
+            if(users[email]) return;
+            users[email] = { name, email, pass, savedJobs: [] };
+            saveUsers(users);
+            setUser({ name, email, savedJobs: [] });
+        }
+
+        function doLogin() {
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const pass = document.getElementById('loginPass').value;
+            const users = getUsers();
+            if(users[email] && users[email].pass === pass) {
+                const {pass:_, ...userData} = users[email];
+                setUser(userData);
+            }
+        }
+
+        // INIT
+        renderFilters();
+        renderEmployers();
+        updateUI();
+    </script>
 </body>
 </html>
