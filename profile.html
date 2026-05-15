@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#1a237e">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <link rel="apple-touch-icon" href="/public/icons/16724.jpg">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root { --teal:#00897b; --purple:#6a1b9a; --dark:#0d0d0d; --card:#1a1a2e; --text:#f0f0f0; --muted:#aaa; }
@@ -77,7 +77,7 @@
 <body>
 
 <header>
-  <img src="/icons/icon-192x192.png" alt="FairChance Finder Logo">
+  <img src="/public/icons/16724.jpg" alt="FairChance Finder Logo">
   <h1><span>FairChance</span> <span>Finder</span></h1>
 </header>
 
@@ -128,6 +128,18 @@
 </div>
 
 <div class="section">
+  <h3>Resume & Documents</h3>
+  <div style="background:var(--card);border-radius:12px;padding:16px;margin-bottom:16px;border:1px solid #333">
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:12px">Upload a resume once, download it later, and attach it when applying to jobs.</p>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <input type="file" id="resumeFile" accept=".pdf,.doc,.docx,.txt,.rtf" style="flex:1 1 200px;font-size:13px;color:var(--muted)">
+      <button onclick="uploadResume()" style="padding:9px 18px;background:var(--teal);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Upload</button>
+    </div>
+    <div id="resumeFiles" style="margin-top:12px"></div>
+  </div>
+</div>
+
+<div class="section">
   <h3>Account</h3>
   <div class="menu-list">
     <a href="/privacy-policy.html" class="menu-item">
@@ -140,7 +152,7 @@
       <span class="m-label">Terms of Service</span>
       <span class="m-arrow">›</span>
     </div>
-    <div class="menu-item" onclick="showToast('Support: support@fairchancefinder.com')">
+    <div class="menu-item" onclick="showToast('Support: EPCSR@fairchancefinder.com')">
       <span class="m-icon">💬</span>
       <span class="m-label">Contact Support</span>
       <span class="m-arrow">›</span>
@@ -158,7 +170,12 @@
   </div>
 </div>
 
-<div class="version-text">FairChance Finder v1.0.0 · Made with ❤️ in Phoenix, AZ</div>
+<div class="version-text">
+  FairChance Finder v1.0.0 · Phoenix, AZ<br>
+  <a href="/privacy-policy.html" style="color:var(--teal);text-decoration:none;">Privacy Notice</a> ·
+  <a href="mailto:empickel.93@gmail.com" style="color:var(--teal);text-decoration:none;">Personal Contact</a> ·
+  <a href="mailto:EPCSR@fairchancefinder.com" style="color:var(--teal);text-decoration:none;">Business Contact</a>
+</div>
 
 <div class="spacer"></div>
 <div id="toast"></div>
@@ -181,10 +198,10 @@
 </div>
 
 <nav>
-  <a href="/"><span>🔍</span> Search</a>
-  <a href="/my-apps.html"><span>📋</span> My Apps</a>
-  <a href="/resources.html"><span>🤝</span> Resources</a>
-  <a href="/profile.html" class="active" aria-current="page"><span>👤</span> Profile</a>
+  <a href="/"><span>&#127968;</span> Home</a>
+  <a href="/my-apps.html"><span>&#128203;</span> My Apps</a>
+  <a href="/resources.html"><span>&#129309;</span> Resources</a>
+  <a href="/profile.html" class="active" aria-current="page"><span>&#128100;</span> Profile</a>
 </nav>
 
 <script>
@@ -263,9 +280,9 @@ function saveProfile() {
 
 function shareApp() {
   if (navigator.share) {
-    navigator.share({ title: 'FairChance Finder', text: 'Find fair-chance jobs that hire regardless of background!', url: 'https://fairchancefinder.netlify.app' });
+    navigator.share({ title: 'FairChance Finder', text: 'Find fair-chance jobs that hire regardless of background!', url: 'https://fairchancefinder.com' });
   } else {
-    navigator.clipboard.writeText('https://fairchancefinder.netlify.app').then(() => showToast('Link copied!'));
+    navigator.clipboard.writeText('https://fairchancefinder.com').then(() => showToast('Link copied!'));
   }
 }
 
@@ -288,8 +305,66 @@ function showToast(msg) {
 
 render();
 
+function getClientId() {
+  var id = localStorage.getItem('fcf_client_id');
+  if (!id) {
+    id = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+    localStorage.setItem('fcf_client_id', id);
+  }
+  return id;
+}
+
+async function uploadResume() {
+  var input = document.getElementById('resumeFile');
+  var file = input && input.files && input.files[0];
+  if (!file) { showToast('Choose a file first.'); return; }
+  if (file.size > 5 * 1024 * 1024) { showToast('File size limit is 5 MB.'); return; }
+  var form = new FormData();
+  form.append('file', file);
+  form.append('clientId', getClientId());
+  var res = await fetch('/api/uploads', { method: 'POST', body: form });
+  if (!res.ok) { showToast('Upload failed. Try again.'); return; }
+  input.value = '';
+  showToast('File uploaded!');
+  await renderResumeFiles();
+}
+
+async function renderResumeFiles() {
+  var el = document.getElementById('resumeFiles');
+  if (!el) return;
+  try {
+    var res = await fetch('/api/uploads?clientId=' + encodeURIComponent(getClientId()));
+    var data = res.ok ? await res.json() : { files: [] };
+    if (!data.files.length) {
+      el.innerHTML = '<p style="font-size:.8rem;color:var(--muted)">No uploaded documents yet.</p>';
+      return;
+    }
+    el.innerHTML = data.files.map(function(file){
+      return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#111;border:1px solid #333;border-radius:8px;font-size:.82rem;margin-bottom:6px">' +
+        '<span>' + file.name + '</span>' +
+        '<span style="display:flex;gap:8px;align-items:center">' +
+          '<button onclick=\'selectResume(' + JSON.stringify(file).replace(/'/g, "\\'") + ')\' style="padding:4px 12px;background:rgba(106,27,154,0.2);color:#ce93d8;border:1px solid #6a1b9a;border-radius:6px;font-size:.75rem;cursor:pointer">Attach</button>' +
+          '<a href="' + file.downloadUrl + '" target="_blank" rel="noopener" style="color:var(--teal);font-size:.78rem">Download</a>' +
+        '</span></div>';
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<p style="font-size:.8rem;color:var(--muted)">Could not load files.</p>';
+  }
+}
+
+function selectResume(file) {
+  localStorage.setItem('fcf_selected_resume', JSON.stringify(file));
+  showToast(file.name + ' will be attached to new applications.');
+}
+
+renderResumeFiles();
+
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(() => {});
+  navigator.serviceWorker.getRegistrations()
+    .then(registrations => Promise.all(registrations.map(registration => registration.unregister())))
+    .then(() => window.caches ? window.caches.keys() : undefined)
+    .then(keys => keys ? Promise.all(keys.map(key => window.caches.delete(key))) : undefined)
+    .catch(() => {});
 }
 </script>
 </body>

@@ -1,3 +1,6 @@
+// Compatibility script for older cached pages that still reference /app/main.js.
+// The current home page owns its main behavior inline in index.html.
+
 // --- MOCK JOB DATA (temporary, like your old version)
 const JOBS = [
   { id: 1, title: "Warehouse Associate", company: "Amazon", location: "Phoenix, AZ", category: "warehouse" },
@@ -12,6 +15,7 @@ let currentCategory = "all";
 // --- RENDER JOBS (this fills the screen)
 function renderJobs(list) {
   const grid = document.getElementById("jobsGrid");
+  if (!grid) return;
 
   if (!list.length) {
     grid.innerHTML = "<p style='text-align:center;color:#aaa'>No jobs found</p>";
@@ -44,7 +48,7 @@ document.addEventListener("click", (e) => {
 
   // scroll button
   if (e.target.matches("[data-scroll]")) {
-    document.getElementById("jobsGrid").scrollIntoView({ behavior: "smooth" });
+    document.getElementById("jobsGrid")?.scrollIntoView({ behavior: "smooth" });
   }
 
   // navigation buttons
@@ -62,7 +66,7 @@ document.addEventListener("click", (e) => {
 
 // --- SEARCH BUTTON
 document.getElementById("searchBtn")?.addEventListener("click", () => {
-  const query = document.getElementById("searchInput").value.toLowerCase();
+  const query = document.getElementById("searchInput")?.value.toLowerCase() || "";
 
   const filtered = JOBS.filter(job =>
     job.title.toLowerCase().includes(query) ||
@@ -73,4 +77,8 @@ document.getElementById("searchBtn")?.addEventListener("click", () => {
 });
 
 // --- INITIAL LOAD
-renderJobs(JOBS);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => renderJobs(JOBS));
+} else {
+  renderJobs(JOBS);
+}

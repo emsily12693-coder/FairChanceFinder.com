@@ -1,634 +1,466 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FairChance Finder — Phoenix, AZ</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --primary-light: #dbeafe;
-            --accent: #f59e0b;
-            --accent-dark: #d97706;
-            --success: #10b981;
-            --danger: #ef4444;
-            --bg: #f0f4f8;
-            --card: #ffffff;
-            --text: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --shadow: 0 1px 3px rgba(0,0,0,.1);
-            --radius: 12px;
-        }
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            padding-bottom: 80px;
-            line-height: 1.5;
-        }
-        a { color: var(--primary); text-decoration: none; transition: 0.2s; }
-        a:hover { text-decoration: underline; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FairChance Finder — Phoenix, AZ</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1a237e">
+  <meta name="description" content="Connecting justice-impacted individuals with verified fair-chance employers in Phoenix, AZ and beyond.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/public/icons/16724.jpg">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --teal:#00897b; --purple:#6a1b9a; --dark:#0d0d0d; --card:#1a1a2e; --text:#f0f0f0; --muted:#aaa; --border:#333; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; }
 
-        /* NAVIGATION */
-        .top-bar {
-            background: var(--primary);
-            color: #fff;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .top-bar h1 { font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-        .top-bar .acct-btn {
-            background: rgba(255,255,255,.2);
-            border: none;
-            color: #fff;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: .82rem;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.2s;
-        }
-        .top-bar .acct-btn:hover { background: rgba(255,255,255,.35); }
+    /* HEADER */
+    header { background: #000; padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--teal); position: sticky; top: 0; z-index: 100; }
+    header img { width: 40px; height: 40px; border-radius: 8px; }
+    header h1 { font-size: 20px; }
+    header h1 span:first-child { color: var(--teal); }
+    header h1 span:last-child { color: var(--purple); }
 
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #fff;
-            border-top: 1px solid var(--border);
-            display: flex;
-            z-index: 100;
-            box-shadow: 0 -2px 10px rgba(0,0,0,.06);
-        }
-        .bottom-nav button {
-            flex: 1;
-            border: none;
-            background: none;
-            padding: 10px 4px 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            font-size: .65rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-weight: 500;
-            transition: .2s;
-        }
-        .bottom-nav button.active { color: var(--primary); font-weight: 700; }
-        .bottom-nav button svg { width: 22px; height: 22px; }
+    /* HERO */
+    .hero { background: linear-gradient(135deg, #1a237e 0%, var(--purple) 100%); border-radius: 12px; padding: 28px 20px; color: #fff; margin: 16px 20px; text-align: center; }
+    .hero h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; }
+    .hero p { font-size: .88rem; opacity: .85; line-height: 1.5; }
 
-        /* PAGES */
-        .page { display: none; max-width: 600px; margin: 0 auto; padding: 16px; animation: fadeIn 0.3s ease-in-out; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    /* STATS */
+    .stats-row { display: flex; gap: 10px; padding: 0 20px 16px; }
+    .stat-box { flex: 1; background: var(--card); border-radius: 10px; padding: 14px; text-align: center; border: 1px solid var(--border); }
+    .stat-box .num { font-size: 1.4rem; font-weight: 700; color: var(--teal); }
+    .stat-box .label { font-size: .7rem; color: var(--muted); margin-top: 2px; }
 
-        /* COMPONENTS */
-        .card {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-        }
-        .card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
-        .card .company { color: var(--primary); font-weight: 600; font-size: .85rem; }
-        .card .meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; font-size: .78rem; color: var(--text-muted); }
-        .card .meta span { display: flex; align-items: center; gap: 4px; }
-        
-        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: .7rem; font-weight: 600; margin-right: 6px; margin-top: 6px; }
-        .badge-green { background: #d1fae5; color: #065f46; }
-        .badge-blue { background: var(--primary-light); color: var(--primary-dark); }
-        .badge-amber { background: #fef3c7; color: #92400e; }
+    /* SEARCH & FILTERS */
+    .search-wrap { padding: 0 20px 12px; position: relative; }
+    .search-wrap input {
+      width: 100%; padding: 12px 16px 12px 42px; border-radius: 10px;
+      border: 1.5px solid var(--border); background: var(--card); color: var(--text);
+      font-size: .9rem; outline: none; transition: .2s;
+    }
+    .search-wrap input:focus { border-color: var(--teal); }
+    .search-wrap input::placeholder { color: #666; }
+    .search-wrap .search-icon { position: absolute; left: 34px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 16px; pointer-events: none; }
 
-        .save-btn {
-            background: none;
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 5px 14px;
-            font-size: .75rem;
-            cursor: pointer;
-            color: var(--text-muted);
-            font-weight: 600;
-            margin-top: 12px;
-            transition: .2s;
-        }
-        .save-btn:hover, .save-btn.saved { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .filter-row { display: flex; gap: 8px; padding: 0 20px 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .filter-chip { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 13px; cursor: pointer; white-space: nowrap; transition: all .2s; }
+    .filter-chip.active { background: var(--teal); color: #fff; border-color: var(--teal); }
 
-        /* HERO & STATS */
-        .hero {
-            background: linear-gradient(135deg, var(--primary), #7c3aed);
-            border-radius: var(--radius);
-            padding: 28px 20px;
-            color: #fff;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-        .hero h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
-        .hero p { font-size: .9rem; opacity: .9; line-height: 1.5; }
+    /* SECTION */
+    .section { padding: 0 20px; }
+    .section-title { font-size: 17px; font-weight: 700; margin: 16px 0 12px; display: flex; align-items: center; gap: 8px; }
 
-        .stats { display: flex; gap: 12px; margin: 16px 0; }
-        .stat {
-            flex: 1;
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 16px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-        }
-        .stat .num { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
-        .stat .label { font-size: .75rem; color: var(--text-muted); margin-top: 2px; }
+    /* AD BANNER */
+    .ad-banner { background: var(--card); border: 1.5px dashed #555; border-radius: 12px; padding: 18px; text-align: center; margin: 16px 20px; position: relative; }
+    .ad-banner .ad-label { position: absolute; top: 6px; right: 10px; font-size: .6rem; color: #666; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+    .ad-banner h4 { font-size: .95rem; color: var(--teal); margin-bottom: 4px; }
+    .ad-banner p { font-size: .78rem; color: var(--muted); }
+    .ad-cta { display: inline-block; margin-top: 10px; padding: 7px 20px; background: var(--teal); color: #fff; border-radius: 20px; font-size: .8rem; font-weight: 600; cursor: pointer; text-decoration: none; }
+    .ad-contact { font-size: .7rem; color: #666; margin-top: 8px; }
+    .ad-contact a { color: var(--teal); text-decoration: none; }
 
-        /* SEARCH & FILTERS */
-        .search-box { position: relative; margin-bottom: 12px; }
-        .search-box input {
-            width: 100%;
-            padding: 12px 16px 12px 42px;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius);
-            font-size: .9rem;
-            background: var(--card);
-            transition: .2s;
-        }
-        .search-box input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
-        .search-box svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px; height: 18px; }
-        
-        .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
-        .filter-btn {
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1.5px solid var(--border);
-            background: var(--card);
-            font-size: .78rem;
-            cursor: pointer;
-            font-weight: 500;
-            transition: .2s;
-            color: var(--text);
-        }
-        .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    /* JOB CARDS */
+    .job-card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--teal); }
+    .job-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 3px; }
+    .job-card .company { color: var(--teal); font-size: .82rem; font-weight: 600; }
+    .job-card .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; font-size: .75rem; color: var(--muted); }
+    .job-card .meta span { display: flex; align-items: center; gap: 4px; }
+    .job-card-link { display: block; color: inherit; text-decoration: none; }
+    .job-card-link:hover { text-decoration: none; }
 
-        /* AD BANNERS */
-        .ad-banner {
-            background: linear-gradient(135deg, #f8fafc, #eef2ff);
-            border: 1.5px dashed #cbd5e1;
-            border-radius: var(--radius);
-            padding: 18px;
-            text-align: center;
-            margin: 16px 0;
-            position: relative;
-        }
-        .ad-banner .ad-label { position: absolute; top: 6px; right: 10px; font-size: .6rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-        .ad-banner h4 { font-size: .95rem; color: var(--primary); margin-bottom: 4px; }
-        .ad-banner p { font-size: .78rem; color: var(--text-muted); }
-        .ad-cta {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 7px 20px;
-            background: var(--primary);
-            color: #fff;
-            border-radius: 20px;
-            font-size: .8rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .ad-contact { font-size: .7rem; color: #94a3b8; margin-top: 8px; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: .68rem; font-weight: 600; margin-right: 5px; margin-top: 6px; }
+    .badge-green { background: rgba(0,137,123,0.15); color: var(--teal); border: 1px solid var(--teal); }
+    .badge-blue { background: rgba(106,27,154,0.15); color: #ce93d8; border: 1px solid var(--purple); }
 
-        /* RESOURCES */
-        .resource-section { background: var(--card); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow); border: 1px solid var(--border); }
-        .resource-section h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-        .resource-section p { font-size: .85rem; color: var(--text-muted); margin-bottom: 12px; }
-        .resource-links { display: flex; flex-direction: column; gap: 8px; }
-        .resource-links a {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 14px;
-            background: #f8fafc;
-            border-radius: 8px;
-            font-size: .83rem;
-            font-weight: 500;
-            color: var(--primary);
-            border: 1px solid var(--border);
-        }
-        .resource-links a:hover { background: var(--primary-light); border-color: var(--primary); text-decoration: none; }
-        .resource-links a .arrow { margin-left: auto; font-size: .75rem; color: #94a3b8; }
+    .job-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .btn { padding: 9px 16px; border: none; border-radius: 8px; font-size: .8rem; font-weight: 600; cursor: pointer; transition: .2s; text-align: center; text-decoration: none; }
+    .btn-primary { background: var(--teal); color: #fff; }
+    .btn-primary:hover { background: #00796b; }
+    .btn-secondary { background: rgba(106,27,154,0.2); color: #ce93d8; border: 1px solid var(--purple); }
+    .btn-secondary:hover { background: rgba(106,27,154,0.35); }
+    .save-btn { background: none; border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; font-size: .75rem; cursor: pointer; color: var(--muted); font-weight: 600; transition: .2s; }
+    .save-btn:hover, .save-btn.saved { background: var(--teal); color: #fff; border-color: var(--teal); }
 
-        /* AUTH & PROFILE */
-        .auth-container { max-width: 400px; margin: 40px auto; }
-        .auth-container h2 { text-align: center; margin-bottom: 24px; font-size: 1.3rem; }
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: .82rem; font-weight: 600; margin-bottom: 6px; }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 11px 14px;
-            border: 1.5px solid var(--border);
-            border-radius: 8px;
-            font-size: .88rem;
-            transition: .2s;
-        }
-        .form-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: .9rem; font-weight: 700; cursor: pointer; transition: .2s; text-align: center; }
-        .btn-primary { background: var(--primary); color: #fff; }
-        .btn-primary:hover { background: var(--primary-dark); }
-        .auth-toggle { text-align: center; margin-top: 16px; font-size: .84rem; color: var(--text-muted); }
-        .auth-toggle a { cursor: pointer; font-weight: 600; color: var(--primary); }
+    /* EMPLOYER CARDS */
+    .employer-card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--purple); }
+    .employer-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 3px; }
+    .employer-card .industry { color: var(--teal); font-size: .82rem; font-weight: 600; }
+    .employer-card p { font-size: .82rem; color: var(--muted); margin-top: 6px; line-height: 1.5; }
 
-        .profile-header { text-align: center; padding: 24px 0; }
-        .avatar { width: 72px; height: 72px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; margin: 0 auto 12px; }
-        .profile-menu .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            background: var(--card);
-            border-radius: var(--radius);
-            margin-bottom: 8px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            cursor: pointer;
-            font-size: .88rem;
-            font-weight: 500;
-        }
-        .profile-menu .menu-item:hover { border-color: var(--primary); color: var(--primary); }
+    /* MODAL */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 300; display: none; padding: 18px; overflow: auto; }
+    .modal-backdrop.open { display: flex; align-items: flex-start; justify-content: center; }
+    .modal-panel { background: var(--card); border-radius: 16px; width: min(560px,100%); margin: 36px auto; padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+    .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+    .modal-close { border: 0; background: #333; border-radius: 999px; width: 34px; height: 34px; cursor: pointer; font-size: 20px; line-height: 1; color: var(--muted); }
+    .modal-close:hover { background: #444; }
+    .detail-list { padding-left: 18px; margin: 12px 0; font-size: .85rem; color: var(--muted); }
+    .detail-list li { margin-bottom: 6px; }
 
-        .alert { padding: 12px 16px; border-radius: 8px; font-size: .84rem; margin-bottom: 12px; font-weight: 500; }
-        .alert-success { background: #d1fae5; color: #065f46; }
-        .alert-error { background: #fee2e2; color: #991b1b; }
+    /* EMPTY STATE */
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--muted); }
+    .empty-state h3 { font-size: 18px; margin-bottom: 8px; color: var(--text); }
 
-        .section-title { font-size: 1.1rem; font-weight: 700; margin: 24px 0 12px; display: flex; align-items: center; gap: 8px; }
-        .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
-        .empty-state svg { width: 48px; height: 48px; margin-bottom: 12px; color: #cbd5e1; }
-    </style>
+    /* PAGES (tabs within index) */
+    .tab-page { display: none; }
+    .tab-page.active { display: block; }
+
+    /* FOOTER */
+    .footer-links { text-align: center; color: var(--muted); font-size: 12px; padding: 16px 20px 8px; line-height: 1.8; }
+    .footer-links a { color: var(--teal); text-decoration: none; }
+    .spacer { height: 80px; }
+
+    /* BOTTOM NAV */
+    nav { position: fixed; bottom: 0; left: 0; right: 0; background: #000; display: flex; border-top: 1px solid #333; z-index: 100; }
+    nav a { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0; color: var(--muted); text-decoration: none; font-size: 11px; gap: 3px; transition: .2s; }
+    nav a.active { color: var(--teal); }
+    nav a span { font-size: 20px; }
+
+    /* TOAST */
+    #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--teal); color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 14px; display: none; z-index: 200; white-space: nowrap; }
+  </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <h1>⚖️ FairChance Finder</h1>
-        <button class="acct-btn" onclick="showPage('account')" id="acctTopBtn">Sign In</button>
+<header>
+  <img src="/public/icons/16724.jpg" alt="FairChance Finder Logo">
+  <h1><span>FairChance</span> <span>Finder</span></h1>
+</header>
+
+<!-- TAB: HOME (default) -->
+<div class="tab-page active" id="tab-home">
+  <div class="hero">
+    <h2>Your Second Chance Starts Here</h2>
+    <p>Connecting justice-impacted individuals with verified fair-chance employers in Phoenix, AZ and beyond.</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-box"><div class="num">250+</div><div class="label">Jobs Listed</div></div>
+    <div class="stat-box"><div class="num">85+</div><div class="label">Employers</div></div>
+    <div class="stat-box"><div class="num">12</div><div class="label">Categories</div></div>
+  </div>
+
+  <div class="ad-banner">
+    <div class="ad-label">Advertisement</div>
+    <h4>Your Ad Here</h4>
+    <p>Reach thousands of motivated job seekers in Phoenix, AZ.</p>
+    <a href="mailto:EPCSR@fairchancefinder.com" class="ad-cta">Advertise With Us</a>
+    <div class="ad-contact">Email: <a href="mailto:EPCSR@fairchancefinder.com">EPCSR@fairchancefinder.com</a></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Featured Jobs</div>
+    <div id="featured-jobs"></div>
+  </div>
+
+  <div class="ad-banner">
+    <div class="ad-label">Advertisement</div>
+    <h4>Employers: Post Your Jobs</h4>
+    <p>Get your listings in front of qualified, motivated candidates.</p>
+    <a href="mailto:EPCSR@fairchancefinder.com" class="ad-cta">Learn More</a>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Fair-Chance Employers</div>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px">Companies committed to fair-chance hiring in Phoenix, AZ.</p>
+    <div id="employer-list"></div>
+  </div>
+</div>
+
+<!-- TAB: SEARCH -->
+<div class="tab-page" id="tab-search">
+  <div style="padding:20px 20px 8px">
+    <div class="section-title" style="margin-top:0">Search Jobs</div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="searchInput" placeholder="Search jobs, companies, keywords..." oninput="renderJobs()">
+  </div>
+  <div class="filter-row" id="categoryFilters"></div>
+  <div class="section">
+    <div id="job-list"></div>
+  </div>
+</div>
+
+<!-- TAB: SAVED -->
+<div class="tab-page" id="tab-saved">
+  <div style="padding:20px 20px 8px">
+    <div class="section-title" style="margin-top:0">Saved Jobs</div>
+  </div>
+  <div class="section">
+    <div id="saved-list"></div>
+  </div>
+</div>
+
+<!-- JOB DETAIL MODAL -->
+<div class="modal-backdrop" id="jobModal" aria-hidden="true">
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="jobModalTitle">
+    <div class="modal-head">
+      <div>
+        <h2 id="jobModalTitle" style="font-size:1.1rem"></h2>
+        <div class="company" id="jobModalCompany" style="color:var(--teal);font-size:.85rem;margin-top:4px"></div>
+      </div>
+      <button class="modal-close" onclick="closeJobModal()" aria-label="Close job detail">&times;</button>
     </div>
+    <div id="jobModalBody"></div>
+  </div>
+</div>
 
-    <!-- HOME PAGE -->
-    <div class="page active" id="page-home">
-        <div class="hero">
-            <h2>Your Second Chance Starts Here</h2>
-            <p>Connecting justice-impacted individuals with verified fair-chance employers in Phoenix, AZ and beyond.</p>
-        </div>
-        <div class="stats">
-            <div class="stat"><div class="num">250+</div><div class="label">Jobs Listed</div></div>
-            <div class="stat"><div class="num">85+</div><div class="label">Employers</div></div>
-            <div class="stat"><div class="num">12</div><div class="label">Categories</div></div>
-        </div>
+<div class="footer-links">
+  <a href="/privacy-policy.html">Privacy Notice</a> &middot;
+  <a href="mailto:empickel.93@gmail.com">Personal Contact</a> &middot;
+  <a href="mailto:EPCSR@fairchancefinder.com">Business Contact</a>
+</div>
+<div class="spacer"></div>
+<div id="toast"></div>
 
-        <div class="ad-banner">
-            <div class="ad-label">Advertisement</div>
-            <h4>📢 Your Ad Here</h4>
-            <p>Reach thousands of motivated job seekers in Phoenix, AZ.</p>
-            <div class="ad-cta" onclick="showPage('advertise')">Advertise With Us</div>
-            <div class="ad-contact">Email: <a href="mailto:advertise@fairchancefinder.com">advertise@fairchancefinder.com</a></div>
-        </div>
+<nav>
+  <a href="/" class="active" id="nav-home" onclick="event.preventDefault(); showTab('home')"><span>&#127968;</span> Home</a>
+  <a href="/" id="nav-search" onclick="event.preventDefault(); showTab('search')"><span>&#128269;</span> Search</a>
+  <a href="/" id="nav-saved" onclick="event.preventDefault(); showTab('saved')"><span>&#128278;</span> Saved</a>
+  <a href="/my-apps.html" id="nav-apps"><span>&#128203;</span> My Apps</a>
+  <a href="/resources.html" id="nav-resources"><span>&#129309;</span> Resources</a>
+  <a href="/profile.html" id="nav-profile"><span>&#128100;</span> Profile</a>
+</nav>
 
-        <div class="section-title">🔥 Featured Jobs</div>
-        <div id="featured-jobs"></div>
+<script>
+const jobs = [
+  {id:1,title:"Customer Service Representative",company:"T-Mobile",location:"Phoenix, AZ",pay:"$18-22/hr",type:"Full-Time",category:"Customer Service",perks:["Benefits","Training"],featured:true,applyUrl:"https://www.t-mobile.com/careers",summary:"Support customers with account, billing, and device questions in a structured call center environment."},
+  {id:2,title:"Administrative Assistant",company:"JPMorgan Chase",location:"Tempe, AZ",pay:"$19-24/hr",type:"Full-Time",category:"Office & Admin",perks:["Benefits","401k"],featured:true,applyUrl:"https://careers.jpmorgan.com/us/en/home",summary:"Coordinate schedules, documents, and office support for a financial services operations team."},
+  {id:3,title:"Warehouse Associate",company:"Amazon",location:"Phoenix, AZ",pay:"$17-21/hr",type:"Full-Time",category:"Warehouse",perks:["Flexible","Benefits"],featured:true,applyUrl:"https://hiring.amazon.com/",summary:"Pick, pack, sort, and ship customer orders in a fast-paced warehouse setting."},
+  {id:4,title:"Customer Support Specialist",company:"Concentrix",location:"Remote (AZ)",pay:"$16-20/hr",type:"Full-Time",category:"Customer Service",perks:["Remote","Training"],featured:true,applyUrl:"https://jobs.concentrix.com/",summary:"Provide remote customer support with paid training and documented workflows."},
+  {id:5,title:"HVAC Apprentice",company:"Comfort Systems USA",location:"Mesa, AZ",pay:"$20-26/hr",type:"Full-Time",category:"Skilled Trades",perks:["Apprenticeship"],applyUrl:"https://comfortsystemsusa.com/careers/",summary:"Learn HVAC installation and service work while assisting licensed technicians."},
+  {id:6,title:"Maintenance Technician",company:"Waste Management",location:"Phoenix, AZ",pay:"$22-28/hr",type:"Full-Time",category:"Skilled Trades",perks:["Benefits"],applyUrl:"https://careers.wm.com/",summary:"Maintain facility equipment, troubleshoot repairs, and support daily operations."},
+  {id:7,title:"IT Help Desk",company:"TEKsystems",location:"Tempe, AZ",pay:"$20-26/hr",type:"Full-Time",category:"Tech",perks:["Growth"],applyUrl:"https://www.teksystems.com/en/careers",summary:"Resolve basic hardware, software, and account support tickets for business users."},
+  {id:8,title:"Crew Member",company:"Chipotle",location:"Phoenix, AZ",pay:"$15-18/hr",type:"Full-Time",category:"Food Service",perks:["Tuition"],applyUrl:"https://jobs.chipotle.com/",summary:"Prepare food, serve guests, and keep the restaurant clean during scheduled shifts."},
+  {id:9,title:"Package Handler",company:"FedEx Ground",location:"Phoenix, AZ",pay:"$17-20/hr",type:"Part-Time",category:"Warehouse",perks:["Flexible"],applyUrl:"https://careers.fedex.com/",summary:"Load, unload, scan, and move packages safely through the facility."},
+  {id:10,title:"Front Desk Agent",company:"Hilton",location:"Scottsdale, AZ",pay:"$16-20/hr",type:"Full-Time",category:"Hospitality",perks:["Discounts"],applyUrl:"https://jobs.hilton.com/",summary:"Welcome guests, manage reservations, and support daily hotel front desk operations."},
+  {id:11,title:"Delivery Driver",company:"Amazon Flex",location:"Phoenix Metro",pay:"$18-25/hr",type:"Flexible",category:"Transport",perks:["Weekly Pay"],applyUrl:"https://flex.amazon.com/",summary:"Deliver packages using scheduled delivery blocks across the Phoenix metro area."},
+  {id:12,title:"Retail Associate",company:"Home Depot",location:"Chandler, AZ",pay:"$16-19/hr",type:"Full-Time",category:"Retail",perks:["Discount"],applyUrl:"https://careers.homedepot.com/",summary:"Assist customers, stock merchandise, and support store departments."},
+  {id:13,title:"Forklift Operator",company:"XPO Logistics",location:"Goodyear, AZ",pay:"$19-24/hr",type:"Full-Time",category:"Warehouse",perks:["Overtime"],applyUrl:"https://jobs.gxo.com/",summary:"Operate powered equipment, move freight, and support warehouse shipping lanes."},
+  {id:14,title:"Prep Cook",company:"Cracker Barrel",location:"Gilbert, AZ",pay:"$15-18/hr",type:"Full-Time",category:"Food Service",perks:["Flexible"],applyUrl:"https://careers.crackerbarrel.com/",summary:"Prepare ingredients and support kitchen teams during meal service."},
+  {id:15,title:"CDL Driver Trainee",company:"Schneider",location:"Phoenix, AZ",pay:"$22-30/hr",type:"Full-Time",category:"Transport",perks:["Paid Training"],applyUrl:"https://schneiderjobs.com/",summary:"Start a paid training path toward commercial driving roles."},
+  {id:16,title:"Data Entry Clerk",company:"Robert Half",location:"Remote (AZ)",pay:"$17-22/hr",type:"Contract",category:"Office & Admin",perks:["Remote"],applyUrl:"https://www.roberthalf.com/us/en/jobs",summary:"Enter, verify, and organize business records with accuracy and confidentiality."}
+];
 
-        <div class="ad-banner">
-            <div class="ad-label">Advertisement</div>
-            <h4>🏢 Employers: Post Your Jobs</h4>
-            <p>Get your listings in front of qualified, motivated candidates.</p>
-            <div class="ad-cta" onclick="showPage('advertise')">Learn More</div>
-        </div>
-    </div>
+const employers = [
+  {name:"Amazon",industry:"Logistics",desc:"Amazon pledged to fair-chance hiring and evaluates candidates individually."},
+  {name:"JPMorgan Chase",industry:"Finance",desc:"Second Chance program has hired thousands with records."},
+  {name:"T-Mobile",industry:"Telecom",desc:"Actively recruits fair-chance candidates for service roles."},
+  {name:"Home Depot",industry:"Retail",desc:"Removed the box from applications nationwide."},
+  {name:"Hilton",industry:"Hospitality",desc:"Partners with reentry organizations for staffing."},
+  {name:"Chipotle",industry:"Food Service",desc:"Offers tuition reimbursement and crew bonuses to all."},
+  {name:"FedEx",industry:"Logistics",desc:"Evaluates candidates individually with tuition assistance."},
+  {name:"Waste Management",industry:"Environmental",desc:"Strong fair-chance policy with competitive wages."},
+  {name:"XPO Logistics",industry:"Supply Chain",desc:"Warehouse careers with clear growth paths."},
+  {name:"Schneider",industry:"Transport",desc:"Paid CDL training for candidates with backgrounds."},
+  {name:"Concentrix",industry:"Business Services",desc:"Remote customer support with paid training."},
+  {name:"TEKsystems",industry:"IT Staffing",desc:"Places fair-chance candidates in tech roles."}
+];
 
-    <!-- SEARCH PAGE -->
-    <div class="page" id="page-search">
-        <div class="search-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <input type="text" id="searchInput" placeholder="Search jobs, companies, keywords..." oninput="renderJobs()">
-        </div>
-        <div class="filters" id="categoryFilters"></div>
-        <div id="job-list"></div>
-    </div>
+const categories = ["All", ...new Set(jobs.map(j => j.category))];
 
-    <!-- EMPLOYERS PAGE -->
-    <div class="page" id="page-employers">
-        <div class="section-title">🏢 Fair-Chance Employers</div>
-        <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px">These companies have committed to fair-chance hiring practices in Phoenix, AZ.</p>
-        <div id="employer-list"></div>
-    </div>
+// SAVED JOBS
+function getSavedIds() { return JSON.parse(localStorage.getItem('fcf_saved') || '[]'); }
+function setSavedIds(ids) { localStorage.setItem('fcf_saved', JSON.stringify(ids)); }
 
-    <!-- SAVED PAGE -->
-    <div class="page" id="page-saved">
-        <div class="section-title">💾 Saved Jobs</div>
-        <div id="saved-list"></div>
-    </div>
+// APPLICATIONS
+function loadApplications() { return JSON.parse(localStorage.getItem('fcf_applications') || '[]'); }
+function saveApplications(apps) { localStorage.setItem('fcf_applications', JSON.stringify(apps)); }
 
-    <!-- RESOURCES PAGE -->
-    <div class="page" id="page-resources">
-        <div class="section-title">📚 Resources & Support</div>
-        <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px">Real links to real help — legal rights, training, and more for Phoenix, AZ.</p>
-        
-        <div class="resource-section">
-            <h3>⚖️ Know Your Rights</h3>
-            <p>Arizona's Ban the Box law protects you. Know what applies to you.</p>
-            <div class="resource-links">
-                <a href="https://www.eeoc.gov/laws/guidance/what-you-should-know-eeoc-and-arrest-and-conviction-records-employment-decisions" target="_blank">EEOC Guidance <span class="arrow">→</span></a>
-                <a href="https://www.azleg.gov/legtext/56leg/1R/bills/HB2431P.htm" target="_blank">Arizona HB 2431 <span class="arrow">→</span></a>
-            </div>
-        </div>
+// TAB NAVIGATION
+function showTab(name) {
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  var tab = document.getElementById('tab-' + name);
+  if (tab) tab.classList.add('active');
+  var navEl = document.getElementById('nav-' + name);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo(0, 0);
+}
 
-        <div class="resource-section">
-            <h3>🔓 Record Sealing</h3>
-            <p>Arizona allows "setting aside" or sealing certain convictions.</p>
-            <div class="resource-links">
-                <a href="https://www.azcourts.gov/selfservicecenter/Self-Service-Forms/Set-Aside-Background" target="_blank">Set Aside Application <span class="arrow">→</span></a>
-                <a href="https://clsaz.org/" target="_blank">Community Legal Services <span class="arrow">→</span></a>
-            </div>
-        </div>
-    </div>
+// JOB CARD HTML
+function jobCard(job) {
+  var saved = getSavedIds().includes(job.id);
+  return '<div class="job-card">' +
+    '<a class="job-card-link" href="/?job=' + job.id + '" onclick="event.preventDefault(); openJobDetail(' + job.id + ')">' +
+      '<h3>' + job.title + '</h3>' +
+      '<div class="company">' + job.company + '</div>' +
+    '</a>' +
+    '<div class="meta">' +
+      '<span>' + job.location + '</span>' +
+      '<span>' + job.pay + '</span>' +
+      '<span>' + job.type + '</span>' +
+    '</div>' +
+    '<div>' +
+      job.perks.map(function(p){ return '<span class="badge badge-green">' + p + '</span>'; }).join('') +
+      '<span class="badge badge-blue">' + job.category + '</span>' +
+    '</div>' +
+    '<div class="job-actions">' +
+      '<button class="btn btn-primary" onclick="openJobDetail(' + job.id + ')">View Details</button>' +
+      '<button class="btn btn-secondary" onclick="startApplication(' + job.id + ')">Apply</button>' +
+      '<button class="save-btn ' + (saved ? 'saved' : '') + '" onclick="toggleSave(' + job.id + ')">' +
+        (saved ? 'Saved' : 'Save') +
+      '</button>' +
+    '</div>' +
+  '</div>';
+}
 
-    <!-- ACCOUNT PAGE -->
-    <div class="page" id="page-account">
-        <div id="auth-section"></div>
-    </div>
+function getJob(id) { return jobs.find(function(j){ return j.id === Number(id); }); }
 
-    <!-- ADVERTISE PAGE -->
-    <div class="page" id="page-advertise">
-        <div class="section-title">📢 Advertise With Us</div>
-        <div class="card">
-            <h3>Reach Phoenix Job Seekers</h3>
-            <p style="font-size:.88rem; margin-top:10px;">Connect with motivated individuals looking for a second chance.</p>
-            <a href="mailto:advertise@fairchancefinder.com" class="btn btn-primary" style="display:block; margin-top:20px; text-decoration:none;">📧 Email Us for Rates</a>
-        </div>
-    </div>
+// JOB DETAIL MODAL
+function openJobDetail(id) {
+  var job = getJob(id);
+  if (!job) return;
+  document.getElementById('jobModalTitle').textContent = job.title;
+  document.getElementById('jobModalCompany').textContent = job.company + ' • ' + job.location;
+  document.getElementById('jobModalBody').innerHTML =
+    '<p style="font-size:.88rem;color:var(--muted);margin:8px 0 12px">' + job.summary + '</p>' +
+    '<div class="meta" style="font-size:.8rem;color:var(--muted);margin-bottom:12px">' +
+      '<span>' + job.pay + '</span>' +
+      '<span>' + job.type + '</span>' +
+      '<span>' + job.category + '</span>' +
+    '</div>' +
+    '<ul class="detail-list">' +
+      '<li>Fair-chance friendly listing with individual candidate review.</li>' +
+      '<li>Resume upload can be attached from your Profile page before applying.</li>' +
+      '<li>External applications open on the employer career site.</li>' +
+    '</ul>' +
+    '<div class="job-actions">' +
+      '<button class="btn btn-primary" onclick="startApplication(' + job.id + ')">Apply Through Platform</button>' +
+      '<a class="btn btn-secondary" href="' + job.applyUrl + '" target="_blank" rel="noopener" onclick="recordExternalApply(' + job.id + ')">Company Website</a>' +
+    '</div>';
+  document.getElementById('jobModal').classList.add('open');
+  document.getElementById('jobModal').setAttribute('aria-hidden', 'false');
+  history.replaceState(null, '', '/?job=' + job.id);
+}
 
-    <!-- BOTTOM NAV -->
-    <div class="bottom-nav">
-        <button class="active" onclick="showPage('home')" id="nav-home">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            Home
-        </button>
-        <button onclick="showPage('search')" id="nav-search">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            Search
-        </button>
-        <button onclick="showPage('employers')" id="nav-employers">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
-            Employers
-        </button>
-        <button onclick="showPage('saved')" id="nav-saved">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
-            Saved
-        </button>
-        <button onclick="showPage('resources')" id="nav-resources">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-            Resources
-        </button>
-    </div>
+function closeJobModal() {
+  document.getElementById('jobModal').classList.remove('open');
+  document.getElementById('jobModal').setAttribute('aria-hidden', 'true');
+  history.replaceState(null, '', '/');
+}
 
-    <script>
-        // DATA
-        const jobs = [
-            {id:1,title:"Customer Service Representative",company:"T-Mobile",location:"Phoenix, AZ",pay:"$18–22/hr",type:"Full-Time",category:"Customer Service",perks:["Benefits","Training"],featured:true},
-            {id:2,title:"Administrative Assistant",company:"JPMorgan Chase",location:"Tempe, AZ",pay:"$19–24/hr",type:"Full-Time",category:"Office & Admin",perks:["Benefits","401k"],featured:true},
-            {id:3,title:"Warehouse Associate",company:"Amazon",location:"Phoenix, AZ",pay:"$17–21/hr",type:"Full-Time",category:"Warehouse",perks:["Flexible","Benefits"],featured:true},
-            {id:4,title:"Customer Support Specialist",company:"Concentrix",location:"Remote (AZ)",pay:"$16–20/hr",type:"Full-Time",category:"Customer Service",perks:["Remote","Training"],featured:true},
-            {id:5,title:"HVAC Apprentice",company:"Comfort Systems USA",location:"Mesa, AZ",pay:"$20–26/hr",type:"Full-Time",category:"Skilled Trades",perks:["Apprenticeship"]},
-            {id:6,title:"Maintenance Technician",company:"Waste Management",location:"Phoenix, AZ",pay:"$22–28/hr",type:"Full-Time",category:"Skilled Trades",perks:["Benefits"]},
-            {id:7,title:"IT Help Desk",company:"TEKsystems",location:"Tempe, AZ",pay:"$20–26/hr",type:"Full-Time",category:"Tech",perks:["Growth"]},
-            {id:8,title:"Crew Member",company:"Chipotle",location:"Phoenix, AZ",pay:"$15–18/hr",type:"Full-Time",category:"Food Service",perks:["Tuition"]},
-            {id:9,title:"Package Handler",company:"FedEx Ground",location:"Phoenix, AZ",pay:"$17–20/hr",type:"Part-Time",category:"Warehouse",perks:["Flexible"]},
-            {id:10,title:"Front Desk Agent",company:"Hilton",location:"Scottsdale, AZ",pay:"$16–20/hr",type:"Full-Time",category:"Hospitality",perks:["Discounts"]},
-            {id:11,title:"Delivery Driver",company:"Amazon Flex",location:"Phoenix Metro",pay:"$18–25/hr",type:"Flexible",category:"Transport",perks:["Weekly Pay"]},
-            {id:12,title:"Retail Associate",company:"Home Depot",location:"Chandler, AZ",pay:"$16–19/hr",type:"Full-Time",category:"Retail",perks:["Discount"]},
-            {id:13,title:"Forklift Operator",company:"XPO Logistics",location:"Goodyear, AZ",pay:"$19–24/hr",type:"Full-Time",category:"Warehouse",perks:["Overtime"]},
-            {id:14,title:"Prep Cook",company:"Cracker Barrel",location:"Gilbert, AZ",pay:"$15–18/hr",type:"Full-Time",category:"Food Service",perks:["Flexible"]},
-            {id:15,title:"CDL Driver Trainee",company:"Schneider",location:"Phoenix, AZ",pay:"$22–30/hr",type:"Full-Time",category:"Transport",perks:["Paid Training"]},
-            {id:16,title:"Data Entry Clerk",company:"Robert Half",location:"Remote (AZ)",pay:"$17–22/hr",type:"Contract",category:"Office & Admin",perks:["Remote"]}
-        ];
+function startApplication(id) {
+  var job = getJob(id);
+  if (!job) return;
+  var resume = JSON.parse(localStorage.getItem('fcf_selected_resume') || 'null');
+  var apps = loadApplications();
+  if (!apps.some(function(a){ return a.jobId === job.id; })) {
+    apps.push({title:job.title, company:job.company, location:job.location, pay:job.pay, type:job.type, category:job.category, jobId:job.id, id:Date.now(), appliedAt:new Date().toISOString(), resume:resume});
+    saveApplications(apps);
+  }
+  window.open(job.applyUrl, '_blank', 'noopener');
+  closeJobModal();
+  showToast('Application saved! View it in My Apps.');
+}
 
-        const employers = [
-            {name:"Amazon",industry:"Logistics",desc:"Amazon pledged to fair-chance hiring and evaluates candidates individually."},
-            {name:"JPMorgan Chase",industry:"Finance",desc:"Second Chance program has hired thousands with records."},
-            {name:"T-Mobile",industry:"Telecom",desc:"Actively recruits fair-chance candidates for service roles."},
-            {name:"Home Depot",industry:"Retail",desc:"Removed the box from applications nationwide."},
-            {name:"Hilton",industry:"Hospitality",desc:"Partners with reentry organizations for staffing."},
-            {name:"Chipotle",industry:"Food Service",desc:"Offers tuition reimbursement and crew bonuses to all."},
-            {name:"FedEx",industry:"Logistics",desc:"Evaluates candidates individually with tuition assistance."},
-            {name:"Waste Management",industry:"Environmental",desc:"Strong fair-chance policy with competitive wages."},
-            {name:"XPO Logistics",industry:"Supply Chain",desc:"Warehouse careers with clear growth paths."},
-            {name:"Schneider",industry:"Transport",desc:"Paid CDL training for candidates with backgrounds."},
-            {name:"Concentrix",industry:"Business Services",desc:"Remote customer support with paid training."},
-            {name:"TEKsystems",industry:"IT Staffing",desc:"Places fair-chance candidates in tech roles."}
-        ];
+function recordExternalApply(id) {
+  var job = getJob(id);
+  if (!job) return;
+  var apps = loadApplications();
+  if (!apps.some(function(a){ return a.jobId === job.id; })) {
+    apps.push({title:job.title, company:job.company, location:job.location, pay:job.pay, type:job.type, category:job.category, jobId:job.id, id:Date.now(), appliedAt:new Date().toISOString(), externalOnly:true});
+    saveApplications(apps);
+  }
+}
 
-        const categories = ["All", ...new Set(jobs.map(j => j.category))];
+// RENDER FUNCTIONS
+function renderFeatured() {
+  document.getElementById('featured-jobs').innerHTML = jobs.filter(function(j){ return j.featured; }).map(jobCard).join('');
+}
 
-        // STATE & STORAGE
-        function getUser() { return JSON.parse(localStorage.getItem('fcf_user') || 'null'); }
-        function setUser(u) { localStorage.setItem('fcf_user', JSON.stringify(u)); updateUI(); }
-        function logout() { localStorage.removeItem('fcf_user'); updateUI(); showPage('home'); }
-        function getUsers() { return JSON.parse(localStorage.getItem('fcf_users') || '{}'); }
-        function saveUsers(u) { localStorage.setItem('fcf_users', JSON.stringify(u)); }
-        function getSavedIds() {
-            const user = getUser();
-            return user ? (user.savedJobs || []) : JSON.parse(localStorage.getItem('fcf_saved') || '[]');
-        }
-        function setSavedIds(ids) {
-            const user = getUser();
-            if(user) {
-                user.savedJobs = ids;
-                setUser(user);
-                const users = getUsers();
-                if(users[user.email]) { users[user.email].savedJobs = ids; saveUsers(users); }
-            } else {
-                localStorage.setItem('fcf_saved', JSON.stringify(ids));
-            }
-        }
+function renderJobs() {
+  var q = document.getElementById('searchInput').value.toLowerCase();
+  var activeChip = document.querySelector('.filter-chip.active');
+  var cat = activeChip ? activeChip.dataset.cat : 'All';
+  var filtered = jobs.filter(function(j){
+    var matchesCat = (cat === 'All' || j.category === cat);
+    var matchesSearch = (j.title + j.company + j.location).toLowerCase().indexOf(q) !== -1;
+    return matchesCat && matchesSearch;
+  });
+  document.getElementById('job-list').innerHTML = filtered.length
+    ? filtered.map(jobCard).join('')
+    : '<div class="empty-state"><h3>No jobs found</h3><p>Try a different search or filter.</p></div>';
+}
 
-        // NAVIGATION
-        function showPage(name) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('active'));
-            const page = document.getElementById('page-' + name);
-            if(page) page.classList.add('active');
-            const nav = document.getElementById('nav-' + name);
-            if(nav) nav.classList.add('active');
-            window.scrollTo(0,0);
-            if(name === 'account') renderAccountPage();
-        }
+function renderFilters() {
+  document.getElementById('categoryFilters').innerHTML = categories.map(function(c){
+    return '<button class="filter-chip ' + (c === 'All' ? 'active' : '') + '" data-cat="' + c + '" onclick="setFilter(this)">' + c + '</button>';
+  }).join('');
+}
 
-        // UI RENDERING
-        function updateUI() {
-            const user = getUser();
-            document.getElementById('acctTopBtn').textContent = user ? user.name.split(' ')[0] : 'Sign In';
-            renderFeatured();
-            renderJobs();
-            renderSaved();
-        }
+function setFilter(btn) {
+  document.querySelectorAll('.filter-chip').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderJobs();
+}
 
-        function jobCard(job) {
-            const saved = getSavedIds().includes(job.id);
-            return `
-                <div class="card">
-                    <h3>${job.title}</h3>
-                    <div class="company">${job.company}</div>
-                    <div class="meta">
-                        <span>📍 ${job.location}</span>
-                        <span>💰 ${job.pay}</span>
-                        <span>🕐 ${job.type}</span>
-                    </div>
-                    <div>
-                        ${job.perks.map(p => `<span class="badge badge-green">${p}</span>`).join('')}
-                        <span class="badge badge-blue">${job.category}</span>
-                    </div>
-                    <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSave(${job.id})">
-                        ${saved ? '★ Saved' : '☆ Save Job'}
-                    </button>
-                </div>`;
-        }
+function renderEmployers() {
+  document.getElementById('employer-list').innerHTML = employers.map(function(e){
+    return '<div class="employer-card">' +
+      '<h3>' + e.name + '</h3>' +
+      '<div class="industry">' + e.industry + '</div>' +
+      '<p>' + e.desc + '</p>' +
+    '</div>';
+  }).join('');
+}
 
-        function renderFeatured() {
-            document.getElementById('featured-jobs').innerHTML = jobs.filter(j => j.featured).map(jobCard).join('');
-        }
+function renderSaved() {
+  var ids = getSavedIds();
+  var el = document.getElementById('saved-list');
+  if (!ids.length) {
+    el.innerHTML = '<div class="empty-state"><h3>No saved jobs</h3><p>Tap Save on any job to bookmark it here.</p></div>';
+    return;
+  }
+  el.innerHTML = jobs.filter(function(j){ return ids.indexOf(j.id) !== -1; }).map(jobCard).join('');
+}
 
-        function renderJobs() {
-            const q = document.getElementById('searchInput').value.toLowerCase();
-            const activeBtn = document.querySelector('.filter-btn.active');
-            const cat = activeBtn ? activeBtn.dataset.cat : 'All';
-            
-            let filtered = jobs.filter(j => {
-                const matchesCat = (cat === 'All' || j.category === cat);
-                const matchesSearch = (j.title + j.company + j.location).toLowerCase().includes(q);
-                return matchesCat && matchesSearch;
-            });
+function toggleSave(id) {
+  var ids = getSavedIds();
+  if (ids.indexOf(id) !== -1) {
+    ids = ids.filter(function(i){ return i !== id; });
+  } else {
+    ids.push(id);
+  }
+  setSavedIds(ids);
+  renderAll();
+  showToast(ids.indexOf(id) !== -1 ? 'Job saved!' : 'Job removed from saved.');
+}
 
-            document.getElementById('job-list').innerHTML = filtered.length 
-                ? filtered.map(jobCard).join('') 
-                : '<div class="empty-state"><h3>No jobs found</h3><p>Try a different search.</p></div>';
-        }
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(function(){ t.style.display = 'none'; }, 2500);
+}
 
-        function renderFilters() {
-            document.getElementById('categoryFilters').innerHTML = categories.map(c => `
-                <button class="filter-btn ${c === 'All' ? 'active' : ''}" data-cat="${c}" onclick="setFilter(this)">
-                    ${c}
-                </button>`).join('');
-        }
+function renderAll() {
+  renderFeatured();
+  renderJobs();
+  renderSaved();
+}
 
-        function setFilter(btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderJobs();
-        }
+// INIT
+renderFilters();
+renderEmployers();
+renderAll();
 
-        function renderEmployers() {
-            document.getElementById('employer-list').innerHTML = employers.map(e => `
-                <div class="card">
-                    <h3>🏢 ${e.name}</h3>
-                    <div class="company">${e.industry}</div>
-                    <p style="font-size:.85rem; margin-top:8px;">${e.desc}</p>
-                </div>`).join('');
-        }
+// Deep link: /?job=3
+var initialJob = new URLSearchParams(location.search).get('job');
+if (initialJob) openJobDetail(initialJob);
 
-        function renderSaved() {
-            const ids = getSavedIds();
-            const el = document.getElementById('saved-list');
-            if(!ids.length) {
-                el.innerHTML = `<div class="empty-state"><h3>No saved jobs</h3><p>Tap Save on any job to bookmark it.</p></div>`;
-                return;
-            }
-            el.innerHTML = jobs.filter(j => ids.includes(j.id)).map(jobCard).join('');
-        }
-
-        function toggleSave(id) {
-            let ids = getSavedIds();
-            ids = ids.includes(id) ? ids.filter(i => i !== id) : [...ids, id];
-            setSavedIds(ids);
-            updateUI();
-        }
-
-        // ACCOUNT SYSTEM
-        function renderAccountPage() {
-            const section = document.getElementById('auth-section');
-            const user = getUser();
-            if(user) {
-                section.innerHTML = `
-                    <div class="profile-header">
-                        <div class="avatar">${user.name.charAt(0).toUpperCase()}</div>
-                        <h3>${user.name}</h3>
-                        <p>${user.email}</p>
-                    </div>
-                    <div class="profile-menu">
-                        <div class="menu-item" onclick="showPage('saved')">💾 Saved Jobs (${getSavedIds().length})</div>
-                        <div class="menu-item" onclick="logout()" style="color:var(--danger)">🚪 Sign Out</div>
-                    </div>`;
-            } else {
-                section.innerHTML = `
-                    <div class="auth-container" id="loginForm">
-                        <h2>Sign In</h2>
-                        <div id="authAlert"></div>
-                        <div class="form-group"><label>Email</label><input type="email" id="loginEmail"></div>
-                        <div class="form-group"><label>Password</label><input type="password" id="loginPass"></div>
-                        <button class="btn btn-primary" onclick="doLogin()">Sign In</button>
-                        <div class="auth-toggle">No account? <a onclick="toggleAuth(true)">Create one</a></div>
-                    </div>
-                    <div class="auth-container" id="signupForm" style="display:none">
-                        <h2>Create Account</h2>
-                        <div id="signupAlert"></div>
-                        <div class="form-group"><label>Full Name</label><input type="text" id="signupName"></div>
-                        <div class="form-group"><label>Email</label><input type="email" id="signupEmail"></div>
-                        <div class="form-group"><label>Password</label><input type="password" id="signupPass"></div>
-                        <button class="btn btn-primary" onclick="doSignup()">Create Account</button>
-                        <div class="auth-toggle">Have an account? <a onclick="toggleAuth(false)">Sign In</a></div>
-                    </div>`;
-            }
-        }
-
-        function toggleAuth(showSignup) {
-            document.getElementById('loginForm').style.display = showSignup ? 'none' : 'block';
-            document.getElementById('signupForm').style.display = showSignup ? 'block' : 'none';
-        }
-
-        function doSignup() {
-            const name = document.getElementById('signupName').value.trim();
-            const email = document.getElementById('signupEmail').value.trim().toLowerCase();
-            const pass = document.getElementById('signupPass').value;
-            if(!name || !email || !pass) return;
-            const users = getUsers();
-            if(users[email]) return;
-            users[email] = { name, email, pass, savedJobs: [] };
-            saveUsers(users);
-            setUser({ name, email, savedJobs: [] });
-        }
-
-        function doLogin() {
-            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-            const pass = document.getElementById('loginPass').value;
-            const users = getUsers();
-            if(users[email] && users[email].pass === pass) {
-                const {pass:_, ...userData} = users[email];
-                setUser(userData);
-            }
-        }
-
-        // INIT
-        renderFilters();
-        renderEmployers();
-        updateUI();
-    </script>
+// Service worker cleanup
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations()
+    .then(function(registrations){ return Promise.all(registrations.map(function(r){ return r.unregister(); })); })
+    .then(function(){ return window.caches ? window.caches.keys() : undefined; })
+    .then(function(keys){ return keys ? Promise.all(keys.map(function(k){ return window.caches.delete(k); })) : undefined; })
+    .catch(function(){});
+}
+</script>
 </body>
 </html>

@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#1a237e">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <link rel="apple-touch-icon" href="/public/icons/16724.jpg">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root { --teal:#00897b; --purple:#6a1b9a; --dark:#0d0d0d; --card:#1a1a2e; --text:#f0f0f0; --muted:#aaa; }
@@ -47,6 +47,8 @@
     nav a { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0; color: var(--muted); text-decoration: none; font-size: 11px; gap: 3px; }
     nav a.active { color: var(--teal); }
     nav a span { font-size: 20px; }
+    .footer-links { text-align:center; color:var(--muted); font-size:12px; padding:8px 20px 0; line-height:1.8; }
+    .footer-links a { color:var(--teal); text-decoration:none; }
     .spacer { height: 80px; }
     #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #e53935; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 14px; display: none; z-index: 200; white-space: nowrap; }
   </style>
@@ -54,7 +56,7 @@
 <body>
 
 <header>
-  <img src="/icons/icon-192x192.png" alt="FairChance Finder Logo">
+  <img src="/public/icons/16724.jpg" alt="FairChance Finder Logo">
   <h1><span>FairChance</span> <span>Finder</span></h1>
 </header>
 
@@ -86,14 +88,19 @@
   <div id="appsList"></div>
 </div>
 
+<div class="footer-links">
+  <a href="/privacy-policy.html">Privacy Notice</a> ·
+  <a href="mailto:empickel.93@gmail.com">Personal Contact</a> ·
+  <a href="mailto:EPCSR@fairchancefinder.com">Business Contact</a>
+</div>
 <div class="spacer"></div>
 <div id="toast"></div>
 
 <nav>
-  <a href="/"><span>🔍</span> Search</a>
-  <a href="/my-apps.html" class="active" aria-current="page"><span>📋</span> My Apps</a>
-  <a href="/resources.html"><span>🤝</span> Resources</a>
-  <a href="/profile.html"><span>👤</span> Profile</a>
+  <a href="/"><span>&#127968;</span> Home</a>
+  <a href="/my-apps.html" class="active" aria-current="page"><span>&#128203;</span> My Apps</a>
+  <a href="/resources.html"><span>&#129309;</span> Resources</a>
+  <a href="/profile.html"><span>&#128100;</span> Profile</a>
 </nav>
 
 <script>
@@ -185,7 +192,11 @@ function showToast(msg) {
 render();
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(() => {});
+  navigator.serviceWorker.getRegistrations()
+    .then(registrations => Promise.all(registrations.map(registration => registration.unregister())))
+    .then(() => window.caches ? window.caches.keys() : undefined)
+    .then(keys => keys ? Promise.all(keys.map(key => window.caches.delete(key))) : undefined)
+    .catch(() => {});
 }
 </script>
 </body>
