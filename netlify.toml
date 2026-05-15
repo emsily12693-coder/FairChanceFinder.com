@@ -25,11 +25,6 @@
     Service-Worker-Allowed = "/"
 
 [[headers]]
-  for = "/index.html"
-  [headers.values]
-    Cache-Control = "no-store, max-age=0"
-
-[[headers]]
   for = "/*.html"
   [headers.values]
     Cache-Control = "no-store, max-age=0"
@@ -41,17 +36,7 @@
     Cache-Control = "public, max-age=86400"
 
 [[headers]]
-  for = "/icons/*"
-  [headers.values]
-    Cache-Control = "public, max-age=2592000"
-
-[[headers]]
   for = "/public/icons/*"
-  [headers.values]
-    Cache-Control = "public, max-age=2592000"
-
-[[headers]]
-  for = "/screenshots/*"
   [headers.values]
     Cache-Control = "public, max-age=2592000"
 
