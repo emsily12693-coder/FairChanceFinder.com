@@ -192,7 +192,11 @@ function showToast(msg) {
 render();
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(() => {});
+  navigator.serviceWorker.getRegistrations()
+    .then(registrations => Promise.all(registrations.map(registration => registration.unregister())))
+    .then(() => window.caches ? window.caches.keys() : undefined)
+    .then(keys => keys ? Promise.all(keys.map(key => window.caches.delete(key))) : undefined)
+    .catch(() => {});
 }
 </script>
 </body>
