@@ -1,11 +1,12 @@
 [build]
-  publish = "public"
+  publish = "/"
 
 [[headers]]
   for = "/.well-known/assetlinks.json"
   [headers.values]
     Content-Type = "application/json"
     Access-Control-Allow-Origin = "*"
+
 [[headers]]
   for = "/*"
   [headers.values]
