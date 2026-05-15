@@ -4,7 +4,7 @@
 // - JS/CSS & data: stale-while-revalidate (fast + refresh in background)
 // - icons/images: cache-first
 
-const CACHE_NAME = 'fairchancefinder-v2';
+const CACHE_NAME = 'fairchancefinder-v3';
 
 const PRECACHE_URLS = [
   '/',
@@ -12,8 +12,7 @@ const PRECACHE_URLS = [
   '/manifest.json',
   '/styles/app.css',
   '/app/main.js',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/public/icons/16724.jpg'
 ];
 
 self.addEventListener('install', (event) => {
@@ -75,6 +74,11 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(req.url);
 
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(fetch(req));
+    return;
+  }
+
   // HTML navigations
   if (req.mode === 'navigate') {
     event.respondWith(networkFirst(req));
@@ -94,7 +98,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // images/icons
-  if (url.pathname.startsWith('/icons/') || req.destination === 'image') {
+  if (url.pathname.startsWith('/public/icons/') || req.destination === 'image') {
     event.respondWith(cacheFirst(req));
     return;
   }

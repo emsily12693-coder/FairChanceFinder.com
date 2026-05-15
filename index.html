@@ -274,6 +274,28 @@
         .section-title { font-size: 1.1rem; font-weight: 700; margin: 24px 0 12px; display: flex; align-items: center; gap: 8px; }
         .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
         .empty-state svg { width: 48px; height: 48px; margin-bottom: 12px; color: #cbd5e1; }
+        .job-card-link { display:block; color:inherit; text-decoration:none; }
+        .job-card-link:hover { text-decoration:none; }
+        .job-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+        .job-actions .btn, .job-actions .save-btn { width:auto; margin-top:0; flex:1 1 130px; }
+        .btn-secondary { background:#f8fafc; color:var(--primary); border:1px solid var(--border); }
+        .btn-secondary:hover { border-color:var(--primary); background:var(--primary-light); }
+        .modal-backdrop { position:fixed; inset:0; background:rgba(15,23,42,.55); z-index:300; display:none; padding:18px; overflow:auto; }
+        .modal-backdrop.open { display:flex; align-items:flex-start; justify-content:center; }
+        .modal-panel { background:#fff; border-radius:12px; width:min(560px,100%); margin:36px auto; padding:18px; box-shadow:0 20px 60px rgba(15,23,42,.25); }
+        .modal-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:12px; }
+        .modal-close { border:0; background:#f1f5f9; border-radius:999px; width:34px; height:34px; cursor:pointer; font-size:20px; line-height:1; }
+        .detail-list { padding-left:18px; margin:12px 0; font-size:.88rem; color:var(--text-muted); }
+        .detail-list li { margin-bottom:6px; }
+        .upload-row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+        .upload-row input[type=file] { flex:1 1 220px; }
+        .file-list { margin-top:12px; display:grid; gap:8px; }
+        .file-pill { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; background:#f8fafc; border:1px solid var(--border); border-radius:8px; font-size:.82rem; }
+        .site-footer { max-width:600px; margin:12px auto 0; padding:0 16px 18px; color:var(--text-muted); font-size:.78rem; }
+        .site-footer .card { margin-bottom:0; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+        .side-menu { margin-top:14px; }
+        .side-menu summary { cursor:pointer; font-weight:700; color:var(--primary); }
+        .side-menu a { display:block; margin-top:8px; }
     </style>
 </head>
 <body>
@@ -300,7 +322,7 @@
             <h4>📢 Your Ad Here</h4>
             <p>Reach thousands of motivated job seekers in Phoenix, AZ.</p>
             <div class="ad-cta" onclick="showPage('advertise')">Advertise With Us</div>
-            <div class="ad-contact">Email: <a href="mailto:advertise@fairchancefinder.com">advertise@fairchancefinder.com</a></div>
+            <div class="ad-contact">Email: <a href="mailto:EPCSR@fairchancefinder.com">EPCSR@fairchancefinder.com</a></div>
         </div>
 
         <div class="section-title">🔥 Featured Jobs</div>
@@ -372,7 +394,33 @@
         <div class="card">
             <h3>Reach Phoenix Job Seekers</h3>
             <p style="font-size:.88rem; margin-top:10px;">Connect with motivated individuals looking for a second chance.</p>
-            <a href="mailto:advertise@fairchancefinder.com" class="btn btn-primary" style="display:block; margin-top:20px; text-decoration:none;">📧 Email Us for Rates</a>
+            <a href="mailto:EPCSR@fairchancefinder.com" class="btn btn-primary" style="display:block; margin-top:20px; text-decoration:none;">📧 Email Us for Rates</a>
+        </div>
+    </div>
+
+    <div class="site-footer">
+        <div class="card">
+            <span>FairChance Finder</span>
+            <a href="/privacy-policy.html">Privacy Notice</a>
+            <details class="side-menu">
+                <summary>Menu</summary>
+                <a href="/privacy-policy.html">Privacy Notice</a>
+                <a href="mailto:empickel.93@gmail.com">Personal Contact</a>
+                <a href="mailto:EPCSR@fairchancefinder.com">Business Contact</a>
+            </details>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="jobModal" aria-hidden="true">
+        <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="jobModalTitle">
+            <div class="modal-head">
+                <div>
+                    <h2 id="jobModalTitle"></h2>
+                    <div class="company" id="jobModalCompany"></div>
+                </div>
+                <button class="modal-close" onclick="closeJobModal()" aria-label="Close job detail">×</button>
+            </div>
+            <div id="jobModalBody"></div>
         </div>
     </div>
 
@@ -403,22 +451,22 @@
     <script>
         // DATA
         const jobs = [
-            {id:1,title:"Customer Service Representative",company:"T-Mobile",location:"Phoenix, AZ",pay:"$18–22/hr",type:"Full-Time",category:"Customer Service",perks:["Benefits","Training"],featured:true},
-            {id:2,title:"Administrative Assistant",company:"JPMorgan Chase",location:"Tempe, AZ",pay:"$19–24/hr",type:"Full-Time",category:"Office & Admin",perks:["Benefits","401k"],featured:true},
-            {id:3,title:"Warehouse Associate",company:"Amazon",location:"Phoenix, AZ",pay:"$17–21/hr",type:"Full-Time",category:"Warehouse",perks:["Flexible","Benefits"],featured:true},
-            {id:4,title:"Customer Support Specialist",company:"Concentrix",location:"Remote (AZ)",pay:"$16–20/hr",type:"Full-Time",category:"Customer Service",perks:["Remote","Training"],featured:true},
-            {id:5,title:"HVAC Apprentice",company:"Comfort Systems USA",location:"Mesa, AZ",pay:"$20–26/hr",type:"Full-Time",category:"Skilled Trades",perks:["Apprenticeship"]},
-            {id:6,title:"Maintenance Technician",company:"Waste Management",location:"Phoenix, AZ",pay:"$22–28/hr",type:"Full-Time",category:"Skilled Trades",perks:["Benefits"]},
-            {id:7,title:"IT Help Desk",company:"TEKsystems",location:"Tempe, AZ",pay:"$20–26/hr",type:"Full-Time",category:"Tech",perks:["Growth"]},
-            {id:8,title:"Crew Member",company:"Chipotle",location:"Phoenix, AZ",pay:"$15–18/hr",type:"Full-Time",category:"Food Service",perks:["Tuition"]},
-            {id:9,title:"Package Handler",company:"FedEx Ground",location:"Phoenix, AZ",pay:"$17–20/hr",type:"Part-Time",category:"Warehouse",perks:["Flexible"]},
-            {id:10,title:"Front Desk Agent",company:"Hilton",location:"Scottsdale, AZ",pay:"$16–20/hr",type:"Full-Time",category:"Hospitality",perks:["Discounts"]},
-            {id:11,title:"Delivery Driver",company:"Amazon Flex",location:"Phoenix Metro",pay:"$18–25/hr",type:"Flexible",category:"Transport",perks:["Weekly Pay"]},
-            {id:12,title:"Retail Associate",company:"Home Depot",location:"Chandler, AZ",pay:"$16–19/hr",type:"Full-Time",category:"Retail",perks:["Discount"]},
-            {id:13,title:"Forklift Operator",company:"XPO Logistics",location:"Goodyear, AZ",pay:"$19–24/hr",type:"Full-Time",category:"Warehouse",perks:["Overtime"]},
-            {id:14,title:"Prep Cook",company:"Cracker Barrel",location:"Gilbert, AZ",pay:"$15–18/hr",type:"Full-Time",category:"Food Service",perks:["Flexible"]},
-            {id:15,title:"CDL Driver Trainee",company:"Schneider",location:"Phoenix, AZ",pay:"$22–30/hr",type:"Full-Time",category:"Transport",perks:["Paid Training"]},
-            {id:16,title:"Data Entry Clerk",company:"Robert Half",location:"Remote (AZ)",pay:"$17–22/hr",type:"Contract",category:"Office & Admin",perks:["Remote"]}
+            {id:1,title:"Customer Service Representative",company:"T-Mobile",location:"Phoenix, AZ",pay:"$18-22/hr",type:"Full-Time",category:"Customer Service",perks:["Benefits","Training"],featured:true,applyUrl:"https://www.t-mobile.com/careers",summary:"Support customers with account, billing, and device questions in a structured call center environment."},
+            {id:2,title:"Administrative Assistant",company:"JPMorgan Chase",location:"Tempe, AZ",pay:"$19-24/hr",type:"Full-Time",category:"Office & Admin",perks:["Benefits","401k"],featured:true,applyUrl:"https://careers.jpmorgan.com/us/en/home",summary:"Coordinate schedules, documents, and office support for a financial services operations team."},
+            {id:3,title:"Warehouse Associate",company:"Amazon",location:"Phoenix, AZ",pay:"$17-21/hr",type:"Full-Time",category:"Warehouse",perks:["Flexible","Benefits"],featured:true,applyUrl:"https://hiring.amazon.com/",summary:"Pick, pack, sort, and ship customer orders in a fast-paced warehouse setting."},
+            {id:4,title:"Customer Support Specialist",company:"Concentrix",location:"Remote (AZ)",pay:"$16-20/hr",type:"Full-Time",category:"Customer Service",perks:["Remote","Training"],featured:true,applyUrl:"https://jobs.concentrix.com/",summary:"Provide remote customer support with paid training and documented workflows."},
+            {id:5,title:"HVAC Apprentice",company:"Comfort Systems USA",location:"Mesa, AZ",pay:"$20-26/hr",type:"Full-Time",category:"Skilled Trades",perks:["Apprenticeship"],applyUrl:"https://comfortsystemsusa.com/careers/",summary:"Learn HVAC installation and service work while assisting licensed technicians."},
+            {id:6,title:"Maintenance Technician",company:"Waste Management",location:"Phoenix, AZ",pay:"$22-28/hr",type:"Full-Time",category:"Skilled Trades",perks:["Benefits"],applyUrl:"https://careers.wm.com/",summary:"Maintain facility equipment, troubleshoot repairs, and support daily operations."},
+            {id:7,title:"IT Help Desk",company:"TEKsystems",location:"Tempe, AZ",pay:"$20-26/hr",type:"Full-Time",category:"Tech",perks:["Growth"],applyUrl:"https://www.teksystems.com/en/careers",summary:"Resolve basic hardware, software, and account support tickets for business users."},
+            {id:8,title:"Crew Member",company:"Chipotle",location:"Phoenix, AZ",pay:"$15-18/hr",type:"Full-Time",category:"Food Service",perks:["Tuition"],applyUrl:"https://jobs.chipotle.com/",summary:"Prepare food, serve guests, and keep the restaurant clean during scheduled shifts."},
+            {id:9,title:"Package Handler",company:"FedEx Ground",location:"Phoenix, AZ",pay:"$17-20/hr",type:"Part-Time",category:"Warehouse",perks:["Flexible"],applyUrl:"https://careers.fedex.com/",summary:"Load, unload, scan, and move packages safely through the facility."},
+            {id:10,title:"Front Desk Agent",company:"Hilton",location:"Scottsdale, AZ",pay:"$16-20/hr",type:"Full-Time",category:"Hospitality",perks:["Discounts"],applyUrl:"https://jobs.hilton.com/",summary:"Welcome guests, manage reservations, and support daily hotel front desk operations."},
+            {id:11,title:"Delivery Driver",company:"Amazon Flex",location:"Phoenix Metro",pay:"$18-25/hr",type:"Flexible",category:"Transport",perks:["Weekly Pay"],applyUrl:"https://flex.amazon.com/",summary:"Deliver packages using scheduled delivery blocks across the Phoenix metro area."},
+            {id:12,title:"Retail Associate",company:"Home Depot",location:"Chandler, AZ",pay:"$16-19/hr",type:"Full-Time",category:"Retail",perks:["Discount"],applyUrl:"https://careers.homedepot.com/",summary:"Assist customers, stock merchandise, and support store departments."},
+            {id:13,title:"Forklift Operator",company:"XPO Logistics",location:"Goodyear, AZ",pay:"$19-24/hr",type:"Full-Time",category:"Warehouse",perks:["Overtime"],applyUrl:"https://jobs.gxo.com/",summary:"Operate powered equipment, move freight, and support warehouse shipping lanes."},
+            {id:14,title:"Prep Cook",company:"Cracker Barrel",location:"Gilbert, AZ",pay:"$15-18/hr",type:"Full-Time",category:"Food Service",perks:["Flexible"],applyUrl:"https://careers.crackerbarrel.com/",summary:"Prepare ingredients and support kitchen teams during meal service."},
+            {id:15,title:"CDL Driver Trainee",company:"Schneider",location:"Phoenix, AZ",pay:"$22-30/hr",type:"Full-Time",category:"Transport",perks:["Paid Training"],applyUrl:"https://schneiderjobs.com/",summary:"Start a paid training path toward commercial driving roles."},
+            {id:16,title:"Data Entry Clerk",company:"Robert Half",location:"Remote (AZ)",pay:"$17-22/hr",type:"Contract",category:"Office & Admin",perks:["Remote"],applyUrl:"https://www.roberthalf.com/us/en/jobs",summary:"Enter, verify, and organize business records with accuracy and confidentiality."}
         ];
 
         const employers = [
@@ -485,8 +533,10 @@
             const saved = getSavedIds().includes(job.id);
             return `
                 <div class="card">
-                    <h3>${job.title}</h3>
-                    <div class="company">${job.company}</div>
+                    <a class="job-card-link" href="/?job=${job.id}" onclick="event.preventDefault(); openJobDetail(${job.id})">
+                        <h3>${job.title}</h3>
+                        <div class="company">${job.company}</div>
+                    </a>
                     <div class="meta">
                         <span>📍 ${job.location}</span>
                         <span>💰 ${job.pay}</span>
@@ -496,10 +546,83 @@
                         ${job.perks.map(p => `<span class="badge badge-green">${p}</span>`).join('')}
                         <span class="badge badge-blue">${job.category}</span>
                     </div>
-                    <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSave(${job.id})">
-                        ${saved ? '★ Saved' : '☆ Save Job'}
-                    </button>
+                    <div class="job-actions">
+                        <button class="btn btn-primary" onclick="openJobDetail(${job.id})">View Details</button>
+                        <button class="btn btn-secondary" onclick="startApplication(${job.id})">Apply</button>
+                        <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSave(${job.id})">
+                            ${saved ? '★ Saved' : '☆ Save Job'}
+                        </button>
+                    </div>
                 </div>`;
+        }
+
+        function getJob(id) {
+            return jobs.find(j => j.id === Number(id));
+        }
+
+        function openJobDetail(id) {
+            const job = getJob(id);
+            if(!job) return;
+            document.getElementById('jobModalTitle').textContent = job.title;
+            document.getElementById('jobModalCompany').textContent = `${job.company} • ${job.location}`;
+            document.getElementById('jobModalBody').innerHTML = `
+                <p style="font-size:.9rem;color:var(--text-muted);margin-bottom:12px">${job.summary}</p>
+                <div class="meta">
+                    <span>💰 ${job.pay}</span>
+                    <span>🕐 ${job.type}</span>
+                    <span>🏷️ ${job.category}</span>
+                </div>
+                <ul class="detail-list">
+                    <li>Fair-chance friendly listing with individual candidate review.</li>
+                    <li>Resume upload can be attached before tracking the application.</li>
+                    <li>External applications open on the employer career site.</li>
+                </ul>
+                <div class="job-actions">
+                    <button class="btn btn-primary" onclick="startApplication(${job.id})">Apply Through Platform</button>
+                    <a class="btn btn-secondary" href="${job.applyUrl}" target="_blank" rel="noopener" onclick="recordExternalApply(${job.id})">Company Website</a>
+                </div>`;
+            document.getElementById('jobModal').classList.add('open');
+            document.getElementById('jobModal').setAttribute('aria-hidden', 'false');
+            history.replaceState(null, '', `/?job=${job.id}`);
+        }
+
+        function closeJobModal() {
+            document.getElementById('jobModal').classList.remove('open');
+            document.getElementById('jobModal').setAttribute('aria-hidden', 'true');
+            history.replaceState(null, '', '/');
+        }
+
+        function loadApplications() {
+            return JSON.parse(localStorage.getItem('fcf_applications') || '[]');
+        }
+
+        function saveApplications(apps) {
+            localStorage.setItem('fcf_applications', JSON.stringify(apps));
+        }
+
+        function startApplication(id) {
+            const job = getJob(id);
+            if(!job) return;
+            const resume = JSON.parse(localStorage.getItem('fcf_selected_resume') || 'null');
+            const apps = loadApplications();
+            if(!apps.some(a => a.jobId === job.id)) {
+                apps.push({...job, jobId: job.id, id: Date.now(), appliedAt: new Date().toISOString(), resume});
+                saveApplications(apps);
+            }
+            window.open(job.applyUrl, '_blank', 'noopener');
+            closeJobModal();
+            showPage('saved');
+            alert('Application saved. Continue on the employer site to finish applying.');
+        }
+
+        function recordExternalApply(id) {
+            const job = getJob(id);
+            if(!job) return;
+            const apps = loadApplications();
+            if(!apps.some(a => a.jobId === job.id)) {
+                apps.push({...job, jobId: job.id, id: Date.now(), appliedAt: new Date().toISOString(), externalOnly: true});
+                saveApplications(apps);
+            }
         }
 
         function renderFeatured() {
@@ -574,8 +697,18 @@
                     </div>
                     <div class="profile-menu">
                         <div class="menu-item" onclick="showPage('saved')">💾 Saved Jobs (${getSavedIds().length})</div>
+                        <div class="card">
+                            <h3>Resume & Documents</h3>
+                            <p style="font-size:.84rem;color:var(--text-muted);margin:6px 0 12px">Upload a resume once, download it later, and attach it when applying.</p>
+                            <div class="upload-row">
+                                <input type="file" id="resumeFile" accept=".pdf,.doc,.docx,.txt,.rtf">
+                                <button class="btn btn-primary" style="width:auto" onclick="uploadResume()">Upload</button>
+                            </div>
+                            <div id="resumeFiles" class="file-list"></div>
+                        </div>
                         <div class="menu-item" onclick="logout()" style="color:var(--danger)">🚪 Sign Out</div>
                     </div>`;
+                renderResumeFiles();
             } else {
                 section.innerHTML = `
                     <div class="auth-container" id="loginForm">
@@ -596,6 +729,53 @@
                         <div class="auth-toggle">Have an account? <a onclick="toggleAuth(false)">Sign In</a></div>
                     </div>`;
             }
+        }
+
+        function getClientId() {
+            let id = localStorage.getItem('fcf_client_id');
+            if(!id) {
+                id = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+                localStorage.setItem('fcf_client_id', id);
+            }
+            return id;
+        }
+
+        async function uploadResume() {
+            const input = document.getElementById('resumeFile');
+            const file = input?.files?.[0];
+            if(!file) return alert('Choose a resume or document first.');
+            if(file.size > 5 * 1024 * 1024) return alert('File size limit is 5 MB.');
+            const form = new FormData();
+            form.append('file', file);
+            form.append('clientId', getClientId());
+            const res = await fetch('/api/uploads', { method:'POST', body: form });
+            if(!res.ok) return alert('Upload failed. Please try again.');
+            input.value = '';
+            await renderResumeFiles();
+        }
+
+        async function renderResumeFiles() {
+            const el = document.getElementById('resumeFiles');
+            if(!el) return;
+            const res = await fetch(`/api/uploads?clientId=${encodeURIComponent(getClientId())}`);
+            const data = res.ok ? await res.json() : { files: [] };
+            if(!data.files.length) {
+                el.innerHTML = '<p style="font-size:.8rem;color:var(--text-muted)">No uploaded documents yet.</p>';
+                return;
+            }
+            el.innerHTML = data.files.map(file => `
+                <div class="file-pill">
+                    <span>${file.name}</span>
+                    <span>
+                        <button class="save-btn" onclick='selectResume(${JSON.stringify(file)})'>Attach</button>
+                        <a href="${file.downloadUrl}" target="_blank" rel="noopener">Download</a>
+                    </span>
+                </div>`).join('');
+        }
+
+        function selectResume(file) {
+            localStorage.setItem('fcf_selected_resume', JSON.stringify(file));
+            alert(`${file.name} will be attached to new tracked applications.`);
         }
 
         function toggleAuth(showSignup) {
@@ -629,6 +809,8 @@
         renderFilters();
         renderEmployers();
         updateUI();
+        const initialJob = new URLSearchParams(location.search).get('job');
+        if(initialJob) openJobDetail(initialJob);
     </script>
 </body>
 </html>
