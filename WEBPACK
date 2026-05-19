@@ -1,3 +1,4 @@
+npm install --save-dev webpack webpack-cli
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
