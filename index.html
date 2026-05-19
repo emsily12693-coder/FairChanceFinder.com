@@ -121,16 +121,6 @@
 
     /* TOAST */
     #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--teal); color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 14px; display: none; z-index: 200; white-space: nowrap; }
-    /* SR ONLY */
-    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-
-    /* SKIP NAV */
-    .skip-link { position: absolute; left: -999px; top: -999px; z-index: 999; background: var(--teal); color: #fff; padding: 10px 18px; border-radius: 0 0 8px 0; font-size: 14px; font-weight: 600; text-decoration: none; }
-    .skip-link:focus { left: 0; top: 0; }
-
-    /* FOCUS STYLES */
-    :focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
-    button:focus-visible, .btn:focus-visible, a:focus-visible, input:focus-visible, .filter-chip:focus-visible, .save-btn:focus-visible, .modal-close:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
   </style>
 </head>
 <body>
@@ -193,6 +183,18 @@
     <label for="searchInput" class="sr-only">Search jobs, companies, keywords</label>
     <input type="text" id="searchInput" placeholder="Search jobs, companies, keywords..." oninput="renderJobs()">
   </div>
+  <div class="radius-row">
+    <label for="radiusFilter">&#128205; Distance from Phoenix:</label>
+    <select id="radiusFilter" class="radius-select" onchange="renderJobs()">
+      <option value="0">Any Distance</option>
+      <option value="10">Within 10 miles</option>
+      <option value="15">Within 15 miles</option>
+      <option value="25" selected>Within 25 miles</option>
+      <option value="50">Within 50 miles</option>
+      <option value="75">Within 75 miles</option>
+      <option value="100">Within 100 miles</option>
+    </select>
+  </div>
   <div class="filter-row" id="categoryFilters"></div>
   <div class="section">
     <div id="job-list"></div>
@@ -244,22 +246,22 @@
 
 <script>
 const jobs = [
-  {id:1,title:"Customer Service Representative",company:"T-Mobile",location:"Phoenix, AZ",pay:"$18-22/hr",type:"Full-Time",category:"Customer Service",perks:["Benefits","Training"],featured:true,applyUrl:"https://www.t-mobile.com/careers",summary:"Support customers with account, billing, and device questions in a structured call center environment."},
-  {id:2,title:"Administrative Assistant",company:"JPMorgan Chase",location:"Tempe, AZ",pay:"$19-24/hr",type:"Full-Time",category:"Office & Admin",perks:["Benefits","401k"],featured:true,applyUrl:"https://careers.jpmorgan.com/us/en/home",summary:"Coordinate schedules, documents, and office support for a financial services operations team."},
-  {id:3,title:"Warehouse Associate",company:"Amazon",location:"Phoenix, AZ",pay:"$17-21/hr",type:"Full-Time",category:"Warehouse",perks:["Flexible","Benefits"],featured:true,applyUrl:"https://hiring.amazon.com/",summary:"Pick, pack, sort, and ship customer orders in a fast-paced warehouse setting."},
-  {id:4,title:"Customer Support Specialist",company:"Concentrix",location:"Remote (AZ)",pay:"$16-20/hr",type:"Full-Time",category:"Customer Service",perks:["Remote","Training"],featured:true,applyUrl:"https://jobs.concentrix.com/",summary:"Provide remote customer support with paid training and documented workflows."},
-  {id:5,title:"HVAC Apprentice",company:"Comfort Systems USA",location:"Mesa, AZ",pay:"$20-26/hr",type:"Full-Time",category:"Skilled Trades",perks:["Apprenticeship"],applyUrl:"https://comfortsystemsusa.com/careers/",summary:"Learn HVAC installation and service work while assisting licensed technicians."},
-  {id:6,title:"Maintenance Technician",company:"Waste Management",location:"Phoenix, AZ",pay:"$22-28/hr",type:"Full-Time",category:"Skilled Trades",perks:["Benefits"],applyUrl:"https://careers.wm.com/",summary:"Maintain facility equipment, troubleshoot repairs, and support daily operations."},
-  {id:7,title:"IT Help Desk",company:"TEKsystems",location:"Tempe, AZ",pay:"$20-26/hr",type:"Full-Time",category:"Tech",perks:["Growth"],applyUrl:"https://www.teksystems.com/en/careers",summary:"Resolve basic hardware, software, and account support tickets for business users."},
-  {id:8,title:"Crew Member",company:"Chipotle",location:"Phoenix, AZ",pay:"$15-18/hr",type:"Full-Time",category:"Food Service",perks:["Tuition"],applyUrl:"https://jobs.chipotle.com/",summary:"Prepare food, serve guests, and keep the restaurant clean during scheduled shifts."},
-  {id:9,title:"Package Handler",company:"FedEx Ground",location:"Phoenix, AZ",pay:"$17-20/hr",type:"Part-Time",category:"Warehouse",perks:["Flexible"],applyUrl:"https://careers.fedex.com/",summary:"Load, unload, scan, and move packages safely through the facility."},
-  {id:10,title:"Front Desk Agent",company:"Hilton",location:"Scottsdale, AZ",pay:"$16-20/hr",type:"Full-Time",category:"Hospitality",perks:["Discounts"],applyUrl:"https://jobs.hilton.com/",summary:"Welcome guests, manage reservations, and support daily hotel front desk operations."},
-  {id:11,title:"Delivery Driver",company:"Amazon Flex",location:"Phoenix Metro",pay:"$18-25/hr",type:"Flexible",category:"Transport",perks:["Weekly Pay"],applyUrl:"https://flex.amazon.com/",summary:"Deliver packages using scheduled delivery blocks across the Phoenix metro area."},
-  {id:12,title:"Retail Associate",company:"Home Depot",location:"Chandler, AZ",pay:"$16-19/hr",type:"Full-Time",category:"Retail",perks:["Discount"],applyUrl:"https://careers.homedepot.com/",summary:"Assist customers, stock merchandise, and support store departments."},
-  {id:13,title:"Forklift Operator",company:"XPO Logistics",location:"Goodyear, AZ",pay:"$19-24/hr",type:"Full-Time",category:"Warehouse",perks:["Overtime"],applyUrl:"https://jobs.gxo.com/",summary:"Operate powered equipment, move freight, and support warehouse shipping lanes."},
-  {id:14,title:"Prep Cook",company:"Cracker Barrel",location:"Gilbert, AZ",pay:"$15-18/hr",type:"Full-Time",category:"Food Service",perks:["Flexible"],applyUrl:"https://careers.crackerbarrel.com/",summary:"Prepare ingredients and support kitchen teams during meal service."},
-  {id:15,title:"CDL Driver Trainee",company:"Schneider",location:"Phoenix, AZ",pay:"$22-30/hr",type:"Full-Time",category:"Transport",perks:["Paid Training"],applyUrl:"https://schneiderjobs.com/",summary:"Start a paid training path toward commercial driving roles."},
-  {id:16,title:"Data Entry Clerk",company:"Robert Half",location:"Remote (AZ)",pay:"$17-22/hr",type:"Contract",category:"Office & Admin",perks:["Remote"],applyUrl:"https://www.roberthalf.com/us/en/jobs",summary:"Enter, verify, and organize business records with accuracy and confidentiality."}
+  {id:1,title:"Customer Service Representative",company:"T-Mobile",location:"Phoenix, AZ",pay:"$18-22/hr",type:"Full-Time",category:"Customer Service",perks:["Benefits","Training"],featured:true,applyUrl:"https://www.t-mobile.com/careers",summary:"Support customers with account, billing, and device questions in a structured call center environment.",distance:0,hours:"40 hrs/week",description:"As a Customer Service Representative at T-Mobile, you will handle inbound calls from customers regarding their wireless accounts. You will troubleshoot device issues, explain billing statements, process payments, and help customers choose the right plans and services. This role operates in a structured call center with set schedules and performance metrics.",qualifications:["High school diploma or GED","Strong verbal communication skills","Basic computer proficiency","Ability to multitask in a fast-paced environment","Previous customer service experience preferred but not required"]},
+  {id:2,title:"Administrative Assistant",company:"JPMorgan Chase",location:"Tempe, AZ",pay:"$19-24/hr",type:"Full-Time",category:"Office & Admin",perks:["Benefits","401k"],featured:true,applyUrl:"https://careers.jpmorgan.com/us/en/home",summary:"Coordinate schedules, documents, and office support for a financial services operations team.",distance:10,hours:"40 hrs/week",description:"In this Administrative Assistant role at JPMorgan Chase, you will provide direct support to a team of financial operations professionals. Responsibilities include managing calendars, scheduling meetings, preparing documents and presentations, handling correspondence, maintaining filing systems, and coordinating with other departments. You will work in a professional office setting with standard business hours.",qualifications:["High school diploma or GED required","Proficiency in Microsoft Office (Word, Excel, Outlook)","Strong organizational and time management skills","Excellent written and verbal communication","Attention to detail and ability to handle confidential information"]},
+  {id:3,title:"Warehouse Associate",company:"Amazon",location:"Phoenix, AZ",pay:"$17-21/hr",type:"Full-Time",category:"Warehouse",perks:["Flexible","Benefits"],featured:true,applyUrl:"https://hiring.amazon.com/",summary:"Pick, pack, sort, and ship customer orders in a fast-paced warehouse setting.",distance:0,hours:"40 hrs/week (shift options available)",description:"As a Warehouse Associate at Amazon, you will work in a fulfillment center picking, packing, and shipping customer orders. You will use handheld scanners to locate and track inventory, prepare packages for delivery, and maintain a clean and organized workspace. Shifts include day, evening, and overnight options with opportunities for overtime.",qualifications:["Must be 18 years or older","Ability to lift up to 49 lbs","Ability to stand and walk for full shift (10-12 hours)","Basic literacy and math skills","No previous warehouse experience required"]},
+  {id:4,title:"Customer Support Specialist",company:"Concentrix",location:"Remote (AZ)",pay:"$16-20/hr",type:"Full-Time",category:"Customer Service",perks:["Remote","Training"],featured:true,applyUrl:"https://jobs.concentrix.com/",summary:"Provide remote customer support with paid training and documented workflows.",distance:0,hours:"40 hrs/week",description:"Working from home as a Customer Support Specialist at Concentrix, you will provide phone, chat, and email support to customers of major brands. All tools and training are provided. You will follow documented troubleshooting workflows, escalate complex issues, and ensure customer satisfaction. Paid training is included during the onboarding period.",qualifications:["High school diploma or GED","Reliable high-speed internet at home","Quiet home workspace","Strong communication skills","Comfortable with computer-based work"]},
+  {id:5,title:"HVAC Apprentice",company:"Comfort Systems USA",location:"Mesa, AZ",pay:"$20-26/hr",type:"Full-Time",category:"Skilled Trades",perks:["Apprenticeship"],applyUrl:"https://comfortsystemsusa.com/careers/",summary:"Learn HVAC installation and service work while assisting licensed technicians.",distance:18,hours:"40-45 hrs/week",description:"As an HVAC Apprentice at Comfort Systems USA, you will work alongside licensed technicians learning the trade of heating, ventilation, and air conditioning. You will assist with equipment installation, perform basic maintenance tasks, learn to read blueprints and schematics, and gain hands-on experience with HVAC systems. This is a pathway to full licensure and a long-term skilled trades career.",qualifications:["Must be 18 years or older","Valid Arizona driver's license","Ability to work in hot outdoor conditions","Willingness to learn and follow instructions","Physical ability to lift 50+ lbs and work on ladders","No prior HVAC experience required"]},
+  {id:6,title:"Maintenance Technician",company:"Waste Management",location:"Phoenix, AZ",pay:"$22-28/hr",type:"Full-Time",category:"Skilled Trades",perks:["Benefits"],applyUrl:"https://careers.wm.com/",summary:"Maintain facility equipment, troubleshoot repairs, and support daily operations.",distance:0,hours:"40-50 hrs/week",description:"As a Maintenance Technician at Waste Management, you will be responsible for the upkeep and repair of facility equipment including conveyors, compactors, and sorting machinery. You will perform preventive maintenance, diagnose mechanical and electrical issues, and ensure equipment operates safely and efficiently. Some overtime may be required during peak operations.",qualifications:["High school diploma or GED","Basic mechanical and electrical knowledge","Ability to read equipment manuals and schematics","Experience with hand and power tools","Ability to lift 50+ lbs and work in various conditions","Previous maintenance experience preferred"]},
+  {id:7,title:"IT Help Desk",company:"TEKsystems",location:"Tempe, AZ",pay:"$20-26/hr",type:"Full-Time",category:"Tech",perks:["Growth"],applyUrl:"https://www.teksystems.com/en/careers",summary:"Resolve basic hardware, software, and account support tickets for business users.",distance:10,hours:"40 hrs/week",description:"In this IT Help Desk role with TEKsystems, you will provide first-level technical support to business users. You will troubleshoot hardware and software issues, reset passwords, set up new user accounts, install applications, and escalate complex issues to senior technicians. You will work in a professional office environment with opportunities to grow into more advanced IT roles.",qualifications:["High school diploma or GED (CompTIA A+ a plus)","Basic understanding of Windows, Mac, and networking","Strong problem-solving skills","Good communication and customer service abilities","Willingness to learn new technologies"]},
+  {id:8,title:"Crew Member",company:"Chipotle",location:"Phoenix, AZ",pay:"$15-18/hr",type:"Full-Time",category:"Food Service",perks:["Tuition"],applyUrl:"https://jobs.chipotle.com/",summary:"Prepare food, serve guests, and keep the restaurant clean during scheduled shifts.",distance:0,hours:"30-40 hrs/week",description:"As a Crew Member at Chipotle, you will prepare ingredients, assemble customer orders on the serving line, operate the cash register, and maintain a clean restaurant. Chipotle is known for its tuition reimbursement program and opportunities for advancement to management. You will work as part of a team in a high-energy environment.",qualifications:["Must be 16 years or older","Ability to stand for full shift","Ability to work in a fast-paced environment","Positive attitude and team player","No previous food service experience required","Food handler's card may be required"]},
+  {id:9,title:"Package Handler",company:"FedEx Ground",location:"Phoenix, AZ",pay:"$17-20/hr",type:"Part-Time",category:"Warehouse",perks:["Flexible"],applyUrl:"https://careers.fedex.com/",summary:"Load, unload, scan, and move packages safely through the facility.",distance:0,hours:"15-25 hrs/week",description:"As a Part-Time Package Handler at FedEx Ground, you will load and unload packages from delivery trucks and trailers. You will scan packages, sort them by destination, and ensure they are handled safely. Shifts are typically early morning or evening, making this a great option for those looking for part-time work or a second job.",qualifications:["Must be 18 years or older","Ability to lift up to 75 lbs","Ability to stand and move packages for entire shift","No prior experience required","Reliable attendance and punctuality"]},
+  {id:10,title:"Front Desk Agent",company:"Hilton",location:"Scottsdale, AZ",pay:"$16-20/hr",type:"Full-Time",category:"Hospitality",perks:["Discounts"],applyUrl:"https://jobs.hilton.com/",summary:"Welcome guests, manage reservations, and support daily hotel front desk operations.",distance:12,hours:"40 hrs/week (includes weekends)",description:"As a Front Desk Agent at Hilton, you will be the first point of contact for hotel guests. You will check guests in and out, manage reservations, answer questions about the hotel and local area, handle special requests, and resolve any issues that arise during their stay. This role requires working rotating shifts including weekends and holidays.",qualifications:["High school diploma or GED","Professional appearance and friendly demeanor","Strong customer service and communication skills","Basic computer proficiency","Ability to stand for extended periods","Flexibility to work nights, weekends, and holidays"]},
+  {id:11,title:"Delivery Driver",company:"Amazon Flex",location:"Phoenix Metro",pay:"$18-25/hr",type:"Flexible",category:"Transport",perks:["Weekly Pay"],applyUrl:"https://flex.amazon.com/",summary:"Deliver packages using scheduled delivery blocks across the Phoenix metro area.",distance:5,hours:"Flexible (choose your own blocks)",description:"As an Amazon Flex Delivery Driver, you will use your own vehicle to deliver packages to customers throughout the Phoenix metro area. You select delivery blocks that fit your schedule through the Amazon Flex app. Each block typically lasts 3-5 hours. Earnings include base pay plus tips, paid weekly. This is an independent contractor opportunity with maximum flexibility.",qualifications:["Must be 21 years or older","Valid driver's license and clean driving record","Reliable vehicle (sedan, SUV, or larger)","Smartphone with Amazon Flex app","Ability to lift packages up to 50 lbs","Valid auto insurance"]},
+  {id:12,title:"Retail Associate",company:"Home Depot",location:"Chandler, AZ",pay:"$16-19/hr",type:"Full-Time",category:"Retail",perks:["Discount"],applyUrl:"https://careers.homedepot.com/",summary:"Assist customers, stock merchandise, and support store departments.",distance:22,hours:"35-40 hrs/week",description:"As a Retail Associate at Home Depot, you will assist customers in finding products, provide knowledge about home improvement projects, stock shelves, maintain organized displays, and operate cash registers. Home Depot provides training on products and customer service. Associate discounts and career growth opportunities are available.",qualifications:["Must be 18 years or older","Ability to stand and walk for entire shift","Basic math skills for register operation","Friendly and helpful attitude","Ability to lift up to 50 lbs","No prior retail experience required"]},
+  {id:13,title:"Forklift Operator",company:"XPO Logistics",location:"Goodyear, AZ",pay:"$19-24/hr",type:"Full-Time",category:"Warehouse",perks:["Overtime"],applyUrl:"https://jobs.gxo.com/",summary:"Operate powered equipment, move freight, and support warehouse shipping lanes.",distance:20,hours:"40-50 hrs/week",description:"As a Forklift Operator at XPO Logistics, you will operate sit-down and stand-up forklifts to move pallets, load and unload trucks, and organize freight in the warehouse. You will follow safety protocols, perform pre-shift equipment inspections, and work as part of a shipping and receiving team. Overtime opportunities are frequently available.",qualifications:["Must be 18 years or older","Previous forklift experience preferred (training available)","Ability to lift up to 50 lbs","Comfortable operating heavy equipment","Basic reading and counting skills","OSHA forklift certification a plus"]},
+  {id:14,title:"Prep Cook",company:"Cracker Barrel",location:"Gilbert, AZ",pay:"$15-18/hr",type:"Full-Time",category:"Food Service",perks:["Flexible"],applyUrl:"https://careers.crackerbarrel.com/",summary:"Prepare ingredients and support kitchen teams during meal service.",distance:25,hours:"30-40 hrs/week",description:"As a Prep Cook at Cracker Barrel, you will prepare ingredients for the kitchen team, follow recipes to ensure consistency, maintain food safety standards, and keep your workstation clean and organized. This role is a great entry point for those interested in a culinary career. Flexible scheduling allows for work-life balance.",qualifications:["Must be 18 years or older","Ability to stand for extended periods in kitchen environment","Basic knowledge of food prep and knife safety","Reliable and punctual","Ability to follow recipes and instructions","Food handler's card may be required"]},
+  {id:15,title:"CDL Driver Trainee",company:"Schneider",location:"Phoenix, AZ",pay:"$22-30/hr",type:"Full-Time",category:"Transport",perks:["Paid Training"],applyUrl:"https://schneiderjobs.com/",summary:"Start a paid training path toward commercial driving roles.",distance:0,hours:"40-55 hrs/week (varies by route)",description:"As a CDL Driver Trainee at Schneider, you will enter a paid training program to earn your Commercial Driver's License. Training covers vehicle operation, safety regulations, trip planning, and load management. After completing the program, you will be assigned routes and begin driving for one of the largest trucking companies in North America.",qualifications:["Must be 21 years or older","Valid driver's license","Able to pass DOT physical and drug screening","No DUI/DWI in last 5 years","Willingness to travel and be away from home","No CDL required — paid training provided"]},
+  {id:16,title:"Data Entry Clerk",company:"Robert Half",location:"Remote (AZ)",pay:"$17-22/hr",type:"Contract",category:"Office & Admin",perks:["Remote"],applyUrl:"https://www.roberthalf.com/us/en/jobs",summary:"Enter, verify, and organize business records with accuracy and confidentiality.",distance:0,hours:"35-40 hrs/week",description:"As a Data Entry Clerk through Robert Half, you will enter information into databases and spreadsheets, verify data accuracy, update records, and maintain organized digital files. This is a remote contract position with the potential for extension. You will work independently with regular check-ins from your team lead.",qualifications:["High school diploma or GED","Typing speed of 40+ WPM with accuracy","Proficiency in Microsoft Excel and data entry tools","Strong attention to detail","Reliable internet connection for remote work","Ability to maintain confidentiality of sensitive data"]}
 ];
 
 const employers = [
@@ -310,6 +312,7 @@ function jobCard(job) {
       '<span>' + job.location + '</span>' +
       '<span>' + job.pay + '</span>' +
       '<span>' + job.type + '</span>' +
+      (job.distance > 0 ? '<span>~' + job.distance + ' mi from Phoenix</span>' : job.distance === 0 && job.location.indexOf('Remote') === -1 ? '<span>In Phoenix</span>' : '<span>Remote</span>') +
     '</div>' +
     '<div>' +
       job.perks.map(function(p){ return '<span class="badge badge-green">' + p + '</span>'; }).join('') +
@@ -333,35 +336,101 @@ function openJobDetail(id) {
   if (!job) return;
   document.getElementById('jobModalTitle').textContent = job.title;
   document.getElementById('jobModalCompany').textContent = job.company + ' • ' + job.location;
-  document.getElementById('jobModalBody').innerHTML =
-    '<p style="font-size:.88rem;color:var(--muted);margin:8px 0 12px">' + job.summary + '</p>' +
-    '<div class="meta" style="font-size:.8rem;color:var(--muted);margin-bottom:12px">' +
-      '<span>' + job.pay + '</span>' +
-      '<span>' + job.type + '</span>' +
-      '<span>' + job.category + '</span>' +
-    '</div>' +
-    '<ul class="detail-list">' +
-      '<li>Fair-chance friendly listing with individual candidate review.</li>' +
-      '<li>Resume upload can be attached from your Profile page before applying.</li>' +
-      '<li>External applications open on the employer career site.</li>' +
-    '</ul>' +
-    '<div class="job-actions">' +
-      '<button class="btn btn-primary" onclick="startApplication(' + job.id + ')">Apply Through Platform</button>' +
-      '<a class="btn btn-secondary" href="' + job.applyUrl + '" target="_blank" rel="noopener" onclick="recordExternalApply(' + job.id + ')">Company Website</a>' +
+
+  var html = '';
+
+  // Key details grid
+  html += '<div class="detail-grid">' +
+    '<div class="detail-item"><div class="detail-label">Pay</div><div class="detail-value">' + job.pay + '</div></div>' +
+    '<div class="detail-item"><div class="detail-label">Hours</div><div class="detail-value">' + (job.hours || job.type) + '</div></div>' +
+    '<div class="detail-item"><div class="detail-label">Job Type</div><div class="detail-value">' + job.type + '</div></div>' +
+    '<div class="detail-item"><div class="detail-label">Category</div><div class="detail-value">' + job.category + '</div></div>' +
+  '</div>';
+
+  // Perks
+  html += '<div>' + job.perks.map(function(p){ return '<span class="badge badge-green">' + p + '</span>'; }).join('') + '</div>';
+
+  // Description
+  html += '<div class="detail-section">' +
+    '<h4>&#128221; Job Description</h4>' +
+    '<p class="job-desc-text">' + (job.description || job.summary) + '</p>' +
+  '</div>';
+
+  // Qualifications
+  if (job.qualifications && job.qualifications.length) {
+    html += '<div class="detail-section">' +
+      '<h4>&#9989; Qualifications</h4>' +
+      '<ul class="qual-list">' +
+      job.qualifications.map(function(q){ return '<li>' + q + '</li>'; }).join('') +
+      '</ul>' +
     '</div>';
+  }
+
+  // Apply panel
+  html += '<div class="apply-panel" id="applyPanel">' +
+    '<h4>&#128640; Apply for this Position</h4>' +
+    '<div id="resumeSection">' + getResumeHTML() + '</div>' +
+    '<input type="file" id="resumeFileInput" accept=".pdf,.doc,.docx,.txt,.rtf" style="display:none" onchange="handleResumeSelect(this)">' +
+    '<p class="apply-note">Clicking "Apply Through Platform" will save this application to your tracker and open the employer\'s career page where you can complete your application. Your attached resume will be saved for your records.</p>' +
+    '<div class="apply-actions">' +
+      '<button class="btn btn-primary" onclick="submitApplication(' + job.id + ')">&#128640; Apply Through Platform</button>' +
+      '<a class="btn btn-secondary" href="' + job.applyUrl + '" target="_blank" rel="noopener" onclick="recordExternalApply(' + job.id + ')">Company Website</a>' +
+    '</div>' +
+  '</div>';
+
+  document.getElementById('jobModalBody').innerHTML = html;
   document.getElementById('jobModal').classList.add('open');
   document.getElementById('jobModal').setAttribute('aria-hidden', 'false');
   document.querySelector('.modal-close').focus();
   history.replaceState(null, '', '/?job=' + job.id);
 }
 
-function closeJobModal() {
-  document.getElementById('jobModal').classList.remove('open');
-  document.getElementById('jobModal').setAttribute('aria-hidden', 'true');
-  history.replaceState(null, '', '/');
+function getResumeHTML() {
+  var resume = JSON.parse(localStorage.getItem('fcf_selected_resume') || 'null');
+  if (resume && resume.name) {
+    return '<div class="resume-attached">' +
+      '<span>&#128196;</span> ' + resume.name +
+      '<button class="remove-resume" onclick="removeResume()" title="Remove resume">&times;</button>' +
+    '</div>';
+  }
+  return '<div class="resume-drop" onclick="document.getElementById(\'resumeFileInput\').click()" id="resumeDrop">' +
+    '<p>&#128196; Attach Your Resume</p>' +
+    '<p class="hint">Click to upload — PDF, DOC, DOCX, TXT, RTF (max 5 MB)</p>' +
+  '</div>';
 }
 
-function startApplication(id) {
+function handleResumeSelect(input) {
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  var allowed = ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','text/plain','text/rtf','application/rtf'];
+  if (allowed.indexOf(file.type) === -1 && !file.name.match(/\.(pdf|doc|docx|txt|rtf)$/i)) {
+    showToast('Please upload a PDF, DOC, DOCX, TXT, or RTF file.');
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('File must be under 5 MB.');
+    return;
+  }
+  localStorage.setItem('fcf_selected_resume', JSON.stringify({name: file.name, size: file.size, type: file.type, addedAt: new Date().toISOString()}));
+
+  // Upload to server
+  var formData = new FormData();
+  formData.append('file', file);
+  var clientId = localStorage.getItem('fcf_client_id');
+  if (!clientId) { clientId = 'client_' + Date.now(); localStorage.setItem('fcf_client_id', clientId); }
+  formData.append('clientId', clientId);
+  fetch('/api/uploads', { method: 'POST', body: formData }).catch(function(){});
+
+  document.getElementById('resumeSection').innerHTML = getResumeHTML();
+  showToast('Resume attached: ' + file.name);
+}
+
+function removeResume() {
+  localStorage.removeItem('fcf_selected_resume');
+  document.getElementById('resumeSection').innerHTML = getResumeHTML();
+}
+
+function submitApplication(id) {
   var job = getJob(id);
   if (!job) return;
   var resume = JSON.parse(localStorage.getItem('fcf_selected_resume') || 'null');
@@ -372,7 +441,17 @@ function startApplication(id) {
   }
   window.open(job.applyUrl, '_blank', 'noopener');
   closeJobModal();
-  showToast('Application saved! View it in My Apps.');
+  showToast('Application saved! Opening employer career page...');
+}
+
+function startApplication(id) {
+  openJobDetail(id);
+}
+
+function closeJobModal() {
+  document.getElementById('jobModal').classList.remove('open');
+  document.getElementById('jobModal').setAttribute('aria-hidden', 'true');
+  history.replaceState(null, '', '/');
 }
 
 function recordExternalApply(id) {
@@ -394,14 +473,17 @@ function renderJobs() {
   var q = document.getElementById('searchInput').value.toLowerCase();
   var activeChip = document.querySelector('.filter-chip.active');
   var cat = activeChip ? activeChip.dataset.cat : 'All';
+  var radiusEl = document.getElementById('radiusFilter');
+  var maxDistance = radiusEl ? Number(radiusEl.value) : 0;
   var filtered = jobs.filter(function(j){
     var matchesCat = (cat === 'All' || j.category === cat);
     var matchesSearch = (j.title + j.company + j.location).toLowerCase().indexOf(q) !== -1;
-    return matchesCat && matchesSearch;
+    var matchesRadius = (maxDistance === 0 || (j.distance !== undefined && j.distance <= maxDistance));
+    return matchesCat && matchesSearch && matchesRadius;
   });
   document.getElementById('job-list').innerHTML = filtered.length
     ? filtered.map(jobCard).join('')
-    : '<div class="empty-state"><h3>No jobs found</h3><p>Try a different search or filter.</p></div>';
+    : '<div class="empty-state"><h3>No jobs found</h3><p>Try a different search, filter, or increase the distance radius.</p></div>';
 }
 
 function renderEmployers() {
@@ -457,39 +539,6 @@ renderAll();
 // Deep link: /?job=3
 var initialJob = new URLSearchParams(location.search).get('job');
 if (initialJob) openJobDetail(initialJob);
-
-// Modal keyboard handling
-document.addEventListener('keydown', function(e) {
-  var modal = document.getElementById('jobModal');
-  if (!modal.classList.contains('open')) return;
-  if (e.key === 'Escape') { closeJobModal(); return; }
-  if (e.key === 'Tab') {
-    var focusable = modal.querySelectorAll('button, a[href], input, [tabindex]:not([tabindex="-1"])');
-    if (!focusable.length) return;
-    var first = focusable[0], last = focusable[focusable.length - 1];
-    if (e.shiftKey) {
-      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
-    } else {
-      if (document.activeElement === last) { e.preventDefault(); first.focus(); }
-    }
-  }
-});
-
-// Filter chip aria-pressed
-function setFilter(btn) {
-  document.querySelectorAll('.filter-chip').forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
-  btn.classList.add('active');
-  btn.setAttribute('aria-pressed', 'true');
-  renderJobs();
-}
-
-function renderFilters() {
-  document.getElementById('categoryFilters').innerHTML = categories.map(function(c){
-    var isActive = c === 'All';
-    return '<button class="filter-chip ' + (isActive ? 'active' : '') + '" data-cat="' + c + '" aria-pressed="' + isActive + '" onclick="setFilter(this)">' + c + '</button>';
-  }).join('');
-}
-
 // Service worker cleanup
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations()
