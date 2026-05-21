@@ -36,14 +36,18 @@
       cursor: pointer;
       width: 100%;
     }
+    :focus-visible { outline: 2px solid #1a237e; outline-offset: 2px; }
+    button:focus-visible { outline: 2px solid #1a237e; outline-offset: 2px; }
   </style>
 </head>
 <body>
+  <main>
   <div class="card">
-    <div class="icon">📶</div>
+    <div class="icon" aria-hidden="true">📶</div>
     <h1>You're offline</h1>
     <p>No internet connection right now. Check your connection and try again — your fair-chance job search will be right here waiting!</p>
     <button onclick="window.location.reload()">Try Again</button>
   </div>
+  </main>
 </body>
 </html>
