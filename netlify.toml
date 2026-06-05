@@ -2,15 +2,16 @@
   command = ""
     publish = "."
 
-    # Serve .well-known files as static (required for Google Play deep links)
+    # Correct MIME headers for .well-known files
     [[headers]]
       for = "/.well-known/assetlinks.json"
         [headers.values]
             Content-Type = "application/json"
                 Access-Control-Allow-Origin = "*"
 
-                # SPA fallback - serve index.html for all routes
+                # SPA fallback  force=false means existing static files are served first
                 [[redirects]]
                   from = "/*"
                     to = "/index.html"
                       status = 200
+                        force = false
