@@ -1,12 +1,16 @@
-# Serve .well-known files as static (required for Google Play deep links)
-[[headers]]
-  for = "/.well-known/assetlinks.json"
-    [headers.values]
-        Content-Type = "application/json"
-            Access-Control-Allow-Origin = "*"
+[build]
+  command = ""
+    publish = "."
 
-            # SPA fallback - serve index.html for all routes (no Base44 redirect)
-            [[redirects]]
-              from = "/*"
-                to = "/index.html"
-                  status = 200
+    # Serve .well-known files as static (required for Google Play deep links)
+    [[headers]]
+      for = "/.well-known/assetlinks.json"
+        [headers.values]
+            Content-Type = "application/json"
+                Access-Control-Allow-Origin = "*"
+
+                # SPA fallback - serve index.html for all routes
+                [[redirects]]
+                  from = "/*"
+                    to = "/index.html"
+                      status = 200
