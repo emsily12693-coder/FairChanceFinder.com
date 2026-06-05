@@ -1,9 +1,8 @@
 [build]
-  command = "#"
   publish = "."
 
-[[redirects]]
-  from = "/*"
-  to = "https://fairchancefinder.base44.app/job/6a0e57024e557566593365f3"
-  status = 301
-  force = true
+  [[redirects]]
+    from = "/*"
+      to = "https://fairchancefinder.base44.app"
+        status = 301
+          force = true
