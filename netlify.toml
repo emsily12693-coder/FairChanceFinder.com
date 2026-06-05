@@ -1,8 +1,18 @@
 [build]
   publish = "."
+    command = ""
+      ignore = "exit 0"
 
-  [[redirects]]
-    from = "/*"
-      to = "https://fairchancefinder.base44.app"
-        status = 301
-          force = true
+      [functions]
+        directory = "/dev/null"
+
+        [[headers]]
+          for = "/*"
+            [headers.values]
+                Cache-Control = "public, max-age=0, must-revalidate"
+
+                [[redirects]]
+                  from = "/*"
+                    to = "https://fairchancefinder.base44.app/:splat"
+                      status = 301
+                        force = true
