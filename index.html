@@ -3,254 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FairChance Finder — Your Second Chance Starts Here</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Redirecting to FairChance Finder...</title>
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="FairChance Finder">
+    <meta name="description" content="Connecting fair-chance job seekers with employers who believe in second chances.">
+    
+    <!-- Redirect to the Base44 App -->
+    <meta http-equiv="refresh" content="0; url=https://fairchancefinder.base44.app/job/6a0e57024e557566593365f3">
+    <link rel="canonical" href="https://fairchancefinder.base44.app/job/6a0e57024e557566593365f3">
+
+    <script type="text/javascript">
+        window.location.href = "https://fairchancefinder.base44.app/job/6a0e57024e557566593365f3";
+    </script>
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --primary: #0f172a; /* Darker theme matching Base44 app */
-            --accent: #0d9488;  /* Teal accent */
-            --accent-light: #14b8a6;
-            --bg: #0f172a;
-            --card: #1e293b;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #334155;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-            --radius: 12px;
-        }
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            padding-bottom: 80px;
-            line-height: 1.5;
-        }
-        a { color: var(--accent-light); text-decoration: none; transition: 0.2s; }
-        a:hover { text-decoration: underline; }
-
-        /* NAVIGATION */
-        .top-bar {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(8px);
-            color: #fff;
-            padding: 16px 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid var(--border);
-        }
-        .top-bar h1 { font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: -0.025em; }
-        .top-bar .launch-btn {
-            background: var(--accent);
-            border: none;
-            color: #fff;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-size: .85rem;
-            cursor: pointer;
-            font-weight: 700;
-            transition: 0.2s;
-        }
-        .top-bar .launch-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #1e293b;
-            border-top: 1px solid var(--border);
-            display: flex;
-            z-index: 100;
-            padding: 8px 0;
-        }
-        .bottom-nav button {
-            flex: 1;
-            border: none;
-            background: none;
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            font-size: .7rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-weight: 600;
-            transition: .2s;
-        }
-        .bottom-nav button.active { color: var(--accent-light); }
-        .bottom-nav button svg { width: 24px; height: 24px; }
-
-        /* HERO */
-        .hero {
-            padding: 60px 20px;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+            color: #333;
             text-align: center;
-            background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
         }
-        .hero h2 { font-size: 2.25rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.05em; line-height: 1.1; }
-        .hero p { font-size: 1.1rem; color: var(--text-muted); max-width: 500px; margin: 0 auto 32px; }
-        
-        .cta-group { display: flex; flex-direction: column; gap: 12px; max-width: 320px; margin: 0 auto; }
-        .btn-large {
-            display: block;
-            padding: 16px 32px;
-            background: var(--accent);
-            color: #fff;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            text-align: center;
-            transition: 0.2s;
+        .container {
+            padding: 20px;
         }
-        .btn-large:hover { background: var(--accent-light); transform: scale(1.02); text-decoration: none; }
-        .btn-outline {
-            display: block;
-            padding: 14px 32px;
-            border: 2px solid var(--border);
-            color: var(--text);
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            text-align: center;
-            transition: 0.2s;
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #6366f1;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
         }
-        .btn-outline:hover { background: rgba(255,255,255,0.05); text-decoration: none; }
-
-        /* CONTENT SECTIONS */
-        .section { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
-        .section-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 24px; text-align: center; }
-        
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
-
-        .card {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 24px;
-            border: 1px solid var(--border);
-            transition: 0.2s;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        .card:hover { border-color: var(--accent); transform: translateY(-2px); }
-        .card h3 { font-size: 1.1rem; margin-bottom: 8px; }
-        .card p { font-size: .9rem; color: var(--text-muted); margin-bottom: 16px; }
-
-        /* FOOTER AD */
-        .ad-banner {
-            background: #1e293b;
-            border: 2px dashed var(--border);
-            border-radius: var(--radius);
-            padding: 32px 20px;
-            text-align: center;
-            margin: 40px 0;
+        a {
+            color: #6366f1;
+            text-decoration: none;
         }
-        .ad-banner h4 { font-size: 1.25rem; margin-bottom: 8px; color: var(--accent-light); }
-        .ad-banner p { font-size: .9rem; color: var(--text-muted); margin-bottom: 20px; }
-
-        /* PAGES */
-        .page { display: none; animation: fadeIn 0.4s ease-out; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
     </style>
 </head>
 <body>
-
-    <div class="top-bar">
-        <h1>⚖️ FairChance Finder</h1>
-        <a href="https://fairchancefinder.base44.app/" class="launch-btn">Launch App</a>
+    <div class="container">
+        <div class="loader"></div>
+        <h1>Redirecting to FairChance Finder</h1>
+        <p>If you are not redirected automatically, <a href="https://fairchancefinder.base44.app/job/6a0e57024e557566593365f3">click here to continue</a>.</p>
     </div>
-
-    <!-- LANDING PAGE -->
-    <div class="page active" id="page-home">
-        <div class="hero">
-            <h2>Find Your Second Chance ⭐</h2>
-            <p>The #1 platform for justice-impacted individuals to find fair-chance employers and reentry resources.</p>
-            <div class="cta-group">
-                <a href="https://fairchancefinder.base44.app/" class="btn-large">Browse All Jobs</a>
-                <a href="https://fairchancefinder.base44.app/resources" class="btn-outline">Reentry Resources</a>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2 class="section-title">Why FairChance Finder?</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3>✅ Verified Employers</h3>
-                    <p>We partner with companies committed to hiring regardless of background.</p>
-                </div>
-                <div class="card">
-                    <h3>📍 Local Focus</h3>
-                    <p>Deep roots in the Phoenix Valley with connections to local hiring managers.</p>
-                </div>
-                <div class="card">
-                    <h3>🛠️ Reentry Support</h3>
-                    <p>Access legal aid, housing, and training resources tailored for you.</p>
-                </div>
-                <div class="card">
-                    <h3>📱 Mobile Ready</h3>
-                    <p>Apply to jobs directly from your phone with our new Base44 powered app.</p>
-                </div>
-            </div>
-
-            <div class="ad-banner">
-                <h4>📢 Advertise With Us</h4>
-                <p>Reach thousands of motivated job seekers in the Phoenix area.</p>
-                <a href="mailto:advertise@fairchancefinder.com" class="btn-outline">Contact Sales</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- ABOUT PAGE -->
-    <div class="page" id="page-about">
-        <div class="section">
-            <h2 class="section-title">About Us</h2>
-            <div class="card">
-                <p>FairChance Finder was created to bridge the gap between motivated individuals looking for a second chance and employers who believe in potential over past mistakes.</p>
-                <p style="margin-top: 16px;">Based in Phoenix, Arizona, we are dedicated to strengthening our community by helping everyone find meaningful employment.</p>
-            </div>
-        </div>
-    </div>
-
-    <nav class="bottom-nav">
-        <button onclick="showPage('home')" class="active">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            Home
-        </button>
-        <button onclick="window.location.href='https://fairchancefinder.base44.app/'">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            Find Jobs
-        </button>
-        <button onclick="window.location.href='https://fairchancefinder.base44.app/resources'">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            Resources
-        </button>
-        <button onclick="showPage('about')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            About
-        </button>
-    </nav>
-
-    <script>
-        function showPage(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            // Show selected page
-            document.getElementById('page-' + pageId).classList.add('active');
-            
-            // Update nav buttons
-            document.querySelectorAll('.bottom-nav button').forEach(btn => btn.classList.remove('active'));
-            const activeBtn = Array.from(document.querySelectorAll('.bottom-nav button')).find(btn => btn.innerText.toLowerCase().includes(pageId));
-            if (activeBtn) activeBtn.classList.add('active');
-            
-            window.scrollTo(0,0);
-        }
-    </script>
 </body>
 </html>
