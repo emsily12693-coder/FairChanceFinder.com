@@ -1,1 +1,11 @@
+logsBucket: "gs://fairchancefinder-build-logs"
 
+steps:
+  - name: "gcr.io/cloud-builders/npm"
+    args: ["install"]
+
+  - name: "gcr.io/cloud-builders/npm"
+    args: ["run", "build"]
+
+images:
+  - "gcr.io/$PROJECT_ID/fairchancefinder"
