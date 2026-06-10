@@ -1,24 +1,24 @@
 [build]
-command = ""
-publish = "."
+  command = ""
+  publish = "."
 
 # Correct MIME headers for .well-known files
 [[headers]]
   for = "/.well-known/assetlinks.json"
     [headers.values]
-        Content-Type = "application/json"
-            Access-Control-Allow-Origin = "*"
+      Content-Type = "application/json"
+      Access-Control-Allow-Origin = "*"
 
-            # Explicit passthrough for .well-known  MUST be above the SPA catch-all
-            [[redirects]]
-              from = "/.well-known/*"
-                to = "/.well-known/:splat"
-                  status = 200
-                    force = true
+# Explicit passthrough for .well-known (must be ABOVE SPA fallback)
+[[redirects]]
+  from = "/.well-known/*"
+  to = "/.well-known/:splat"
+  status = 200
+  force = true
 
-                    # SPA fallback  serves index.html for all other routes
-                    [[redirects]]
-                      from = "/*"
-                        to = "/index.html"
-                          status = 200
-                            force = false
+# SPA fallback — serves index.html for all other routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
