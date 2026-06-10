@@ -9,3 +9,6 @@ steps:
 
 images:
   - "gcr.io/$PROJECT_ID/fairchancefinder"
+
+- name: git-bash
+  uses: pkg-src/github-action-git-bash@v1.1
