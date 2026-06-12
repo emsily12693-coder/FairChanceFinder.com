@@ -585,10 +585,11 @@
         <div data-id="441" class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
             <div data-id="442" class="text-center md:text-left">
                 <p data-id="443" class="font-semibold">© 2025 HomeIsYou LLC DBA FairChance Finder</p>
-                <p data-id="444" class="text-gray-400 mt-1"><a data-id="445" href="mailto:EPCSR@fairchancefinder.com" class="hover:text-green transition-colors" target="_blank" rel="noopener noreferrer">EPCSR@fairchancefinder.com</a></p>
+                <p data-id="444" class="text-gray-400 mt-1">Business: <a data-id="445" href="mailto:EPCSR@fairchancefinder.com" class="hover:text-green transition-colors" target="_blank" rel="noopener noreferrer">EPCSR@fairchancefinder.com</a></p>
+                <p class="text-gray-400">Support: <a href="mailto:empickel.93@gmail.com" class="hover:text-green transition-colors" target="_blank" rel="noopener noreferrer">empickel.93@gmail.com</a></p>
             </div>
             <div data-id="446" class="flex items-center gap-4">
-                <button data-id="447" id="footer-privacy-k5l5" class="text-gray-400 hover:text-white bg-transparent border-none cursor-pointer text-sm">Privacy Policy</button>
+                <button data-id="447" id="footer-privacy-k5l5" class="text-gray-400 hover:text-white bg-transparent border-none cursor-pointer text-sm">Privacy Notice</button>
                 <span data-id="448" class="text-gray-600">·</span>
                 <span data-id="449" class="text-gray-400">Made with ❤️ in Phoenix, AZ</span>
             </div>
@@ -728,20 +729,21 @@
         if (cand) {
             navLinks = [
                 {label:'Jobs',view:'v-jobs'},{label:'My Applications',view:'v-applications'},
-                {label:'Resources',view:'v-resources'},{label:'My Profile',view:'v-profile'}
+                {label:'Resources',view:'v-resources'},{label:'My Profile',view:'v-profile'},
+                {label:'Privacy',view:'v-privacy'}
             ];
             actions = [{label:'Log Out',cls:'btn-gray',action:'logout-cand'},{label:cand.name.split(' ')[0],cls:'text-sm font-semibold text-navy',action:null}];
         } else if (emp) {
             navLinks = [
                 {label:'Post a Job',view:'v-post-job'},{label:'My Dashboard',view:'v-employer-dashboard'},
-                {label:'Pricing',view:'v-employer-landing'}
+                {label:'Pricing',view:'v-employer-landing'},{label:'Privacy',view:'v-privacy'}
             ];
             actions = [{label:'Log Out',cls:'btn-gray',action:'logout-emp'},{label:emp.companyName,cls:'text-sm font-semibold text-navy',action:null}];
         } else {
             navLinks = [
                 {label:'Home',view:'v-landing'},{label:'Jobs',view:'v-jobs'},
                 {label:'Resources',view:'v-resources'},{label:'Employers',view:'v-employer-landing'},
-                {label:'About',view:'v-about'}
+                {label:'About',view:'v-about'},{label:'Privacy',view:'v-privacy'}
             ];
             actions = [
                 {label:'Find Jobs',cls:'btn-green',action:'go-cand-auth'},
@@ -865,7 +867,7 @@
         }
 
         listEl.innerHTML = filtered.map(j => `
-            <div class="card-hover bg-white border border-grayBorder rounded-xl p-5 flex flex-col">
+            <div class="card-hover job-card cursor-pointer bg-white border border-grayBorder rounded-xl p-5 flex flex-col" data-jid="${j.id}" role="button" tabindex="0" aria-label="View details for ${j.title} at ${j.company}">
                 <p class="text-xs text-grayMuted mb-1">${j.company} · ${j.location}</p>
                 <h3 class="font-bold text-navy text-lg mb-2">${j.title}</h3>
                 <p class="text-sm font-semibold text-green mb-2">${formatSalary(j.salary_min, j.salary_max)}</p>
@@ -879,8 +881,12 @@
             </div>
         `).join('');
 
-        listEl.querySelectorAll('.job-view-btn').forEach(btn => {
-            btn.addEventListener('click', () => showJobDetail(btn.dataset.jid));
+        listEl.querySelectorAll('.job-card').forEach(card => {
+            const open = () => showJobDetail(card.dataset.jid);
+            card.addEventListener('click', open);
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+            });
         });
     }
 
@@ -903,6 +909,7 @@
 
         renderApplyCard(job);
         showView('v-job-detail');
+        try { history.replaceState(null, '', `?job=${job.id}`); } catch (e) {}
     }
 
     function renderApplyCard(job) {
@@ -939,6 +946,11 @@
                     <input id="apply-email" type="email" class="input-field" placeholder="Email" value="${cand.email||''}" />
                     <input id="apply-phone" type="tel" class="input-field" placeholder="Phone" value="${cand.phone||''}" />
                     <textarea id="apply-note" class="input-field" rows="3" placeholder="Cover note (optional)"></textarea>
+                    <div>
+                        <label class="block text-xs font-medium text-grayMuted mb-1">Resume (optional)</label>
+                        <input id="apply-resume" type="file" class="input-field" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png" />
+                        <p class="text-xs text-grayMuted mt-1">PDF, Word, text, or image · max 5 MB</p>
+                    </div>
                     <p id="apply-err" class="text-red-500 text-sm hidden"></p>
                     <button id="btn-submit-apply" class="btn-green w-full">Submit Application</button>
                     <a href="${job.apply_url}" target="_blank" rel="noopener noreferrer" class="btn-outline-navy w-full text-center block" style="text-decoration:none;">Apply on Company Website</a>
@@ -946,14 +958,43 @@
             `;
             setTimeout(() => {
                 const btn = document.getElementById('btn-submit-apply');
-                if (btn) btn.addEventListener('click', () => {
+                if (btn) btn.addEventListener('click', async () => {
                     const name = document.getElementById('apply-name').value.trim();
                     const email = document.getElementById('apply-email').value.trim();
                     const errEl = document.getElementById('apply-err');
                     if (!name || !email) { errEl.textContent = 'Name and email are required.'; errEl.classList.remove('hidden'); return; }
                     errEl.classList.add('hidden');
+
+                    // Upload an attached resume (if any) to the serverless endpoint first.
+                    let resume = null;
+                    const fileInput = document.getElementById('apply-resume');
+                    const file = fileInput && fileInput.files && fileInput.files[0];
+                    if (file) {
+                        if (file.size > 5 * 1024 * 1024) { errEl.textContent = 'Resume exceeds the 5 MB limit.'; errEl.classList.remove('hidden'); return; }
+                        btn.disabled = true; btn.textContent = 'Uploading resume…';
+                        try {
+                            const fd = new FormData();
+                            fd.append('resume', file);
+                            const res = await fetch('/api/resume', { method: 'POST', body: fd });
+                            if (!res.ok) {
+                                const data = await res.json().catch(() => ({}));
+                                errEl.textContent = data.error || 'Resume upload failed. Please try again.';
+                                errEl.classList.remove('hidden');
+                                btn.disabled = false; btn.textContent = 'Submit Application';
+                                return;
+                            }
+                            resume = await res.json();
+                        } catch (e) {
+                            errEl.textContent = 'Resume upload failed. Check your connection and try again.';
+                            errEl.classList.remove('hidden');
+                            btn.disabled = false; btn.textContent = 'Submit Application';
+                            return;
+                        }
+                        btn.disabled = false; btn.textContent = 'Submit Application';
+                    }
+
                     const apps = getApplications();
-                    apps.push({ jobId: job.id, jobTitle: job.title, company: job.company, appliedAt: new Date().toISOString(), status: 'Pending' });
+                    apps.push({ jobId: job.id, jobTitle: job.title, company: job.company, appliedAt: new Date().toISOString(), status: 'Pending', resume });
                     setApplications(apps);
                     showToast('✅ Application submitted! The employer will contact you soon.');
                     renderApplyCard(job);
@@ -991,6 +1032,7 @@
                 <div class="min-w-0 flex-1">
                     <h3 class="font-bold text-navy text-sm truncate">${a.jobTitle}</h3>
                     <p class="text-xs text-grayMuted">${a.company} · ${date}</p>
+                    ${a.resume ? `<a href="${a.resume.url}" target="_blank" rel="noopener noreferrer" class="text-xs text-green font-semibold hover:underline inline-flex items-center gap-1 mt-1">📄 ${a.resume.filename}</a>` : ''}
                 </div>
                 <span class="${bc}">${a.status}</span>
             </div>`;
@@ -1340,9 +1382,28 @@
     // ============================================================
     // INIT
     // ============================================================
+    // Resolve a job id from the URL so that links and redirects such as
+    // /job.html?id=1, /?job=j1, or /#j1 open the matching job detail page.
+    function getDeepLinkJobId() {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            let raw = params.get('job') || params.get('id') || '';
+            if (!raw && window.location.hash) raw = window.location.hash.replace(/^#/, '');
+            raw = String(raw || '').trim();
+            if (!raw) return null;
+            if (/^\d+$/.test(raw)) raw = 'j' + raw; // "1" -> "j1"
+            return raw;
+        } catch (e) { return null; }
+    }
+
     function init() {
         const cand = getCandidateUser();
         const emp = getEmployerUser();
+        const deepJobId = getDeepLinkJobId();
+        if (deepJobId && JOBS.some(j => j.id === deepJobId)) {
+            showJobDetail(deepJobId);
+            return;
+        }
         if (cand) showView('v-jobs');
         else if (emp) showView('v-employer-dashboard');
         else showView('v-landing');

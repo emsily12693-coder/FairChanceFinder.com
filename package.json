@@ -1,0 +1,10 @@
+{
+  "name": "fairchancefinder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FairChanceFinder — fair-chance job board for the Phoenix Valley.",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0",
+    "@netlify/functions": "^2.8.2"
+  }
+}
