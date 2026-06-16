@@ -145,3 +145,13 @@ body {
     padding-inline: 0.5rem;
   }
 }
+
+body,
+body * {
+  color: #000000 !important;
+}
+
+::placeholder {
+  color: #000000 !important;
+  opacity: 1;
+}
