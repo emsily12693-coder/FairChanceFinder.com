@@ -22,3 +22,12 @@ export const jobAnalytics = pgTable("job_analytics", {
   applyClicks: integer("apply_clicks").notNull().default(0),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+export const applications = pgTable("applications", {
+  id: serial("id").primaryKey(),
+  jobId: text("job_id").notNull(),
+  applicantName: text("applicant_name").notNull(),
+  applicantEmail: text("applicant_email").notNull(),
+  resumeKey: text("resume_key"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
