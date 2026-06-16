@@ -151,7 +151,65 @@ body * {
   color: #000000 !important;
 }
 
+.site-header,
+.site-header *,
+.site-footer,
+.site-footer *,
+.btn-primary,
+.btn-primary *,
+.btn-secondary,
+.btn-secondary *,
+.input,
+.modal {
+  color: #ffffff !important;
+}
+
 ::placeholder {
   color: #000000 !important;
   opacity: 1;
+}
+
+.input::placeholder {
+  color: #ffffff !important;
+  opacity: 0.75;
+}
+
+.auth-wrapper,
+.auth-wrapper *,
+.auth-wrap > :not(.panel),
+.auth-wrap > :not(.panel) * {
+  color: #ffffff !important;
+}
+
+.page-header,
+.page-header *,
+.hero,
+.hero *,
+.hero-panel,
+.hero-panel *,
+.panel,
+.panel *,
+.feature-grid article,
+.feature-grid article *,
+.job-card,
+.job-card *,
+.modal-card,
+.modal-card *,
+.app-shell,
+.app-shell * {
+  color: #000000 !important;
+}
+
+.site-header,
+.site-header *,
+.site-footer,
+.site-footer *,
+.btn-primary,
+.btn-primary *,
+.btn-secondary,
+.btn-secondary *,
+.input,
+.input *,
+.input::placeholder {
+  color: #ffffff !important;
 }
