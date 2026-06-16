@@ -16,6 +16,21 @@
   status = 200
   force = true
 
+[[redirects]]
+  from = "/job/:id"
+  to = "/job.html?id=:id"
+  status = 200
+
+[[redirects]]
+  from = "/employer-posting.html"
+  to = "/employers.html"
+  status = 301
+
+[[redirects]]
+  from = "/privacy-policy.html"
+  to = "/privacy.html"
+  status = 301
+
 # SPA fallback — serves index.html for all other routes
 [[redirects]]
   from = "/*"

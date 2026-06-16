@@ -1,0 +1,41 @@
+[
+  {
+    "id": "101",
+    "title": "Warehouse Associate",
+    "company": "Desert Logistics Group",
+    "location": "Phoenix, AZ",
+    "type": "Full-time",
+    "pay": "$18 - $22/hr",
+    "category": "Logistics",
+    "description": "Support inbound and outbound warehouse operations for a fair-chance employer with steady daytime shifts.",
+    "responsibilities": ["Pick, pack, and stage orders", "Use handheld scanners to track inventory", "Keep work areas clean and safe"],
+    "qualifications": ["Reliable attendance", "Able to lift 40 pounds", "Warehouse experience preferred but not required"],
+    "applyUrl": "https://www.indeed.com/jobs?q=warehouse+associate&l=Phoenix%2C+AZ"
+  },
+  {
+    "id": "102",
+    "title": "Customer Support Representative",
+    "company": "Southwest Service Partners",
+    "location": "Tempe, AZ",
+    "type": "Full-time",
+    "pay": "$20/hr",
+    "category": "Customer Service",
+    "description": "Help customers by phone and email while documenting account updates in a supportive team environment.",
+    "responsibilities": ["Answer customer questions", "Update account records", "Escalate complex issues to supervisors"],
+    "qualifications": ["Clear communication", "Basic computer skills", "Calm problem-solving style"],
+    "applyUrl": "https://www.indeed.com/jobs?q=customer+support&l=Tempe%2C+AZ"
+  },
+  {
+    "id": "103",
+    "title": "Commercial Cleaner",
+    "company": "Valley Facilities Co.",
+    "location": "Mesa, AZ",
+    "type": "Part-time",
+    "pay": "$17/hr",
+    "category": "Facilities",
+    "description": "Join an evening facilities crew cleaning offices, common areas, and light industrial spaces.",
+    "responsibilities": ["Clean assigned areas", "Restock supplies", "Report maintenance needs"],
+    "qualifications": ["Evening availability", "Attention to detail", "Able to work independently"],
+    "applyUrl": "https://www.indeed.com/jobs?q=commercial+cleaner&l=Mesa%2C+AZ"
+  }
+]
