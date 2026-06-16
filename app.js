@@ -5,6 +5,15 @@ const CONTACT_BUSINESS = "EPCSR@fairchancefinder.com";
 const state = { jobs: [], user: null };
 let identityClient = null;
 
+function uploadOwnerId() {
+  let ownerId = localStorage.getItem("fcf_upload_owner");
+  if (!ownerId) {
+    ownerId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    localStorage.setItem("fcf_upload_owner", ownerId);
+  }
+  return ownerId;
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   renderShell();
   await hydrateAuth();
@@ -68,8 +77,9 @@ function routePage() {
 }
 
 function jobUrl(job) {
-  if (location.pathname.includes("/app/")) return `job.html?id=${encodeURIComponent(job.id)}`;
-  return `${basePrefix()}job.html?id=${encodeURIComponent(job.id)}`;
+  const id = encodeURIComponent(job.id);
+  if (location.pathname.includes("/app/")) return `job.html?id=${id}`;
+  return `${basePrefix()}job.html?id=${id}`;
 }
 
 function jobCard(job, modal = false) {
@@ -103,6 +113,10 @@ async function openJobChoice(event) {
   const id = event.currentTarget.dataset.viewJob;
   await track(id, "click");
   const modal = document.getElementById("jobChoiceModal");
+  if (!modal) {
+    location.href = `job.html?id=${encodeURIComponent(id)}`;
+    return;
+  }
   modal.innerHTML = `<div class="modal-card"><h2>View this job</h2><a class="btn btn-primary" href="job.html?id=${id}">Continue on Web</a><a class="btn btn-secondary" href="app/job.html?id=${id}">Open App</a><a class="btn btn-outline" href="app/index.html">Download App</a><button class="btn btn-outline" data-close-modal>Close</button></div>`;
   modal.setAttribute("aria-hidden", "false");
   modal.querySelector("[data-close-modal]").addEventListener("click", () => modal.setAttribute("aria-hidden", "true"));
@@ -121,7 +135,16 @@ async function renderJobDetail() {
   const summary = document.getElementById("jobSummary");
   if (summary) summary.innerHTML = `<p><strong>Company:</strong> ${job.company}</p><p><strong>Location:</strong> ${job.location}</p><p><strong>Type:</strong> ${job.type}</p><p><strong>Pay:</strong> ${job.pay}</p>`;
   const external = document.getElementById("externalApply");
-  if (external) external.href = job.applyUrl;
+  if (external) {
+    if (job.applyUrl) {
+      external.href = job.applyUrl;
+      external.removeAttribute("aria-disabled");
+    } else {
+      external.removeAttribute("href");
+      external.setAttribute("aria-disabled", "true");
+      external.textContent = "Employer site unavailable";
+    }
+  }
   document.getElementById("platformApply")?.addEventListener("click", async () => {
     await track(id, "apply");
     const applicantName = localStorage.getItem("profileName") || "FairChanceFinder applicant";
@@ -132,7 +155,7 @@ async function renderJobDetail() {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ jobId: id, applicantName, applicantEmail, resumeKey }),
     }).catch(() => null);
-    alert(response?.ok ? "Application submitted through FairChanceFinder." : "Application started. Upload a resume in the app to attach it before applying.");
+    alert(response?.ok ? "Application submitted through FairChanceFinder." : "Application could not be submitted. Upload a resume in the app, save your profile, and try again.");
   });
   external?.addEventListener("click", () => track(id, "apply"));
 }
@@ -224,8 +247,9 @@ function bindProfile() {
 function bindUploads() {
   const form = document.getElementById("uploadForm");
   const listUploads = async () => {
-    const files = await fetch("/api/uploads").then((r) => r.json()).catch(() => []);
-    document.getElementById("uploadList").innerHTML = files.map((file) => `<a class="job-card" href="/api/uploads?key=${encodeURIComponent(file.key)}" download>Download ${file.name}</a>`).join("");
+    const ownerId = uploadOwnerId();
+    const files = await fetch(`/api/uploads?ownerId=${encodeURIComponent(ownerId)}`).then((r) => r.json()).catch(() => []);
+    document.getElementById("uploadList").innerHTML = files.map((file) => `<a class="job-card" href="/api/uploads?ownerId=${encodeURIComponent(ownerId)}&key=${encodeURIComponent(file.key)}" download>Download ${file.name}</a>`).join("") || "<p>No uploaded resumes yet.</p>";
   };
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -233,6 +257,7 @@ function bindUploads() {
     if (!file) return;
     const body = new FormData();
     body.append("file", file);
+    body.append("ownerId", uploadOwnerId());
     const uploaded = await fetch("/api/uploads", { method: "POST", body }).then((r) => r.ok ? r.json() : null).catch(() => null);
     if (uploaded?.key) localStorage.setItem("latestResumeKey", uploaded.key);
     listUploads();

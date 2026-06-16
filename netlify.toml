@@ -27,8 +27,33 @@
   force = true
 
 [[redirects]]
+  from = "/jobs"
+  to = "/jobs.html"
+  status = 200
+
+[[redirects]]
+  from = "/job"
+  to = "/job.html"
+  status = 200
+
+[[redirects]]
   from = "/job/:id"
   to = "/job.html?id=:id"
+  status = 200
+
+[[redirects]]
+  from = "/app/jobs"
+  to = "/app/jobs.html"
+  status = 200
+
+[[redirects]]
+  from = "/app/job"
+  to = "/app/job.html"
+  status = 200
+
+[[redirects]]
+  from = "/app/job/:id"
+  to = "/app/job.html?id=:id"
   status = 200
 
 [[redirects]]
