@@ -16,6 +16,12 @@
   status = 200
   force = true
 
+[[redirects]]
+  from = "/api/uploads"
+  to = "/.netlify/functions/uploads"
+  status = 200
+  force = true
+
 # SPA fallback — serves index.html for all other routes
 [[redirects]]
   from = "/*"

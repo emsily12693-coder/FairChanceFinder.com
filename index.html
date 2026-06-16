@@ -352,6 +352,15 @@
                     <textarea data-id="196" id="prof-bg-e3f3" class="input-field" rows="2"></textarea>
                 </div>
                 <button data-id="197" id="btn-save-profile-g3h3" class="btn-green w-full">Save Changes</button>
+                <div class="border-t border-grayBorder pt-4 mt-4">
+                    <p class="text-sm font-semibold text-grayText mb-1">Resume & Documents</p>
+                    <p class="text-xs text-grayMuted mb-3">Upload a PDF, Word, RTF, or text resume up to 5 MB.</p>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input id="profile-resume-file" type="file" class="input-field" accept=".pdf,.doc,.docx,.txt,.rtf" aria-label="Upload resume or document" />
+                        <button id="btn-upload-resume" class="btn-navy whitespace-nowrap" type="button">Upload</button>
+                    </div>
+                    <div id="profile-resume-list" class="mt-3 space-y-2" aria-live="polite"></div>
+                </div>
                 <div data-id="198" class="border-t border-grayBorder pt-4 mt-4">
                     <p data-id="199" class="text-sm font-semibold text-grayText mb-3">Danger Zone</p>
                     <button data-id="200" id="btn-cand-logout-i3j3" class="btn-outline-red w-full">Log Out</button>
@@ -565,7 +574,7 @@
                 <p data-id="421"><strong data-id="422">HomeIsYou LLC DBA FairChance Finder</strong></p>
                 <p data-id="423"><strong data-id="424">Last Updated:</strong> June 2025</p>
                 <h3 data-id="425" class="font-bold text-navy text-base mt-6">What We Collect</h3>
-                <p data-id="426">We collect information you voluntarily provide: your name, email address, phone number, skills, background notes, and application data. All data is stored locally on your device using browser storage.</p>
+                <p data-id="426">We collect information you voluntarily provide: your name, email address, phone number, skills, background notes, application data, and resume documents you choose to upload.</p>
                 <h3 data-id="427" class="font-bold text-navy text-base mt-6">How We Use Your Data</h3>
                 <p data-id="428">Your information is used solely to connect you with fair-chance employers in the Phoenix Valley. We display your name, email, and phone number to employers only when you submit a job application.</p>
                 <h3 data-id="429" class="font-bold text-navy text-base mt-6">Data Sharing</h3>
@@ -573,7 +582,7 @@
                 <h3 data-id="432" class="font-bold text-navy text-base mt-6">Payment Security</h3>
                 <p data-id="433">Employer payments are processed securely by <strong data-id="434">Stripe</strong>, a PCI-compliant payment platform. We do not store credit card numbers or financial details on our servers.</p>
                 <h3 data-id="435" class="font-bold text-navy text-base mt-6">Data Retention</h3>
-                <p data-id="436">Your profile and application data is stored in your browser's local storage. You can delete your data at any time by clearing your browser data or logging out.</p>
+                <p data-id="436">Your profile and application tracking data is stored in your browser's local storage. Uploaded resume documents are stored with Netlify Blobs so you can download and attach them later.</p>
                 <h3 data-id="437" class="font-bold text-navy text-base mt-6">Contact</h3>
                 <p data-id="438">For privacy questions, contact us at <a data-id="439" href="mailto:EPCSR@fairchancefinder.com" class="text-green font-semibold" target="_blank" rel="noopener noreferrer">EPCSR@fairchancefinder.com</a>.</p>
             </div>
@@ -585,10 +594,10 @@
         <div data-id="441" class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
             <div data-id="442" class="text-center md:text-left">
                 <p data-id="443" class="font-semibold">© 2025 HomeIsYou LLC DBA FairChance Finder</p>
-                <p data-id="444" class="text-gray-400 mt-1"><a data-id="445" href="mailto:EPCSR@fairchancefinder.com" class="hover:text-green transition-colors" target="_blank" rel="noopener noreferrer">EPCSR@fairchancefinder.com</a></p>
+                <p data-id="444" class="text-gray-400 mt-1"><a data-id="445" href="mailto:EPCSR@fairchancefinder.com" class="hover:text-green transition-colors" target="_blank" rel="noopener noreferrer">EPCSR@fairchancefinder.com</a> · <a href="mailto:empickel.93@gmail.com" class="hover:text-green transition-colors" target="_blank" rel="noopener noreferrer">empickel.93@gmail.com</a></p>
             </div>
             <div data-id="446" class="flex items-center gap-4">
-                <button data-id="447" id="footer-privacy-k5l5" class="text-gray-400 hover:text-white bg-transparent border-none cursor-pointer text-sm">Privacy Policy</button>
+                <button data-id="447" id="footer-privacy-k5l5" class="text-gray-400 hover:text-white bg-transparent border-none cursor-pointer text-sm">Privacy Notice</button>
                 <span data-id="448" class="text-gray-600">·</span>
                 <span data-id="449" class="text-gray-400">Made with ❤️ in Phoenix, AZ</span>
             </div>
@@ -669,6 +678,14 @@
     function setApplications(a) { localStorage.setItem('fcf_applications', JSON.stringify(a)); }
     function getPostedJobs() { try { return JSON.parse(localStorage.getItem('fcf_postedJobs')) || []; } catch(e) { return []; } }
     function setPostedJobs(j) { localStorage.setItem('fcf_postedJobs', JSON.stringify(j)); }
+    function getClientId() {
+        let id = localStorage.getItem('fcf_client_id');
+        if (!id) {
+            id = 'client-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+            localStorage.setItem('fcf_client_id', id);
+        }
+        return id;
+    }
 
     // ============================================================
     // TOAST
@@ -728,20 +745,21 @@
         if (cand) {
             navLinks = [
                 {label:'Jobs',view:'v-jobs'},{label:'My Applications',view:'v-applications'},
-                {label:'Resources',view:'v-resources'},{label:'My Profile',view:'v-profile'}
+                {label:'Resources',view:'v-resources'},{label:'My Profile',view:'v-profile'},
+                {label:'Privacy',view:'v-privacy'}
             ];
             actions = [{label:'Log Out',cls:'btn-gray',action:'logout-cand'},{label:cand.name.split(' ')[0],cls:'text-sm font-semibold text-navy',action:null}];
         } else if (emp) {
             navLinks = [
                 {label:'Post a Job',view:'v-post-job'},{label:'My Dashboard',view:'v-employer-dashboard'},
-                {label:'Pricing',view:'v-employer-landing'}
+                {label:'Pricing',view:'v-employer-landing'},{label:'Privacy',view:'v-privacy'}
             ];
             actions = [{label:'Log Out',cls:'btn-gray',action:'logout-emp'},{label:emp.companyName,cls:'text-sm font-semibold text-navy',action:null}];
         } else {
             navLinks = [
                 {label:'Home',view:'v-landing'},{label:'Jobs',view:'v-jobs'},
                 {label:'Resources',view:'v-resources'},{label:'Employers',view:'v-employer-landing'},
-                {label:'About',view:'v-about'}
+                {label:'About',view:'v-about'},{label:'Privacy',view:'v-privacy'}
             ];
             actions = [
                 {label:'Find Jobs',cls:'btn-green',action:'go-cand-auth'},
@@ -938,6 +956,9 @@
                     <input id="apply-name" type="text" class="input-field" placeholder="Full Name" value="${cand.name||''}" />
                     <input id="apply-email" type="email" class="input-field" placeholder="Email" value="${cand.email||''}" />
                     <input id="apply-phone" type="tel" class="input-field" placeholder="Phone" value="${cand.phone||''}" />
+                    <select id="apply-resume" class="input-field" aria-label="Attach an uploaded resume">
+                        <option value="">No resume attached</option>
+                    </select>
                     <textarea id="apply-note" class="input-field" rows="3" placeholder="Cover note (optional)"></textarea>
                     <p id="apply-err" class="text-red-500 text-sm hidden"></p>
                     <button id="btn-submit-apply" class="btn-green w-full">Submit Application</button>
@@ -945,15 +966,18 @@
                 </div>
             `;
             setTimeout(() => {
+                populateApplicationResumeSelect();
                 const btn = document.getElementById('btn-submit-apply');
                 if (btn) btn.addEventListener('click', () => {
                     const name = document.getElementById('apply-name').value.trim();
                     const email = document.getElementById('apply-email').value.trim();
+                    const resumeSelect = document.getElementById('apply-resume');
+                    const selectedResume = resumeSelect && resumeSelect.value ? JSON.parse(resumeSelect.value) : null;
                     const errEl = document.getElementById('apply-err');
                     if (!name || !email) { errEl.textContent = 'Name and email are required.'; errEl.classList.remove('hidden'); return; }
                     errEl.classList.add('hidden');
                     const apps = getApplications();
-                    apps.push({ jobId: job.id, jobTitle: job.title, company: job.company, appliedAt: new Date().toISOString(), status: 'Pending' });
+                    apps.push({ jobId: job.id, jobTitle: job.title, company: job.company, resumeName: selectedResume ? selectedResume.name : '', appliedAt: new Date().toISOString(), status: 'Pending' });
                     setApplications(apps);
                     showToast('✅ Application submitted! The employer will contact you soon.');
                     renderApplyCard(job);
@@ -961,6 +985,21 @@
             }, 0);
         }
         setTimeout(refreshIcons, 50);
+    }
+
+    async function populateApplicationResumeSelect() {
+        const select = document.getElementById('apply-resume');
+        if (!select) return;
+        try {
+            const res = await fetch('/api/uploads?clientId=' + encodeURIComponent(getClientId()));
+            const data = await res.json();
+            const files = res.ok ? (data.files || []) : [];
+            select.innerHTML = '<option value="">No resume attached</option>' + files.map(file =>
+                `<option value='${JSON.stringify(file).replace(/'/g, '&#39;')}'>${file.name}</option>`
+            ).join('');
+        } catch (error) {
+            select.innerHTML = '<option value="">No resume available</option>';
+        }
     }
 
     // ============================================================
@@ -991,6 +1030,7 @@
                 <div class="min-w-0 flex-1">
                     <h3 class="font-bold text-navy text-sm truncate">${a.jobTitle}</h3>
                     <p class="text-xs text-grayMuted">${a.company} · ${date}</p>
+                    ${a.resumeName ? `<p class="text-xs text-grayMuted mt-1">Resume: ${a.resumeName}</p>` : ''}
                 </div>
                 <span class="${bc}">${a.status}</span>
             </div>`;
@@ -1024,6 +1064,61 @@
         document.getElementById('prof-phone-a3b3').value = cand.phone || '';
         document.getElementById('prof-skills-c3d3').value = cand.skills || '';
         document.getElementById('prof-bg-e3f3').value = cand.backgroundNote || '';
+        renderResumeFiles();
+    }
+
+    async function uploadResumeFile() {
+        const input = document.getElementById('profile-resume-file');
+        const file = input.files && input.files[0];
+        if (!file) { showToast('Choose a resume or document first.'); return; }
+
+        const form = new FormData();
+        form.append('clientId', getClientId());
+        form.append('file', file);
+
+        const btn = document.getElementById('btn-upload-resume');
+        btn.disabled = true;
+        btn.textContent = 'Uploading...';
+        try {
+            const res = await fetch('/api/uploads', { method: 'POST', body: form });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Upload failed');
+            input.value = '';
+            showToast('Resume uploaded.');
+            renderResumeFiles();
+        } catch (error) {
+            showToast(error.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Upload';
+        }
+    }
+
+    async function renderResumeFiles() {
+        const container = document.getElementById('profile-resume-list');
+        if (!container) return;
+        container.innerHTML = '<p class="text-xs text-grayMuted">Loading documents...</p>';
+        try {
+            const res = await fetch('/api/uploads?clientId=' + encodeURIComponent(getClientId()));
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Could not load documents');
+            const files = data.files || [];
+            if (!files.length) {
+                container.innerHTML = '<p class="text-xs text-grayMuted">No uploaded documents yet.</p>';
+                return;
+            }
+            container.innerHTML = files.map(file => `
+                <div class="flex items-center justify-between gap-3 rounded-lg border border-grayBorder bg-grayBg px-3 py-2">
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-navy truncate">${file.name}</p>
+                        <p class="text-xs text-grayMuted">${Math.max(1, Math.round(file.size / 1024))} KB</p>
+                    </div>
+                    <a href="${file.downloadUrl}" class="btn-gray text-xs" download>Download</a>
+                </div>
+            `).join('');
+        } catch (error) {
+            container.innerHTML = `<p class="text-xs text-red-500">${error.message}</p>`;
+        }
     }
 
     // ============================================================
@@ -1316,6 +1411,7 @@
         updateNav();
         showToast('Profile saved!');
     });
+    document.getElementById('btn-upload-resume').addEventListener('click', uploadResumeFile);
 
     // Profile logout
     document.getElementById('btn-cand-logout-i3j3').addEventListener('click', () => {
