@@ -48,9 +48,30 @@ function downloadResume() {
 async function loadUploads() {
   const list = document.getElementById('uploadedFiles');
   if (!list) return;
-  const response = await fetch(`/api/uploads?clientId=${encodeURIComponent(ensureClientId())}`);
-  const data = await response.json();
-  list.innerHTML = (data.files || []).map((file) => `<div class="file-row"><span>${file.name}</span><a class="btn btn-outline" href="${file.downloadUrl}">Download</a></div>`).join('') || '<p class="footer-text">No uploaded files yet.</p>';
+  try {
+    const response = await fetch(`/api/uploads?clientId=${encodeURIComponent(ensureClientId())}`);
+    if (!response.ok) throw new Error('Unable to load uploaded files');
+    const data = await response.json();
+    list.innerHTML = '';
+    if (!data.files?.length) {
+      list.innerHTML = '<p class="footer-text">No uploaded files yet.</p>';
+      return;
+    }
+    data.files.forEach((file) => {
+      const row = document.createElement('div');
+      const name = document.createElement('span');
+      const link = document.createElement('a');
+      row.className = 'file-row';
+      name.textContent = file.name;
+      link.className = 'btn btn-outline';
+      link.href = file.downloadUrl;
+      link.textContent = 'Download';
+      row.append(name, link);
+      list.appendChild(row);
+    });
+  } catch (error) {
+    list.innerHTML = '<p class="footer-text">Uploaded files are temporarily unavailable.</p>';
+  }
 }
 
 async function uploadResume(event) {
@@ -68,6 +89,7 @@ async function uploadResume(event) {
   }
   input.value = '';
   await loadUploads();
+  alert('Resume uploaded. You can attach it when applying for a job.');
 }
 
 document.addEventListener('DOMContentLoaded', () => {

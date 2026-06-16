@@ -1,0 +1,6 @@
+/.well-known/*  /.well-known/:splat  200!
+/api/uploads  /.netlify/functions/uploads  200!
+/job/:id  /job.html?id=:id  200
+/employer-posting.html  /employers.html  301
+/privacy-policy.html  /privacy.html  301
+/*  /index.html  200

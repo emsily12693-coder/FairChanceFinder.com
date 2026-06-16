@@ -21,6 +21,12 @@ const json = (body, status = 200) =>
     }
   });
 
+const corsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'GET,POST,OPTIONS',
+  'access-control-allow-headers': 'content-type'
+};
+
 const clean = (value) => String(value || '').replace(/[^a-zA-Z0-9._-]/g, '-').slice(0, 120);
 
 export default async (request) => {
@@ -33,6 +39,9 @@ export default async (request) => {
   if (request.method === 'GET') {
     const key = url.searchParams.get('key');
     if (key) {
+      const clientId = clean(url.searchParams.get('clientId'));
+      if (!clientId || !key.startsWith(`clients/${clientId}/`)) return json({ error: 'File not found' }, 404);
+
       const file = await store.get(key, { type: 'blob' });
       if (!file) return json({ error: 'File not found' }, 404);
 
@@ -41,7 +50,8 @@ export default async (request) => {
         headers: {
           'content-type': file.type || 'application/octet-stream',
           'content-disposition': `attachment; filename="${filename}"`,
-          'cache-control': 'private, max-age=0'
+          'cache-control': 'private, max-age=0',
+          ...corsHeaders
         }
       });
     }
@@ -49,7 +59,10 @@ export default async (request) => {
     const clientId = clean(url.searchParams.get('clientId'));
     if (!clientId) return json({ error: 'Missing clientId' }, 400);
 
-    const files = (await indexStore.get(`clients/${clientId}.json`, { type: 'json' })) || [];
+    const files = ((await indexStore.get(`clients/${clientId}.json`, { type: 'json' })) || []).map((file) => ({
+      ...file,
+      downloadUrl: `/api/uploads?clientId=${encodeURIComponent(clientId)}&key=${encodeURIComponent(file.key)}&filename=${encodeURIComponent(file.name)}`
+    }));
     return json({ files });
   }
 
@@ -75,7 +88,7 @@ export default async (request) => {
     size: file.size,
     type: file.type,
     uploadedAt: new Date().toISOString(),
-    downloadUrl: `/api/uploads?key=${encodeURIComponent(key)}&filename=${encodeURIComponent(originalName)}`
+    downloadUrl: `/api/uploads?clientId=${encodeURIComponent(clientId)}&key=${encodeURIComponent(key)}&filename=${encodeURIComponent(originalName)}`
   };
   await indexStore.setJSON(`clients/${clientId}.json`, [record, ...existing].slice(0, 12));
 

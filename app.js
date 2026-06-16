@@ -1,4 +1,5 @@
 const STRIPE_CHECKOUT_URL = 'https://buy.stripe.com/5kQ8wP2B99jN7co049es000';
+const CLIENT_ID_KEY = 'fcf_client_id';
 let jobs = [];
 
 const $ = (selector, scope = document) => scope.querySelector(selector);
@@ -18,9 +19,19 @@ function getJobId() {
   return params.get('id') || location.pathname.split('/').filter(Boolean).pop();
 }
 
+function ensureClientId() {
+  let id = localStorage.getItem(CLIENT_ID_KEY);
+  if (!id) {
+    id = crypto.randomUUID ? crypto.randomUUID() : `client-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    localStorage.setItem(CLIENT_ID_KEY, id);
+  }
+  return id;
+}
+
 async function loadJobs() {
   if (jobs.length) return jobs;
   const response = await fetch('/job-data.json');
+  if (!response.ok) throw new Error('Unable to load job data');
   jobs = await response.json();
   return jobs;
 }
@@ -78,7 +89,12 @@ async function initJobsPage() {
 async function initJobDetail() {
   const mount = $('#jobDetail');
   if (!mount) return;
-  await loadJobs();
+  try {
+    await loadJobs();
+  } catch (error) {
+    mount.innerHTML = '<article class="panel"><h1>Jobs are temporarily unavailable</h1><p>Please refresh the page or try again shortly.</p></article>';
+    return;
+  }
   const job = jobs.find((item) => item.id === getJobId()) || jobs[0];
   document.title = `${job.title} | FairChanceFinder`;
   mount.innerHTML = `
@@ -107,6 +123,28 @@ async function initJobDetail() {
   `;
 }
 
+async function loadResumeOptions() {
+  const select = $('#applicationResumeSelect');
+  if (!select) return;
+  select.innerHTML = '<option value="">No uploaded resume selected</option>';
+  try {
+    const response = await fetch(`/api/uploads?clientId=${encodeURIComponent(ensureClientId())}`);
+    if (!response.ok) throw new Error('Unable to load uploads');
+    const data = await response.json();
+    (data.files || []).forEach((file) => {
+      const option = document.createElement('option');
+      option.value = JSON.stringify({ key: file.key, name: file.name, downloadUrl: file.downloadUrl });
+      option.textContent = file.name;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    const option = document.createElement('option');
+    option.value = '';
+    option.textContent = 'Uploaded resumes unavailable';
+    select.appendChild(option);
+  }
+}
+
 function initApplicationModal() {
   const modal = $('#applicationModal');
   if (!modal) return;
@@ -114,6 +152,7 @@ function initApplicationModal() {
     const opener = event.target.closest('[data-open-application]');
     if (opener) {
       $('#applicationJobId').value = opener.dataset.openApplication;
+      loadResumeOptions();
       modal.hidden = false;
     }
     if (event.target.matches('[data-close-modal]') || event.target === modal) {
@@ -122,6 +161,13 @@ function initApplicationModal() {
   });
   $('#applicationForm')?.addEventListener('submit', (event) => {
     event.preventDefault();
+    const selectedResume = $('#applicationResumeSelect')?.value;
+    if (selectedResume) {
+      const resume = JSON.parse(selectedResume);
+      $('#applicationResumeName').value = resume.name;
+      $('#applicationResumeKey').value = resume.key;
+      $('#applicationResumeDownloadUrl').value = resume.downloadUrl;
+    }
     const application = Object.fromEntries(new FormData(event.currentTarget));
     const saved = JSON.parse(localStorage.getItem('fcf_applications') || '[]');
     saved.unshift({ ...application, submittedAt: new Date().toISOString() });
