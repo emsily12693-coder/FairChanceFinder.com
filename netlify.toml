@@ -17,12 +17,6 @@
   force = true
 
 [[redirects]]
-  from = "/api/uploads"
-  to = "/.netlify/functions/uploads"
-  status = 200
-  force = true
-
-[[redirects]]
   from = "/job/:id"
   to = "/job.html?id=:id"
   status = 200

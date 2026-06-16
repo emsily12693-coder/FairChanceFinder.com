@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Company placeholder">
-  <rect width="96" height="96" rx="20" fill="#F5F7FA"/>
-  <path d="M24 78V30l24-12 24 12v48" fill="#fff" stroke="#2BB5A3" stroke-width="5" stroke-linejoin="round"/>
-  <path d="M38 78V58h20v20M36 38h8M52 38h8M36 50h8M52 50h8" stroke="#000" stroke-width="5" stroke-linecap="round"/>
-  <circle cx="73" cy="23" r="10" fill="#7A4FFF"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title">
+  <title id="title">Company placeholder</title>
+  <rect width="96" height="96" rx="18" fill="#eef8f6"/>
+  <path d="M25 75V27h30v48M55 42h17v33" fill="none" stroke="#111827" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M35 39h10M35 52h10M35 65h10M64 54h4M64 65h4" stroke="#2bb5a3" stroke-width="5" stroke-linecap="round"/>
 </svg>

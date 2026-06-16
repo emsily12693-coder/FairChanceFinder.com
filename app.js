@@ -1,221 +1,232 @@
-const STRIPE_CHECKOUT_URL = 'https://buy.stripe.com/bJebJ1grZbrVgMY8AFes001';
-const CLIENT_ID_KEY = 'fcf_client_id';
-let jobs = [];
+const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/bJebJ1grZbrVgMY8AFes001";
+const CONTACT_PERSONAL = "empickel.93@gmail.com";
+const CONTACT_BUSINESS = "EPCSR@fairchancefinder.com";
 
-const $ = (selector, scope = document) => scope.querySelector(selector);
-const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
+const state = { jobs: [], user: null };
+let identityClient = null;
 
-function toast(message) {
-  const el = document.createElement('div');
-  el.className = 'toast';
-  el.setAttribute('role', 'status');
-  el.textContent = message;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 3200);
+document.addEventListener("DOMContentLoaded", async () => {
+  renderShell();
+  await hydrateAuth();
+  await loadJobs();
+  routePage();
+});
+
+function basePrefix() {
+  return location.pathname.includes("/app/") ? "../" : "";
 }
 
-function getJobId() {
-  const params = new URLSearchParams(location.search);
-  return params.get('id') || location.pathname.split('/').filter(Boolean).pop();
-}
-
-function ensureClientId() {
-  let id = localStorage.getItem(CLIENT_ID_KEY);
-  if (!id) {
-    id = crypto.randomUUID ? crypto.randomUUID() : `client-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    localStorage.setItem(CLIENT_ID_KEY, id);
+function renderShell() {
+  const prefix = basePrefix();
+  const header = document.querySelector(".site-header");
+  if (header) {
+    header.innerHTML = `<div class="container header-inner"><a class="logo" href="${prefix}index.html"><img src="${prefix}assets/logo.svg" alt="FairChanceFinder logo"></a><nav class="main-nav"><a href="${prefix}index.html">Home</a><a href="${prefix}jobs.html">Jobs</a><a href="${prefix}resources.html">Resources</a><a href="${prefix}employers.html">Employers</a><a href="${prefix}about.html">About</a><details class="privacy-menu"><summary>More</summary><a href="${prefix}privacy.html">Privacy Notice</a></details></nav><nav class="portal-nav"><a href="${prefix}employer-login.html">Employer Login</a><a href="${prefix}employer-dashboard.html">Dashboard</a></nav></div>`;
   }
-  return id;
+  const footer = document.querySelector(".site-footer");
+  if (footer) {
+    footer.innerHTML = `<div class="container footer-inner"><strong>FairChanceFinder</strong><span>Contact: <a href="mailto:${CONTACT_BUSINESS}">${CONTACT_BUSINESS}</a> | <a href="mailto:${CONTACT_PERSONAL}">${CONTACT_PERSONAL}</a></span><a href="${prefix}privacy.html">Privacy Notice</a></div>`;
+  }
+}
+
+async function hydrateAuth() {
+  try {
+    identityClient = await import("/node_modules/@netlify/identity/dist/main.js");
+    await identityClient.handleAuthCallback?.();
+    state.user = await identityClient.getUser();
+  } catch {
+    const stored = localStorage.getItem("fcf_user");
+    state.user = stored ? JSON.parse(stored) : null;
+  }
+  if (document.body.dataset.protected === "true" && !state.user) {
+    location.href = "employer-login.html";
+  }
 }
 
 async function loadJobs() {
-  if (jobs.length) return jobs;
-  const response = await fetch('/job-data.json');
-  if (!response.ok) throw new Error('Unable to load job data');
-  jobs = await response.json();
-  return jobs;
-}
-
-function jobCard(job) {
-  return `
-    <article class="job-card">
-      <div class="job-top">
-        <div class="company-logo" aria-hidden="true">${job.logo}</div>
-        <div>
-          <h3>${job.title}</h3>
-          <p>${job.company}</p>
-        </div>
-      </div>
-      <p>${job.summary}</p>
-      <div class="job-meta">
-        <span class="tag">${job.location}</span>
-        <span class="tag">${job.type}</span>
-        <span class="tag">${job.pay}</span>
-      </div>
-      <div class="job-actions">
-        <a class="btn btn-outline" href="/job.html?id=${encodeURIComponent(job.id)}">Details</a>
-        <a class="btn btn-primary" href="${job.applyUrl}" target="_blank" rel="noopener">Apply</a>
-      </div>
-    </article>
-  `;
-}
-
-function filterJobs() {
-  const grid = $('#jobsGrid');
-  if (!grid) return;
-  const search = ($('#searchInput')?.value || '').trim().toLowerCase();
-  const locationValue = $('#locationFilter')?.value || '';
-  const type = $('#typeFilter')?.value || '';
-  const filtered = jobs.filter((job) => {
-    const haystack = `${job.title} ${job.company} ${job.category} ${job.summary}`.toLowerCase();
-    return (!search || haystack.includes(search)) &&
-      (!locationValue || job.location === locationValue) &&
-      (!type || job.type === type);
-  });
-  grid.innerHTML = filtered.map(jobCard).join('');
-  const empty = $('#noResults');
-  if (empty) empty.hidden = filtered.length > 0;
-}
-
-async function initJobsPage() {
-  if (!$('#jobsGrid')) return;
-  await loadJobs();
-  filterJobs();
-  ['searchInput', 'locationFilter', 'typeFilter'].forEach((id) => {
-    document.getElementById(id)?.addEventListener('input', filterJobs);
-  });
-}
-
-async function initJobDetail() {
-  const mount = $('#jobDetail');
-  if (!mount) return;
   try {
-    await loadJobs();
-  } catch (error) {
-    mount.innerHTML = '<article class="panel"><h1>Jobs are temporarily unavailable</h1><p>Please refresh the page or try again shortly.</p></article>';
-    return;
-  }
-  const job = jobs.find((item) => item.id === getJobId()) || jobs[0];
-  document.title = `${job.title} | FairChanceFinder`;
-  mount.innerHTML = `
-    <div class="detail-layout">
-      <article class="panel">
-        <p class="eyebrow">${job.company}</p>
-        <h1>${job.title}</h1>
-        <p class="page-subtitle">${job.location} · ${job.type} · ${job.pay}</p>
-        <h2>About the Role</h2>
-        <p>${job.description}</p>
-        <h2>Requirements</h2>
-        <ul>${job.requirements.map((item) => `<li>${item}</li>`).join('')}</ul>
-        <h2>Benefits</h2>
-        <ul>${job.benefits.map((item) => `<li>${item}</li>`).join('')}</ul>
-      </article>
-      <aside>
-        <div class="panel">
-          <div class="company-logo" aria-hidden="true">${job.logo}</div>
-          <h2>${job.company}</h2>
-          <p>${job.summary}</p>
-          <button class="btn btn-primary btn-full" data-open-application="${job.id}">Apply through FairChanceFinder</button>
-          <a class="btn btn-outline btn-full" href="${job.applyUrl}" target="_blank" rel="noopener" style="margin-top:10px">Company career page</a>
-        </div>
-      </aside>
-    </div>
-  `;
-}
-
-async function loadResumeOptions() {
-  const select = $('#applicationResumeSelect');
-  if (!select) return;
-  select.innerHTML = '<option value="">No uploaded resume selected</option>';
-  try {
-    const response = await fetch(`/api/uploads?clientId=${encodeURIComponent(ensureClientId())}`);
-    if (!response.ok) throw new Error('Unable to load uploads');
-    const data = await response.json();
-    (data.files || []).forEach((file) => {
-      const option = document.createElement('option');
-      option.value = JSON.stringify({ key: file.key, name: file.name, downloadUrl: file.downloadUrl });
-      option.textContent = file.name;
-      select.appendChild(option);
-    });
-  } catch (error) {
-    const option = document.createElement('option');
-    option.value = '';
-    option.textContent = 'Uploaded resumes unavailable';
-    select.appendChild(option);
+    const local = await fetch(`${basePrefix()}job-data.json`).then((r) => r.json());
+    const api = await fetch("/api/jobs").then((r) => (r.ok ? r.json() : [])).catch(() => []);
+    state.jobs = [...api, ...local.filter((job) => !api.some((item) => String(item.id) === String(job.id)))];
+  } catch {
+    state.jobs = [];
   }
 }
 
-function initApplicationModal() {
-  const modal = $('#applicationModal');
-  if (!modal) return;
-  document.addEventListener('click', (event) => {
-    const opener = event.target.closest('[data-open-application]');
-    if (opener) {
-      $('#applicationJobId').value = opener.dataset.openApplication;
-      loadResumeOptions();
-      modal.hidden = false;
-    }
-    if (event.target.matches('[data-close-modal]') || event.target === modal) {
-      modal.hidden = true;
-    }
+function routePage() {
+  const page = document.body.dataset.page;
+  if (page === "home") renderFeaturedJobs();
+  if (page === "jobs" || page === "app-jobs") renderJobs();
+  if (page === "job" || page === "app-job") renderJobDetail();
+  if (page === "employer-login") bindLogin();
+  if (page === "employer-register") bindRegister();
+  if (page === "employer-dashboard") renderDashboard();
+  if (page === "employer-jobs") bindEmployerJobs();
+  if (page === "employer-analytics") renderAnalytics();
+  if (page === "employer-settings") renderSettings();
+  if (page === "app-profile") bindProfile();
+  if (page === "app-resume") bindUploads();
+}
+
+function jobUrl(job) {
+  if (location.pathname.includes("/app/")) return `job.html?id=${encodeURIComponent(job.id)}`;
+  return `${basePrefix()}job.html?id=${encodeURIComponent(job.id)}`;
+}
+
+function jobCard(job, modal = false) {
+  const action = modal ? `data-view-job="${job.id}" href="#"` : `href="${jobUrl(job)}"`;
+  return `<a class="job-card" ${action}><span class="tag">${job.type}</span><h3>${job.title}</h3><p class="meta">${job.company} | ${job.location}</p><strong>${job.pay}</strong><p>${job.description}</p></a>`;
+}
+
+function renderFeaturedJobs() {
+  const target = document.getElementById("featuredJobs");
+  if (target) target.innerHTML = state.jobs.slice(0, 3).map((job) => jobCard(job)).join("");
+}
+
+function renderJobs() {
+  const list = document.getElementById("jobList");
+  const search = document.getElementById("jobSearch");
+  const type = document.getElementById("jobType");
+  const draw = () => {
+    const q = (search?.value || "").toLowerCase();
+    const t = type?.value || "";
+    const jobs = state.jobs.filter((job) => (!t || job.type === t) && `${job.title} ${job.company} ${job.location}`.toLowerCase().includes(q));
+    list.innerHTML = jobs.map((job) => jobCard(job, document.body.dataset.page === "jobs")).join("") || "<p>No matching jobs found.</p>";
+    document.querySelectorAll("[data-view-job]").forEach((link) => link.addEventListener("click", openJobChoice));
+  };
+  search?.addEventListener("input", draw);
+  type?.addEventListener("change", draw);
+  draw();
+}
+
+async function openJobChoice(event) {
+  event.preventDefault();
+  const id = event.currentTarget.dataset.viewJob;
+  await track(id, "click");
+  const modal = document.getElementById("jobChoiceModal");
+  modal.innerHTML = `<div class="modal-card"><h2>View this job</h2><a class="btn btn-primary" href="job.html?id=${id}">Continue on Web</a><a class="btn btn-secondary" href="app/job.html?id=${id}">Open App</a><a class="btn btn-outline" href="app/index.html">Download App</a><button class="btn btn-outline" data-close-modal>Close</button></div>`;
+  modal.setAttribute("aria-hidden", "false");
+  modal.querySelector("[data-close-modal]").addEventListener("click", () => modal.setAttribute("aria-hidden", "true"));
+}
+
+async function renderJobDetail() {
+  const id = new URLSearchParams(location.search).get("id") || "101";
+  const job = state.jobs.find((item) => String(item.id) === String(id));
+  if (!job) return;
+  await track(id, "impression");
+  text("jobTitle", job.title);
+  text("jobMeta", `${job.company} | ${job.location} | ${job.pay}`);
+  text("jobDescription", job.description);
+  list("jobResponsibilities", job.responsibilities || []);
+  list("jobQualifications", job.qualifications || []);
+  const summary = document.getElementById("jobSummary");
+  if (summary) summary.innerHTML = `<p><strong>Company:</strong> ${job.company}</p><p><strong>Location:</strong> ${job.location}</p><p><strong>Type:</strong> ${job.type}</p><p><strong>Pay:</strong> ${job.pay}</p>`;
+  const external = document.getElementById("externalApply");
+  if (external) external.href = job.applyUrl;
+  document.getElementById("platformApply")?.addEventListener("click", async () => {
+    await track(id, "apply");
+    alert("Application started. Add a resume in the app profile to attach it to future applications.");
   });
-  $('#applicationForm')?.addEventListener('submit', (event) => {
+  external?.addEventListener("click", () => track(id, "apply"));
+}
+
+function text(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || ""; }
+function list(id, items) { const el = document.getElementById(id); if (el) el.innerHTML = items.map((item) => `<li>${item}</li>`).join(""); }
+async function track(jobId, eventType) { fetch("/api/analytics", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jobId, eventType }) }).catch(() => {}); }
+
+function bindLogin() {
+  document.getElementById("loginForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const selectedResume = $('#applicationResumeSelect')?.value;
-    if (selectedResume) {
-      const resume = JSON.parse(selectedResume);
-      $('#applicationResumeName').value = resume.name;
-      $('#applicationResumeKey').value = resume.key;
-      $('#applicationResumeDownloadUrl').value = resume.downloadUrl;
+    const data = Object.fromEntries(new FormData(event.currentTarget));
+    try {
+      state.user = identityClient ? await identityClient.login(data.email, data.password) : null;
+      if (!state.user) {
+        localStorage.setItem("fcf_user", JSON.stringify({ email: data.email, name: data.email.split("@")[0] }));
+      }
+      location.href = "employer-dashboard.html";
+    } catch (error) {
+      text("authMessage", error.message || "Unable to log in.");
     }
-    const application = Object.fromEntries(new FormData(event.currentTarget));
-    const saved = JSON.parse(localStorage.getItem('fcf_applications') || '[]');
-    saved.unshift({ ...application, submittedAt: new Date().toISOString() });
-    localStorage.setItem('fcf_applications', JSON.stringify(saved.slice(0, 20)));
-    modal.hidden = true;
-    toast('Application saved. Use the company career page for final submission when requested.');
   });
 }
 
-function initEmployerForm() {
-  const form = $('#employerForm');
-  if (!form) return;
-  form.addEventListener('submit', (event) => {
+function bindRegister() {
+  document.getElementById("registerForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const data = Object.fromEntries(new FormData(form));
-    localStorage.setItem('fcf_pending_employer_job', JSON.stringify(data));
-    window.location.href = STRIPE_CHECKOUT_URL;
+    const data = Object.fromEntries(new FormData(event.currentTarget));
+    try {
+      state.user = identityClient ? await identityClient.signup(data.email, data.password, { full_name: data.name }) : null;
+      if (!state.user || !state.user.emailVerified) text("authMessage", "Check your email to confirm your account.");
+      if (state.user?.emailVerified) location.href = "employer-dashboard.html";
+      if (!identityClient) {
+        localStorage.setItem("fcf_user", JSON.stringify({ email: data.email, name: data.name }));
+        location.href = "employer-dashboard.html";
+      }
+    } catch (error) {
+      text("authMessage", error.message || "Unable to create account.");
+    }
   });
 }
 
-function initNavigation() {
-  $('.nav-toggle')?.addEventListener('click', () => $('.main-nav')?.classList.toggle('open'));
-  const path = location.pathname.split('/').pop() || 'index.html';
-  $$('.nav-link').forEach((link) => {
-    const href = link.getAttribute('href');
-    link.classList.toggle('active', href === path || (path === '' && href === 'index.html'));
+function renderDashboard() {
+  text("employerWelcome", `Signed in as ${state.user?.email || ""}`);
+  fetch("/api/jobs").then((r) => r.json()).then((jobs) => text("dashJobCount", `${jobs.length} active listings`)).catch(() => {});
+  fetch("/api/analytics").then((r) => r.json()).then((rows) => text("dashApplyCount", `${rows.reduce((sum, row) => sum + Number(row.applyClicks || 0), 0)} apply clicks`)).catch(() => {});
+}
+
+function bindEmployerJobs() {
+  const form = document.getElementById("jobForm");
+  const draw = async () => {
+    const jobs = await fetch("/api/jobs").then((r) => r.json()).catch(() => []);
+    document.getElementById("employerJobs").innerHTML = jobs.map((job) => `<article class="job-card"><h3>${job.title}</h3><p>${job.company} | ${job.location}</p><button class="btn btn-outline" data-edit="${job.id}">Edit</button><button class="btn btn-secondary" data-delete="${job.id}">Delete</button></article>`).join("") || "<p>No jobs posted yet.</p>";
+    document.querySelectorAll("[data-delete]").forEach((btn) => btn.addEventListener("click", async () => { await fetch(`/api/jobs/${btn.dataset.delete}`, { method: "DELETE" }); draw(); }));
+    document.querySelectorAll("[data-edit]").forEach((btn) => btn.addEventListener("click", () => {
+      const job = jobs.find((item) => String(item.id) === String(btn.dataset.edit));
+      Object.entries(job).forEach(([key, value]) => { if (form.elements[key]) form.elements[key].value = value; });
+    }));
+  };
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(form));
+    await fetch(payload.id ? `/api/jobs/${payload.id}` : "/api/jobs", { method: payload.id ? "PUT" : "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
+    location.href = STRIPE_PAYMENT_LINK;
+  });
+  draw();
+}
+
+function renderAnalytics() {
+  fetch("/api/analytics").then((r) => r.json()).then((rows) => {
+    document.getElementById("analyticsTable").innerHTML = `<table class="table"><thead><tr><th>Job</th><th>Impressions</th><th>Clicks</th><th>Apply clicks</th><th>Conversion</th></tr></thead><tbody>${rows.map((row) => `<tr><td>${row.jobId}</td><td>${row.impressions}</td><td>${row.clicks}</td><td>${row.applyClicks}</td><td>${row.conversionRate}%</td></tr>`).join("")}</tbody></table>`;
   });
 }
 
-function initResources() {
-  const filters = $$('[data-resource-filter]');
-  if (!filters.length) return;
-  filters.forEach((button) => {
-    button.addEventListener('click', () => {
-      const category = button.dataset.resourceFilter;
-      filters.forEach((item) => item.classList.toggle('active', item === button));
-      $$('[data-resource]').forEach((card) => {
-        card.hidden = category !== 'all' && card.dataset.resource !== category;
-      });
-    });
+function renderSettings() {
+  text("settingsEmail", `Signed in as ${state.user?.email || ""}`);
+  document.getElementById("logoutButton")?.addEventListener("click", async () => {
+    if (identityClient) await identityClient.logout();
+    localStorage.removeItem("fcf_user");
+    location.href = "employer-login.html";
   });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-  initNavigation();
-  initEmployerForm();
-  initApplicationModal();
-  initResources();
-  await initJobsPage();
-  await initJobDetail();
-});
+function bindProfile() {
+  ["profileName", "profileEmail"].forEach((id) => { const el = document.getElementById(id); if (el) el.value = localStorage.getItem(id) || ""; });
+  document.getElementById("saveProfile")?.addEventListener("click", () => { ["profileName", "profileEmail"].forEach((id) => localStorage.setItem(id, document.getElementById(id).value)); alert("Profile saved."); });
+}
+
+function bindUploads() {
+  const form = document.getElementById("uploadForm");
+  const listUploads = async () => {
+    const files = await fetch("/api/uploads").then((r) => r.json()).catch(() => []);
+    document.getElementById("uploadList").innerHTML = files.map((file) => `<a class="job-card" href="/api/uploads?key=${encodeURIComponent(file.key)}">Download ${file.name}</a>`).join("");
+  };
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const file = document.getElementById("resumeFile").files[0];
+    if (!file) return;
+    const body = new FormData();
+    body.append("file", file);
+    await fetch("/api/uploads", { method: "POST", body });
+    listUploads();
+  });
+  listUploads();
+}
