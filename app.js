@@ -124,7 +124,15 @@ async function renderJobDetail() {
   if (external) external.href = job.applyUrl;
   document.getElementById("platformApply")?.addEventListener("click", async () => {
     await track(id, "apply");
-    alert("Application started. Add a resume in the app profile to attach it to future applications.");
+    const applicantName = localStorage.getItem("profileName") || "FairChanceFinder applicant";
+    const applicantEmail = localStorage.getItem("profileEmail") || CONTACT_PERSONAL;
+    const resumeKey = localStorage.getItem("latestResumeKey") || "";
+    const response = await fetch("/api/applications", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ jobId: id, applicantName, applicantEmail, resumeKey }),
+    }).catch(() => null);
+    alert(response?.ok ? "Application submitted through FairChanceFinder." : "Application started. Upload a resume in the app to attach it before applying.");
   });
   external?.addEventListener("click", () => track(id, "apply"));
 }
@@ -217,7 +225,7 @@ function bindUploads() {
   const form = document.getElementById("uploadForm");
   const listUploads = async () => {
     const files = await fetch("/api/uploads").then((r) => r.json()).catch(() => []);
-    document.getElementById("uploadList").innerHTML = files.map((file) => `<a class="job-card" href="/api/uploads?key=${encodeURIComponent(file.key)}">Download ${file.name}</a>`).join("");
+    document.getElementById("uploadList").innerHTML = files.map((file) => `<a class="job-card" href="/api/uploads?key=${encodeURIComponent(file.key)}" download>Download ${file.name}</a>`).join("");
   };
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -225,7 +233,8 @@ function bindUploads() {
     if (!file) return;
     const body = new FormData();
     body.append("file", file);
-    await fetch("/api/uploads", { method: "POST", body });
+    const uploaded = await fetch("/api/uploads", { method: "POST", body }).then((r) => r.ok ? r.json() : null).catch(() => null);
+    if (uploaded?.key) localStorage.setItem("latestResumeKey", uploaded.key);
     listUploads();
   });
   listUploads();
