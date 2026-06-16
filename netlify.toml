@@ -2,6 +2,16 @@
   command = ""
   publish = "."
 
+[[headers]]
+  for = "/*"
+    [headers.values]
+      X-Content-Type-Options = "nosniff"
+      X-Frame-Options = "DENY"
+      Referrer-Policy = "strict-origin-when-cross-origin"
+      Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+      Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+      Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.ampproject.org 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+
 # Correct MIME headers for .well-known files
 [[headers]]
   for = "/.well-known/assetlinks.json"
@@ -17,8 +27,33 @@
   force = true
 
 [[redirects]]
+  from = "/jobs"
+  to = "/jobs.html"
+  status = 200
+
+[[redirects]]
+  from = "/job"
+  to = "/job.html"
+  status = 200
+
+[[redirects]]
   from = "/job/:id"
   to = "/job.html?id=:id"
+  status = 200
+
+[[redirects]]
+  from = "/app/jobs"
+  to = "/app/jobs.html"
+  status = 200
+
+[[redirects]]
+  from = "/app/job"
+  to = "/app/job.html"
+  status = 200
+
+[[redirects]]
+  from = "/app/job/:id"
+  to = "/app/job.html?id=:id"
   status = 200
 
 [[redirects]]
