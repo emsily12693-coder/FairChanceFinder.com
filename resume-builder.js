@@ -3,7 +3,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const download = document.getElementById("downloadResume");
   document.getElementById("generateResume")?.addEventListener("click", () => {
     const val = (id) => document.getElementById(id)?.value || "";
-    output.innerHTML = `<h2>${val("resName")}</h2><p>${val("resEmail")} | ${val("resPhone")} | ${val("resLocation")}</p><h3>Summary</h3><p>${val("resSummary")}</p><h3>Experience</h3><p>${val("resExperience")}</p><h3>Skills</h3><p>${val("resSkills")}</p><h3>Education</h3><p>${val("resEducation")}</p>`;
+
+    output.replaceChildren();
+
+    const addHeading = (tag, text) => {
+      const el = document.createElement(tag);
+      el.textContent = text;
+      output.appendChild(el);
+    };
+
+    const addParagraph = (text) => {
+      const p = document.createElement("p");
+      p.textContent = text;
+      output.appendChild(p);
+    };
+
+    addHeading("h2", val("resName"));
+    addParagraph(`${val("resEmail")} | ${val("resPhone")} | ${val("resLocation")}`);
+    addHeading("h3", "Summary");
+    addParagraph(val("resSummary"));
+    addHeading("h3", "Experience");
+    addParagraph(val("resExperience"));
+    addHeading("h3", "Skills");
+    addParagraph(val("resSkills"));
+    addHeading("h3", "Education");
+    addParagraph(val("resEducation"));
+
     download.disabled = false;
   });
   download?.addEventListener("click", () => {
