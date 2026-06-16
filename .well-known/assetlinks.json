@@ -1,14 +1,1 @@
-{
-  "relation": [
-    "delegate_permission/common.handle_all_urls",
-    "delegate_permission/common.get_login_creds"
-  ],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "com.fairchancefinder.twa",
-    "sha256_cert_fingerprints": [
-      "E2:D5:5A:CE:C0:4A:57:29:77:13:4E:35:AC:3C:3E:59:21:0F:CC:C0:A3:D8:6A:5F:56:31:96:B1:FE:45:2B:C4",
-      "DE:3C:04:71:90:95:0A:68:EC:1C:02:B6:BD:F9:2C:29:38:B1:E4:32:2B:E9:36:F8:D0:23:D4:26:B5:79:FA:F6"
-    ]
-  }
-}
+
