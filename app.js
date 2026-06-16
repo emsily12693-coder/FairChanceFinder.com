@@ -1,4 +1,4 @@
-const STRIPE_CHECKOUT_URL = 'https://buy.stripe.com/5kQ8wP2B99jN7co049es000';
+const STRIPE_CHECKOUT_URL = 'https://buy.stripe.com/bJebJ1grZbrVgMY8AFes001';
 const CLIENT_ID_KEY = 'fcf_client_id';
 let jobs = [];
 
